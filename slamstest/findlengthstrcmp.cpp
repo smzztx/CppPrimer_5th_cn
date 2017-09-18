@@ -2,7 +2,7 @@
 #include <string.h>
 #include "ros/ros.h"
 int main(){
-int i;
+unsigned int i;
 unsigned int a=-1,b=7;
 printf("%x\n",a);
 std::string c="#abcdefgh";
