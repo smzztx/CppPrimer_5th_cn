@@ -6,3 +6,5 @@ gcc -o thanks thanks.o thanks_2.o
 
 g++ -c helloworld.cpp
 g++ -o hello helloworld.o
+//add C++11
+g++ -o sleep_time sleep_time.cpp -std=c++0x
