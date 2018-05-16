@@ -24,10 +24,11 @@ int main(void)
         perror("pipe_fd open error");
         return 1;
     }
+
     do
     {
         res = read(pipe_fd,buffer,PIPE_BUF);
-        bytes_write = write(data_fd,buffer,PIPE_BUF);
+        bytes_write = write(data_fd,buffer,res);
         bytes_read += res;
     }while(res > 0);
     close(pipe_fd);
