@@ -30,20 +30,25 @@ int main(void)
     int bytes_read = 0;
     bytes_read = read(data_fd,buffer,PIPE_BUF);
     buffer[bytes_read] = '\0';
-    while(bytes_read == -1)
+    if(bytes_read == -1)
     {
         perror("read error");
         return 1;
     }
-    res = write(pipe_fd,buffer,bytes_read);
-    if(res == -1)
+    
+    while(bytes_read != -1)
     {
-        perror("write error");
-        return 1;
+        res = write(pipe_fd,buffer,bytes_read);
+        if(res == -1)
+        {
+            perror("write error");
+            return 1;
+        }
+        bytes_sent += res;
+        bytes_read = read(data_fd,buffer,PIPE_BUF);
+        buffer[bytes_read] = '\0';
     }
-    bytes_sent += res;
-    bytes_read = read(data_fd,buffer,PIPE_BUF);
-    buffer[bytes_read] = '\0';
+    
     close(pipe_fd);
     close(data_fd);
 
