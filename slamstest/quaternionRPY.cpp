@@ -13,7 +13,7 @@ void EulerAnglesToQuaternion(double roll, double pitch, double yaw)
     cosPitch = cosf(pitch * 0.5f);//Y
     sinPitch = sinf(pitch * 0.5f);//Y
 
-    cosyaw= cosf(yaw * 0.5f);//Z
+    cosyaw = cosf(yaw * 0.5f);//Z
     sinyaw = sinf(yaw * 0.5f);//Z
  
     qx = sinRoll * cosPitch * cosyaw - cosRoll * sinPitch * sinyaw;
@@ -29,9 +29,9 @@ void EulerAnglesToQuaternion(double roll, double pitch, double yaw)
 void QuaternionToEulerAngles(double qx, double qy, double qz, double qw) 
 {
     double roll, pitch, yaw;
-    roll =atan2f(2.f * (qw*qx + qy*qz), 1-2*(qx*qx+qy*qy));//X
-    pitch =  asinf(2.f * (qw*qy - qx*qz)); //Y
-    yaw =  atan2f(2.f * (qw*qz + qx*qy), 1-2*(qy*qy+qz*qz)); //Z
+    roll = atan2f(2.f * (qw*qx + qy*qz), 1-2*(qx*qx+qy*qy));//X
+    pitch = asinf(2.f * (qw*qy - qx*qz)); //Y
+    yaw = atan2f(2.f * (qw*qz + qx*qy), 1-2*(qy*qy+qz*qz)); //Z
  
     cout << "roll = " << roll << endl;
     cout << "pitch = " << pitch << endl;
