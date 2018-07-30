@@ -9,7 +9,7 @@ main  main.cpp
 参考：
 [GCC and File Extensions](http://labor-liber.org/en/gnu-linux/development/index.php?diapo=extensions)
 
-##1.2
+## 1.2
 将返回值改为-1后得到：
 ```linux
 $ echo $?
@@ -18,7 +18,7 @@ $ echo $?
 参考：
 [Exit Codes With Special Meanings](http://www.tldp.org/LDP/abs/html/exitcodes.html)
 
-##1.3
+## 1.3
 
 ```cpp
 #include <iostream>
@@ -31,7 +31,7 @@ int main()
 }
 ```
 
-##1.4
+## 1.4
 
 ```cpp
 #include <iostream>
@@ -47,7 +47,7 @@ int main()
 }
 ```
 
-##1.5
+## 1.5
 
 ```cpp
 #include <iostream>
@@ -68,7 +68,7 @@ int main()
 }
 ```
 
-##1.6
+## 1.6
 非法，修改为：
 
 ```cpp
@@ -77,7 +77,7 @@ std::cout << "The sum of " << v1
           << " is " << v1 + v2 << std::endl;
 ```
 
-##1.7
+## 1.7
 
 ```linux
 $ g++ -o ex07 ex07.cpp 
@@ -91,13 +91,13 @@ ex07.cpp:6:2: error: expected primary-expression before ‘return’
 ex07.cpp:6:2: error: expected ‘;’ before ‘return’
 ```
 
-##1.8
+## 1.8
 第三行非法，第三行改为：
 ```cpp
 	std::cout << /* "*/" */";
 ```
 
-##1.9
+## 1.9
 
 ```cpp
 #include <iostream>
@@ -117,7 +117,7 @@ int main()
 }
 ```
 
-##1.10
+## 1.10
 
 ```cpp
 #include <iostream>
@@ -137,7 +137,7 @@ int main()
 }
 ```
 
-##1.11
+## 1.11
 
 ```cpp
 #include <iostream>
@@ -164,7 +164,7 @@ int main()
 }
 ```
 
-##1.12
+## 1.12
 求从-100加到100的和，最终值为0。
 测试代码如下：
 ```cpp
@@ -184,7 +184,7 @@ int main()
 }
 ```
 
-##1.13
+## 1.13
 
 Ex1.9:
 ```cpp
@@ -236,15 +236,15 @@ int main()
 }
 ```
 
-##1.14
+## 1.14
 已知迭代次数时，使用for循环比较简洁；不知道迭代次数时使用while。
 参考：
 [A similar question on Stack Overflow](http://stackoverflow.com/questions/2950931/for-vs-while-in-c-programming)
 
-##1.15
+## 1.15
 请自行尝试。
 
-##1.16
+## 1.16
 
 ```cpp
 #include <iostream>
@@ -262,10 +262,10 @@ int main()
 ```
 数字输入完成后，Ctrl+d结束输入。
 
-##1.17
+## 1.17
 如果输入的所有值都是相等的，Ctrl+d后，才有输出统计的个数；如果没有重复输出，输入与前个不同的数即打印一行，Ctrl+d后，才输出最后一行统计的个数。
 
-##1.18
+## 1.18
 
 ```linux
 $ ./ex17 
@@ -280,10 +280,10 @@ $ ./ex17
 5 occurs 1 times
 ```
 
-##1.19
+## 1.19
 见1.11。
 
-##1.20
+## 1.20
 
 ```cpp
 #include <iostream>
@@ -299,7 +299,7 @@ int main()
 }
 ```
 
-##1.21
+## 1.21
 
 ```cpp
 #include <iostream>
@@ -322,7 +322,7 @@ $ ./ex20
 2-01 2 40 20
 ```
 
-##1.22
+## 1.22
 
 ```cpp
 #include <iostream>
@@ -346,7 +346,7 @@ $ ./ex21
 1-01 5 500 100
 ```
 
-##1.22
+## 1.22
 
 ```
 #include <iostream>
@@ -377,7 +377,7 @@ $ ./ex22
 需要初始化sum_item：
 std::cin >> sum_item;
 
-##1.23
+## 1.23
 
 ```cpp
 #include <iostream>
@@ -405,7 +405,7 @@ int main()
 }
 ```
 
-##1.24
+## 1.24
 测试：
 
 ```
@@ -418,7 +418,7 @@ $ ./ex23
 
 ```
 
-##1.25
+## 1.25
 
 ```cpp
 #include <iostream>
