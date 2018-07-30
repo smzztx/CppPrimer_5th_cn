@@ -1,4 +1,4 @@
-﻿##1.1
+﻿## 1.1
 我使用g++，一般将C++程序命名为.cpp。
 g++ -o main main.cpp 
 ```linux
