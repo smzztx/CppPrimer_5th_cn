@@ -298,22 +298,6 @@ int main()
     return 0;
 }
 ```
-
-## 1.21
-
-```cpp
-#include <iostream>
-#include "Sales_item.h"
-
-int main()
-{
-    Sales_item item1,item2;
-    std::cin >> item1 >> item2;
-    std::cout << item1 + item2 <<std::endl;
-    
-    return 0;
-}
-```
 测试：
 
 ```
@@ -322,7 +306,7 @@ $ ./ex20
 2-01 2 40 20
 ```
 
-## 1.22
+## 1.21
 
 ```cpp
 #include <iostream>
