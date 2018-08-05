@@ -315,3 +315,99 @@ int main(int argc, char const *argv[])
 无需改变实参的时候应该用常量引用；可能会改变常亮实参，从而导致出错。
 
 ## 6.21
+```cpp
+#include <iostream>
+
+int compare(int j, int *i)
+{
+	return j > *i ? j : *i; 
+}
+
+int main()
+{
+	int j = 0, i = 1;
+	
+	std::cout << compare(j, &i) << std::endl;
+
+	return 0;
+}
+```
+
+## 6.22
+```cpp
+#include <iostream>
+
+void swap_intp(int *&i, int *&j)
+{
+	int *tmp;
+	tmp = i;
+	i = j;
+	j = tmp;
+}
+
+int main()
+{
+	int i = 0, j = 1;
+	int *pi = &i, *pj = &j;
+
+	std::cout << pi << " " << pj << std::endl;
+	swap_intp(pi, pj);
+	std::cout << pi << " " << pj << std::endl;
+
+	return 0;
+}
+```
+
+## 6.23
+```cpp
+#include <iostream>
+
+using std::cout;
+using std::endl;
+using std::begin;
+using std::end;
+
+void print(const int* pi)
+{
+	cout << *pi << endl;
+}
+
+void print(const int *beg, const int *end)
+{
+	while(beg != end)
+		cout << *beg++ << " ";
+	cout << endl;
+}
+
+void print(const int ia[], size_t size)
+{
+	for(size_t i = 0; i != size; ++i)
+		cout << ia[i] << " ";
+	cout << endl;
+}
+
+void print(const int (&arr)[2])
+{
+	for(auto e : arr)
+		cout << e << " ";
+	cout << endl;
+}
+
+int main()
+{
+	int i = 0, j[2] = {0, 1};
+
+	print(&i);
+	print(begin(j), end(j));
+	print(j, end(j) - begin(j));
+	print(j);
+
+	return 0;
+}
+```
+
+## 6.24
+该函数传递的不是数组是const int*，如果实参不是含10个元素的int数组，可能导致for循环数组越界。修改为：
+```cpp
+void print(const int (&ia)[10]) { /*...*/ }
+```
