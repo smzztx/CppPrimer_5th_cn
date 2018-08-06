@@ -411,3 +411,70 @@ int main()
 ```cpp
 void print(const int (&ia)[10]) { /*...*/ }
 ```
+
+## 6.25
+```cpp
+#include <iostream>
+
+int main(int argc, char const *argv[])
+{
+	const std::string s1 = argv[1], s2 = argv[2];
+
+	std::cout << s1 + s2 << std::endl;
+
+	return 0;
+}
+```
+```linux
+$ ./ex25 hel lo
+hello
+```
+
+## 6.26
+```cpp
+#include <iostream>
+
+int main(int argc, char const *argv[])
+{
+	std::string s;
+
+	for(int i = 0; i != argc; ++i)
+		s += std::string(argv[i]) + " ";
+	std::cout << s << std::endl;
+
+	return 0;
+}
+```
+```linux
+$ ./ex26 -d -o ofile data0
+./ex26 -d -o ofile data0 
+$ ./ex26 
+./ex26 
+```
+
+## 6.27
+```cpp
+#include <iostream>
+#include <initializer_list>
+
+int counter_int(std::initializer_list<int> il)
+{
+	int cnt_i = 0;
+	for(auto e : il)
+		cnt_i += e;
+	return cnt_i;
+}
+
+int main(int argc, char const *argv[])
+{
+	std::cout << counter_int({1,2,3,4,5}) << std::endl;
+
+	return 0;
+}
+```
+
+## 6.28
+const std::string&
+
+## 6.29
+如果拷贝代价小，则无需设置成引用类型；如果拷贝代价大，可以设置成引用类型。（具体的我也不太理解）
