@@ -478,3 +478,30 @@ const std::string&
 
 ## 6.29
 如果拷贝代价小，则无需设置成引用类型；如果拷贝代价大，可以设置成引用类型。（具体的我也不太理解）
+
+## 6.36
+```cpp
+std::string (&fun(std::string (&arrs)[10]))[10];
+```
+
+## 6.37
+```cpp
+using ARRS = std::string[10];
+ARRS &fun(ARRS &arrs);
+ 
+auto fun(std::string (&arrs)[10]) -> std::string (&)[10]);
+ 
+std::string arrs1[10];
+decltype(arrs1) &fun(decltype(arrs1) &arrs);
+```
+个人觉得using最好，最简洁。
+
+## 6.38
+```cpp
+decltype(arrStr)& arrPtr(int i)
+{
+          return (i % 2) ? odd : even;
+}
+```
+
+## 6.39
