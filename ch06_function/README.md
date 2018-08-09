@@ -479,6 +479,54 @@ const std::string&
 ## 6.29
 如果拷贝代价小，则无需设置成引用类型；如果拷贝代价大，可以设置成引用类型。（具体的我也不太理解）
 
+## 6.30
+g++
+```linux
+错误#1：error: return-statement with no value, in function returning ‘bool’ [-fpermissive]
+错误#2：检查不出，返回true
+```
+
+## 6.31
+返回的引用时局部对象的引用，返回的常量引用是局部常量对象的引用时。
+
+## 6.32
+合法，返回数组ia[0]-ia[9]
+
+## 6.33
+```cpp
+#include <iostream>
+#include <vector>
+
+void read_vi(std::vector<int>::const_iterator iterator_begin, std::vector<int>::const_iterator iterator_end)
+{
+	if(iterator_begin != iterator_end)
+	{
+		std::cout << *iterator_begin << " ";
+		return read_vi(++iterator_begin, iterator_end);
+	}else
+	{
+		std::cout << std::endl;
+		return;
+	}
+}
+
+int main()
+{
+	std::vector<int> v{1,2,3,4,5};
+
+	read_vi(v.begin(), v.end());
+
+	return 0;
+}
+```
+
+## 6.34
+如果实参为大于等于0，函数将会多乘以一个1，比如factorial(5)，等价于5 * 4 * 3 * 2 * 1 * 1;
+如果实参小于0，函数将会不断地调用它自身直到程序栈空间耗尽为止。
+
+## 6.35
+val--会返回val，使程序陷入无限循环
+
 ## 6.36
 ```cpp
 std::string (&fun(std::string (&arrs)[10]))[10];
