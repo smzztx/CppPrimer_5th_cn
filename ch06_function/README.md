@@ -558,3 +558,31 @@ decltype(arrStr)& arrPtr(int i)
 （c）合法。
 
 ## 6.40
+（a）正确；
+（b）错误。
+
+## 6.41
+（a）非法，函数第一个形参没有默认实参，必须给实参；
+（b）合法；
+（c）合法，但与初衷不符，char '*'转换成整形了。
+
+## 6.42
+```cpp
+#include <iostream>
+#include <string>
+
+using std::string;
+
+string make_plural(size_t ctr, const string &word, const string &ending = "s")
+{
+	return (ctr > 1) ? word + ending : word;
+}
+
+int main()
+{
+	std::cout << make_plural(2, "success", "es") << std::endl;
+	std::cout << make_plural(2, "failure") << std::endl;
+}
+```
+
+## 6.43
