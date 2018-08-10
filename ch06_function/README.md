@@ -586,3 +586,33 @@ int main()
 ```
 
 ## 6.43
+（a）放在头文件中，内联函数在程序中可以多次定义，它的多个定义必须完全一致，所以放在头文件中比较好；
+（b）放在头文件中，声明放在头文件中。
+
+## 6.44
+```cpp
+#include <iostream>
+#include <string>
+
+using std::string;
+
+inline bool isShorter(const string &s1, const string &s2)
+{
+	return s1.size() < s2.size();
+}
+
+int main()
+{
+	string s1("aabb"), s2("aabbcc");
+
+	std::cout << isShorter(s1, s2) << std::endl;
+
+	return 0;
+}
+```
+
+## 6.45
+6.38和6.42应该是内联函数；6.4不应该是，规模不小，调用不频繁。
+
+## 6.46
+不能，因为std::string::size()不是一个constexpr函数，s1.size() == s2.size()不是一个常量表达式。
