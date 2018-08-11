@@ -74,7 +74,7 @@ int main()
 ```
 
 ### 3.1.4
-```
+```cpp
 #include <iostream>
 #include <string>
 #include "../ch02/ex2_42.h"
