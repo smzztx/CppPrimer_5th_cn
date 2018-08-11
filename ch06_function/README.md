@@ -116,7 +116,7 @@ size_t generate()
 }
 ```
 
-##　6.8
+## 6.8
 ```cpp
 #ifndef CHAPTER6_H
 #define CHAPTER6_H
