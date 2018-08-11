@@ -658,3 +658,109 @@ int main()
 合理，当输入结束时终止程序。
 
 ## 6.49
+候选函数具备两个特征：一是与被调用的函数同名，二是其声明在调用点可见。
+可行函数是从候选函数中选出的，有两个特征：一是其形参数量与本次调用提供的实参数量相等，二是每个实参的类型与对应的形参类型相同，或者能转换成形参的类型。
+
+## 6.50
+（a）二义性；（b）最佳匹配void f(int)；（c）最佳匹配void f(int, int)；（d）最佳匹配void f(double, double = 3.14)。
+
+## 6.51
+```cpp
+#include <iostream>
+using std::cout; using std::endl;
+
+void f()
+{
+    cout << "f()" << endl;
+}
+
+void f(int)
+{
+    cout << "f(int)" << endl;
+}
+
+void f(int, int)
+{
+    cout << "f(int, int)" << endl;
+}
+
+void f(double, double)
+{
+    cout << "f(double, double)" << endl;
+}
+
+int main()
+{
+    //f(2.56, 42); // error: 'f' is ambiguous.
+    f(42);
+    f(42, 0);
+    f(2.56, 3.14);
+    
+    return 0;
+}
+```
+
+## 6.52
+（a）3等级，通过类型提升实现的匹配；
+（b）4等级，通过算数类型转换。
+
+## 6.53
+（a）合法，实参可以为const int；
+（b）合法，实参可以为const char*；
+（c）合法，顶层const，声明重复（可以重复声明，不可重复定义）。
+
+## 6.54
+```cpp
+vector<int (*)(int, int)> vf;
+
+//others:
+int func(int a, int b);
+
+using pFunc1 = decltype(func) *;
+typedef decltype(func) *pFunc2;
+using pFunc3 = int (*)(int a, int b);
+using pFunc4 = int(int a, int b);
+typedef int(*pFunc5)(int a, int b);
+using pFunc6 = decltype(func);
+
+std::vector<pFunc1> vec1;
+std::vector<pFunc2> vec2;
+std::vector<pFunc3> vec3;
+std::vector<pFunc4*> vec4;
+std::vector<pFunc5> vec5;
+std::vector<pFunc6*> vec6;
+```
+
+## 6.55
+```cpp
+int add(int a, int b) { return a + b; }
+int subtract(int a, int b) { return a - b; }
+int multiply(int a, int b) { return a * b; }
+int divide(int a, int b) { return b != 0 ? a / b : 0; }
+```
+
+## 6.56
+```cpp
+#include <iostream>
+#include <string>
+#include <vector>
+
+using std::string;
+using std::cout;
+using std::endl;
+using std::vector;
+
+int add(int a, int b) { return a + b; }
+int subtract(int a, int b) { return a - b; }
+int multiply(int a, int b) { return a * b; }
+int divide(int a, int b) { return b != 0 ? a / b : 0; }
+
+int main()
+{
+	vector<int (*)(int, int)> vf{add, subtract, multiply, divide};
+
+	for(const auto &e : vf) cout << e(4, 2) << endl;
+
+	return 0;
+}
+```
