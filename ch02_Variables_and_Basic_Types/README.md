@@ -212,30 +212,7 @@ struct Sale_data
 
 ## 2.41
 
-### 1.5.1
-```cpp
-#include <iostream>
-#include <string>
-
-struct Sale_data
-{
-    std::string bookNo;
-    unsigned units_sold = 0;
-    double revenue = 0.0;
-};
-
-int main()
-{
-    Sale_data book;
-    double price;
-    std::cin >> book.bookNo >> book.units_sold >> price;
-    book.revenue = book.units_sold * price;
-    std::cout << book.bookNo << " " << book.units_sold << " " << book.revenue << " " << price;
-
-    return 0;
-}
-```
-
+### [1.5.1（这里有３题，我这里只简单实现该类型的输入、相加和输出）](ex41.cpp)
 ### 1.5.2
 ```cpp
 #include <iostream>
