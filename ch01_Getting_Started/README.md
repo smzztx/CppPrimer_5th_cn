@@ -112,8 +112,8 @@ int main()
 ```
 
 ## 1.14
-已知迭代次数时，使用for循环比较简洁；不知道迭代次数时使用while。
-参考：
+已知迭代次数时，使用for循环比较简洁；不知道迭代次数时使用while。  
+参考：  
 [A similar question on Stack Overflow](http://stackoverflow.com/questions/2950931/for-vs-while-in-c-programming)
 
 ## 1.15
@@ -123,7 +123,7 @@ int main()
 数字输入完成后，Ctrl+d结束输入。
 
 ## 1.17
-如果输入的所有值都是相等的，Ctrl+d后，才有输出统计的个数；如果没有重复输出，输入与前个不同的数即打印一行，Ctrl+d后，才输出最后一行统计的个数。
+如果输入的所有值都是相等的，Ctrl+d后，才有输出统计的个数；如果没有重复输出，输入与前个不同的数即打印一行，Ctrl+d后，才输出最后一行统计的个数。  
 [本节程序](ex17.cpp)
 
 ## 1.18
@@ -163,7 +163,7 @@ $ ./ex21
 1-01 5 500 100
 ```
 
-## [1.22](ex21.cpp)
+## [1.22](ex22.cpp)
 
 ```
 #include <iostream>
