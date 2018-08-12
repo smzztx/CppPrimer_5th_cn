@@ -1,13 +1,13 @@
 ## 1.1
-我使用g++，一般将C++程序命名为.cpp。
-g++ -o main main.cpp 
+我使用g++，一般将C++程序命名为.cpp。  
+g++ -o main main.cpp  
 [代码](ex01_main.cpp)
 ```bash
 $ g++ -o main main.cpp 
 $ ls
 main  main.cpp
 ```
-参考：
+参考：  
 [GCC and File Extensions](http://labor-liber.org/en/gnu-linux/development/index.php?diapo=extensions)
 
 ## 1.2
@@ -16,7 +16,7 @@ main  main.cpp
 $ echo $?
 255
 ```
-参考：
+参考：  
 [Exit Codes With Special Meanings](http://www.tldp.org/LDP/abs/html/exitcodes.html)
 
 ## [1.3](ex03_helloworld.cpp)
@@ -24,7 +24,6 @@ $ echo $?
 ## [1.5](ex05.cpp)
 ## 1.6
 非法，修改为：
-
 ```cpp
 std::cout << "The sum of " << v1
           << " and " << v2
