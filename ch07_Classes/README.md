@@ -537,3 +537,229 @@ std::ostream &print(std::ostream &os, const Person &item)
 ```
 
 ## 7.16
+一个类可以包含0个或多个访问说明符，而且对于某个访问说明符能出现多少次也没有严格的限定。
+public：成员在整个程序内可被访问，public成员定义类的接口；
+private：成员可以被类的成员函数访问，但是不能被使用该类的代码访问，private部分封装了（即隐藏了）类的实现细节。
+
+## 7.17
+struct默认的访问权限是public；
+class默认的访问权限是private。
+
+## 7.18
+封装是实现与接口的分离。它隐藏了类型的实现细节。（在C++中，封装是通过将实现放在一个类的私有部分来实现的）
+封装有两个重要的优点：
+1.确保用户代码不会无意间破坏封装对象的状态；
+2.被封装的类的具体实现细节可以随时改变，而无须调整用户级别的代码。
+
+## 7.19
+```cpp
+struct Person
+{
+public:
+	Person() : name(""), address(""){}
+	Person(const std::string &sname, const std::string &saddress = "") : name(sname), address(saddress){}
+	Person(std::istream &is){read(is, *this);}
+    std::string get_name() const{return name;}
+    std::string get_address() const{return address;}
+private:
+    std::string name;
+    std::string address;
+};
+```
+接口应该被定义为公共的，数据不应该暴露在类之外。
+
+## 7.20
+类可以允许其他类或者函数访问它的非公有成员，方法是令其他类或者函数成为它的友元。
+优点：
+外部函数可以方便地使用类的成员，而不需要显示地给它们加上类名；
+可以方便地访问所有非公有成员；
+有时，对类的用户更容易读懂。
+缺点：
+减少封装和可维护性；
+代码冗长，类内的声明，类外函数声明。
+
+## 7.21
+Sales_data_ex21.h
+```cpp
+#ifndef SALES_DATA_H_
+#define SALES_DATA_H_
+
+#include <string>
+
+struct Sales_data;
+
+std::istream &read(std::istream &is, Sales_data &item);
+std::ostream &print(std::ostream &os, const Sales_data &item);
+Sales_data add(const Sales_data &lhs, const Sales_data &rhs);
+
+struct Sales_data
+{
+friend std::istream &read(std::istream &is, Sales_data &item);
+friend std::ostream &print(std::ostream &os, const Sales_data &item);
+friend Sales_data add(const Sales_data &lhs, const Sales_data &rhs);
+public:
+	Sales_data() = default;
+	Sales_data(const std::string &s) : bookNo(s){}
+	Sales_data(const std::string &s, unsigned n, double p) : bookNo(s), units_sold(n), revenue(p*n){}
+	Sales_data(std::istream &is) {read(is, *this);}
+	std::string isbn() const {return bookNo;}
+    Sales_data& combine(const Sales_data&);
+    double avg_price() const;
+private:
+    std::string bookNo;
+    unsigned units_sold = 0;
+    double revenue = 0.0;
+};
+
+Sales_data& Sales_data::combine(const Sales_data &rhs)
+{
+	units_sold += rhs.units_sold;
+	revenue += rhs.revenue;
+
+	return *this;
+}
+
+double Sales_data::avg_price() const
+{
+	if(units_sold)
+		return revenue / units_sold;
+	else
+		return 0;
+}
+
+std::istream &read(std::istream &is, Sales_data &item)
+{
+	double price = 0;
+
+	is >> item.bookNo >> item.units_sold >> price;
+	item.revenue = price * item.units_sold;
+
+	return is;
+}
+
+std::ostream &print(std::ostream &os, const Sales_data &item)
+{
+	os << item.isbn() << " " << item.units_sold << " " << item.revenue << " " << item.avg_price();
+
+	return os;
+}
+
+Sales_data add(const Sales_data &lhs, const Sales_data &rhs)
+{
+	Sales_data sum = lhs;
+	sum.combine(rhs);
+
+	return sum;
+}
+
+#endif
+```
+
+ex21.cpp
+```cpp
+#include <iostream>
+#include <string>
+#include "Sales_data_ex21.h"
+
+int main()
+{
+    Sales_data total(std::cin);
+
+    if (!total.isbn().empty())
+    {
+        Sales_data trans;
+
+        while (read(std::cin, trans))
+        {
+            if (total.isbn() == trans.isbn())
+            {
+                total.combine(trans);
+            }
+            else
+            {
+                print(std::cout, total);
+                std::cout << std::endl;
+                total = trans;
+            }
+        }
+        print(std::cout, total);
+        std::cout << std::endl;
+
+        return 0;
+    }
+    else
+    {
+        std::cerr << "No data?!" << std::endl;
+        return -1;  // indicate failure
+    }
+}
+```
+
+## 7.22
+Person_ex22.h
+```cpp
+#ifndef PERSON_H_
+#define PERSON_H_
+
+#include <string>
+
+struct Person;
+
+std::istream &read(std::istream &is, Person &item);
+std::ostream &print(std::ostream &os, const Person &item);
+
+struct Person
+{
+friend std::istream &read(std::istream &is, Person &item);
+friend std::ostream &print(std::ostream &os, const Person &item);
+public:
+	Person() : name(""), address(""){}
+	Person(const std::string &sname, const std::string &saddress = "") : name(sname), address(saddress){}
+	Person(std::istream &is){read(is, *this);}
+    std::string get_name() const{return name;}
+    std::string get_address() const{return address;}
+private:
+    std::string name;
+    std::string address;
+};
+
+std::istream &read(std::istream &is, Person &item)
+{
+	return is >> item.name >> item.address;
+}
+
+std::ostream &print(std::ostream &os, const Person &item)
+{
+	return os << item.name << " " << item.address;
+}
+
+#endif
+```
+
+ex22.cpp
+```cpp
+//test Person_ex15.h
+#include <string>
+#include <iostream>
+#include "Person_ex15.h"
+
+int main()
+{
+	Person person1;
+	print(std::cout, person1) << std::endl;
+
+	Person person2("tx", "hangzhou");
+	print(std::cout, person2) << std::endl;
+	std::cout << person2.get_name() << " " << person2.get_address() << std::endl;
+
+	Person person3("tx");
+	print(std::cout, person3) << std::endl;
+
+	Person person4(std::cin);
+	print(std::cout, person4) << std::endl;
+
+	return 0;
+}
+```
+
+## 7.23
