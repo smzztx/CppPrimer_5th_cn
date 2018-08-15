@@ -763,3 +763,177 @@ int main()
 ```
 
 ## 7.23
+```cpp
+#ifndef SCREEN_EX23_H_
+#define SCREEN_EX23_H_
+
+#include <string>
+
+class Screen {
+    public:
+        using pos = std::string::size_type;
+
+        Screen() = default;
+        Screen(pos ht, pos wd, char c):height(ht), width(wd), contents(ht*wd, c){ }
+
+        char get() const { return contents[cursor]; }
+        char get(pos r, pos c) const { return contents[r*width+c]; }
+
+    private:
+        pos cursor = 0;
+        pos height = 0, width = 0;
+        std::string contents;
+};
+
+#endif
+```
+
+## 7.24
+```cpp
+#ifndef SCREEN_EX23_H_
+#define SCREEN_EX23_H_
+
+#include <string>
+
+class Screen {
+    public:
+        using pos = std::string::size_type;
+
+        Screen() = default;
+        Screen(pos ht, pos wd):height(ht), width(wd){ }
+        Screen(pos ht, pos wd, char c):height(ht), width(wd), contents(ht*wd, c){ }
+
+        char get() const { return contents[cursor]; }
+        char get(pos r, pos c) const { return contents[r*width+c]; }
+
+    private:
+        pos cursor = 0;
+        pos height = 0, width = 0;
+        std::string contents;
+};
+
+#endif
+```
+
+## 7.25
+能，Screen类中只有内置类型和string可以使用拷贝和赋值操作，见7.15。
+
+## 7.26
+Sales_data_ex26.h
+```cpp
+#ifndef SALES_DATA_H_
+#define SALES_DATA_H_
+
+#include <string>
+
+struct Sales_data;
+
+std::istream &read(std::istream &is, Sales_data &item);
+std::ostream &print(std::ostream &os, const Sales_data &item);
+Sales_data add(const Sales_data &lhs, const Sales_data &rhs);
+
+struct Sales_data
+{
+friend std::istream &read(std::istream &is, Sales_data &item);
+friend std::ostream &print(std::ostream &os, const Sales_data &item);
+friend Sales_data add(const Sales_data &lhs, const Sales_data &rhs);
+public:
+	Sales_data() = default;
+	Sales_data(const std::string &s) : bookNo(s){}
+	Sales_data(const std::string &s, unsigned n, double p) : bookNo(s), units_sold(n), revenue(p*n){}
+	Sales_data(std::istream &is) {read(is, *this);}
+	std::string isbn() const {return bookNo;}
+    Sales_data& combine(const Sales_data&);
+private:
+	inline double avg_price() const;
+
+    std::string bookNo;
+    unsigned units_sold = 0;
+    double revenue = 0.0;
+};
+
+Sales_data& Sales_data::combine(const Sales_data &rhs)
+{
+	units_sold += rhs.units_sold;
+	revenue += rhs.revenue;
+
+	return *this;
+}
+
+inline double Sales_data::avg_price() const
+{
+	if(units_sold)
+		return revenue / units_sold;
+	else
+		return 0;
+}
+
+std::istream &read(std::istream &is, Sales_data &item)
+{
+	double price = 0;
+
+	is >> item.bookNo >> item.units_sold >> price;
+	item.revenue = price * item.units_sold;
+
+	return is;
+}
+
+std::ostream &print(std::ostream &os, const Sales_data &item)
+{
+	os << item.isbn() << " " << item.units_sold << " " << item.revenue << " " << item.avg_price();
+
+	return os;
+}
+
+Sales_data add(const Sales_data &lhs, const Sales_data &rhs)
+{
+	Sales_data sum = lhs;
+	sum.combine(rhs);
+
+	return sum;
+}
+
+#endif
+```
+
+ex26.cpp
+```cpp
+#include <iostream>
+#include <string>
+#include "Sales_data_ex26.h"
+
+int main()
+{
+    Sales_data total(std::cin);
+
+    if (!total.isbn().empty())
+    {
+        Sales_data trans;
+
+        while (read(std::cin, trans))
+        {
+            if (total.isbn() == trans.isbn())
+            {
+                total.combine(trans);
+            }
+            else
+            {
+                print(std::cout, total);
+                std::cout << std::endl;
+                total = trans;
+            }
+        }
+        print(std::cout, total);
+        std::cout << std::endl;
+
+        return 0;
+    }
+    else
+    {
+        std::cerr << "No data?!" << std::endl;
+        return -1;  // indicate failure
+    }
+}
+```
+
+## 2.27
