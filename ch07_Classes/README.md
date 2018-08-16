@@ -537,19 +537,19 @@ std::ostream &print(std::ostream &os, const Person &item)
 ```
 
 ## 7.16
-一个类可以包含0个或多个访问说明符，而且对于某个访问说明符能出现多少次也没有严格的限定。
-public：成员在整个程序内可被访问，public成员定义类的接口；
-private：成员可以被类的成员函数访问，但是不能被使用该类的代码访问，private部分封装了（即隐藏了）类的实现细节。
+一个类可以包含0个或多个访问说明符，而且对于某个访问说明符能出现多少次也没有严格的限定。  
+public：成员在整个程序内可被访问，public成员定义类的接口；  
+private：成员可以被类的成员函数访问，但是不能被使用该类的代码访问，private部分封装了（即隐藏了）类的实现细节。  
 
 ## 7.17
-struct默认的访问权限是public；
-class默认的访问权限是private。
+struct默认的访问权限是public；  
+class默认的访问权限是private。  
 
 ## 7.18
-封装是实现与接口的分离。它隐藏了类型的实现细节。（在C++中，封装是通过将实现放在一个类的私有部分来实现的）
-封装有两个重要的优点：
-1.确保用户代码不会无意间破坏封装对象的状态；
-2.被封装的类的具体实现细节可以随时改变，而无须调整用户级别的代码。
+封装是实现与接口的分离。它隐藏了类型的实现细节。（在C++中，封装是通过将实现放在一个类的私有部分来实现的）  
+封装有两个重要的优点：  
+1.确保用户代码不会无意间破坏封装对象的状态；  
+2.被封装的类的具体实现细节可以随时改变，而无须调整用户级别的代码。  
 
 ## 7.19
 ```cpp
@@ -569,14 +569,14 @@ private:
 接口应该被定义为公共的，数据不应该暴露在类之外。
 
 ## 7.20
-类可以允许其他类或者函数访问它的非公有成员，方法是令其他类或者函数成为它的友元。
-优点：
-外部函数可以方便地使用类的成员，而不需要显示地给它们加上类名；
-可以方便地访问所有非公有成员；
-有时，对类的用户更容易读懂。
-缺点：
-减少封装和可维护性；
-代码冗长，类内的声明，类外函数声明。
+类可以允许其他类或者函数访问它的非公有成员，方法是令其他类或者函数成为它的友元。  
+优点：  
+外部函数可以方便地使用类的成员，而不需要显示地给它们加上类名；  
+可以方便地访问所有非公有成员；  
+有时，对类的用户更容易读懂。  
+缺点：  
+减少封装和可维护性；  
+代码冗长，类内的声明，类外函数声明。  
 
 ## 7.21
 Sales_data_ex21.h
@@ -816,7 +816,7 @@ class Screen {
 ```
 
 ## 7.25
-能，Screen类中只有内置类型和string可以使用拷贝和赋值操作，见7.15。
+能，Screen类中只有内置类型和string可以使用拷贝和赋值操作，见7.15。  
 
 ## 7.26
 Sales_data_ex26.h
@@ -937,3 +937,105 @@ int main()
 ```
 
 ## 2.27
+Screen_ex27.h
+```cpp
+#ifndef SCREEN_EX23_H_
+#define SCREEN_EX23_H_
+
+#include <string>
+
+class Screen {
+    public:
+        using pos = std::string::size_type;
+
+        Screen() = default;
+        Screen(pos ht, pos wd):height(ht), width(wd){ }
+        Screen(pos ht, pos wd, char c):height(ht), width(wd), contents(ht*wd, c){ }
+
+        char get() const { return contents[cursor]; }
+        char get(pos r, pos c) const { return contents[r*width+c]; }
+        Screen &move(pos r, pos c);
+        Screen &set(char);
+        Screen &set(pos, pos, char);
+        Screen &display(std::ostream &os) {do_display(os); return *this;}
+        const Screen &display(std::ostream &os) const {do_display(os); return *this;}
+
+    private:
+        pos cursor = 0;
+        pos height = 0, width = 0;
+        std::string contents;
+        void do_display(std::ostream &os) const {os << contents;}
+};
+
+inline Screen &Screen::move(pos r, pos c)
+{
+	pos row = r * width;
+	cursor = row + c;
+	return *this;
+}
+
+inline Screen &Screen::set(char c)
+{
+	contents[cursor] = c;
+	return *this;
+}
+
+inline Screen &Screen::set(pos r, pos col, char c)
+{
+	contents[r*width + col] = c;
+	return *this;
+}
+
+#endif
+```
+
+ex27.cpp
+```cpp
+#include <string>
+#include <iostream>
+#include "Screen_ex27.h"
+
+int main()
+{
+	Screen myScreen(5, 5, 'X');
+	
+	myScreen.move(4, 0).set('#').display(std::cout);
+	std::cout << "\n";
+	myScreen.display(std::cout);
+	std::cout << "\n";
+
+	return 0;
+}
+```
+
+## 7.28
+返回类型是Screen&的输出：  
+XXXXXXXXXXXXXXXXXXXX#XXXX  
+XXXXXXXXXXXXXXXXXXXX#XXXX  
+返回类型是Screen的输出：  
+XXXXXXXXXXXXXXXXXXXX#XXXX  
+XXXXXXXXXXXXXXXXXXXXXXXXX  
+因为这样的话move、set和display返回的是Screen的临时副本，后续set和display操作并不会改变myScreen。  
+
+## 7.29
+```linux
+$ ./ex29
+XXXXXXXXXXXXXXXXXXXX#XXXX
+XXXXXXXXXXXXXXXXXXXXXXXXX
+```
+
+## 7.30
+优点：
+更明确，减少误读的可能性；
+可以使用名称与成员名相同的形参。
+```cpp
+void setAddr(const std::string &addr) { this->addr = addr; }
+```
+
+缺点：
+冗余代码增加。
+```cpp
+std::string getAddr() const { return this->addr; } // unnecessary
+```
+
+## 7.31
