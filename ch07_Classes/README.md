@@ -1025,17 +1025,42 @@ XXXXXXXXXXXXXXXXXXXXXXXXX
 ```
 
 ## 7.30
-优点：
-更明确，减少误读的可能性；
-可以使用名称与成员名相同的形参。
+优点：  
+更明确，减少误读的可能性；  
+可以使用名称与成员名相同的形参。  
 ```cpp
 void setAddr(const std::string &addr) { this->addr = addr; }
 ```
 
-缺点：
-冗余代码增加。
+缺点：  
+冗余代码增加。  
 ```cpp
 std::string getAddr() const { return this->addr; } // unnecessary
 ```
 
 ## 7.31
+```cpp
+//
+//  ex7_31.h
+//  Exercise 7.31
+//
+//  Created by pezy on 11/17/14.
+//
+
+#ifndef CP5_ex7_31_h
+#define CP5_ex7_31_h
+
+class Y;
+
+class X {
+    Y* y = nullptr;
+};
+
+class Y {
+    X x;
+};
+
+#endif
+```
+
+## 7.32
