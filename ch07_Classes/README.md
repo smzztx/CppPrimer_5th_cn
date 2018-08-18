@@ -1239,3 +1239,31 @@ int main()
 ```
 
 ## 7.34
+dummy_fcn(pos height)中的pos未声明，将会报错。
+
+## 7.35
+```cpp
+typedef string Type;
+Type initVal(); // use `string`
+class Exercise {
+public:
+    typedef double Type;
+    Type setVal(Type); // use `double`
+    Type initVal(); // use `double`
+private:
+    int val;
+};
+
+Type Exercise::setVal(Type parm) {  // first is `string`, second is `double`
+    val = parm + initVal();     // Exercise::initVal()
+    return val;
+}
+```
+
+修改为：
+```cpp
+Exercise::Type Exercise::setVal(Type parm) {
+    val = parm + initVal();
+    return val;
+}
+```
