@@ -1477,3 +1477,79 @@ private:
 （d）不正确，当类没有显示地定义构造函数时，编译器才会隐式地定义默认构造函数。  
 
 ## 7.47
+优点：  
+防止隐式转换的产生；  
+可以只用作初始化。  
+缺点：  
+只有个单个参数的构造函数才有意义。  
+
+## 7.48
+都不会有问题，都显示构造了Sales_data对象。
+
+## 7.49
+（a）正确；  
+（b）不正确，combine的参数是非常量的引用，所以我们不能将临时参数传递给它，改成Sales_data &combine(const Sales_data&);后正确；  
+（c）不正确，后面的const不对，this需要可改变的。  
+
+## 7.50
+```cpp
+#ifndef PERSON_H_
+#define PERSON_H_
+
+#include <string>
+
+struct Person;
+
+std::istream &read(std::istream &is, Person &item);
+std::ostream &print(std::ostream &os, const Person &item);
+
+struct Person
+{
+friend std::istream &read(std::istream &is, Person &item);
+friend std::ostream &print(std::ostream &os, const Person &item);
+public:
+	Person() : name(""), address(""){}
+	Person(const std::string &sname, const std::string &saddress = "") : name(sname), address(saddress){}
+	explicit Person(std::istream &is){read(is, *this);}
+    std::string get_name() const{return name;}
+    std::string get_address() const{return address;}
+private:
+    std::string name;
+    std::string address;
+};
+
+std::istream &read(std::istream &is, Person &item)
+{
+	return is >> item.name >> item.address;
+}
+
+std::ostream &print(std::ostream &os, const Person &item)
+{
+	return os << item.name << " " << item.address;
+}
+
+#endif
+```
+
+## 7.51
+以下函数：
+
+```cpp
+int getSize(const std::vector<int>&);
+```
+
+如果vector的构造函数没有explicit，
+
+```cpp
+getSize(34);
+```
+我们就会不明白上述函数的意思。
+
+stirng则不同，下述函数我们就很清楚。
+
+```cpp
+void setYourName(std::string); // declaration.
+setYourName("pezy"); // just fine.
+```
+
+## 7.52
