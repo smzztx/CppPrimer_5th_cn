@@ -1267,3 +1267,213 @@ Exercise::Type Exercise::setVal(Type parm) {
     return val;
 }
 ```
+
+## 7.36
+成员的初始化顺序与它们在类定义中的出现顺序一致，所以会先初始化rem再初始化base，初始化rem时会用到base，故程序出错。  
+可以改变定义的顺序：  
+int base, rem;  
+
+## 7.37
+```cpp
+Sales_data first_item(cin);   // use Sales_data(std::istream &is) ; its value are up to your input.
+
+int main() {
+  Sales_data next;  // use Sales_data(std::string s = ""); bookNo = "", cnt = 0, revenue = 0.0
+  Sales_data last("9-999-99999-9"); // use Sales_data(std::string s = ""); bookNo = "9-999-99999-9", cnt = 0, revenue = 0.0
+}
+```
+
+## 7.38
+```cpp
+Sales_data(std::istream &is = std::cin) { read(is, *this); }
+```
+
+## 7.39
+非法。因为这样的话，重载构造函数Sale_data()将不明确。
+
+## 7.40
+```cpp
+//by Mooophy
+#include <iostream>
+#include <string>
+
+class Book 
+{
+public:
+    Book(unsigned isbn, std::string const& name, std::string const& author, std::string const& pubdate)
+        :isbn_(isbn), name_(name), author_(author), pubdate_(pubdate)
+    { }
+
+    explicit Book(std::istream &in) 
+    { 
+        in >> isbn_ >> name_ >> author_ >> pubdate_;
+    }
+
+private:
+    unsigned isbn_;
+    std::string name_;
+    std::string author_;
+    std::string pubdate_;
+};
+```
+
+## 7.41
+Sales_data_ex41.h
+```cpp
+#ifndef SALES_DATA_H_
+#define SALES_DATA_H_
+
+#include <string>
+
+struct Sales_data;
+
+std::istream &read(std::istream &is, Sales_data &item);
+std::ostream &print(std::ostream &os, const Sales_data &item);
+Sales_data add(const Sales_data &lhs, const Sales_data &rhs);
+
+struct Sales_data
+{
+friend std::istream &read(std::istream &is, Sales_data &item);
+friend std::ostream &print(std::ostream &os, const Sales_data &item);
+friend Sales_data add(const Sales_data &lhs, const Sales_data &rhs);
+public:
+	Sales_data(const std::string &s, unsigned n, double p) : bookNo(s), units_sold(n), revenue(p*n){std::cout << "Sales_data(const std::string &s, unsigned n, double p)" << std::endl;}
+	Sales_data() : Sales_data("", 0, 0){std::cout << "Sales_data() : Sales_data(\"\", 0, 0)" << std::endl;}
+	Sales_data(const std::string &s) : Sales_data(s, 0, 0){std::cout << "Sales_data(const std::string &s) : Sales_data" << std::endl;}
+	Sales_data(std::istream &is) : Sales_data(){read(is, *this);std::cout << "Sales_data(std::istream &is) : Sales_data()" << std::endl;}
+	std::string isbn() const {return bookNo;}
+    Sales_data& combine(const Sales_data&);
+private:
+	inline double avg_price() const;
+
+    std::string bookNo;
+    unsigned units_sold = 0;
+    double revenue = 0.0;
+};
+
+Sales_data& Sales_data::combine(const Sales_data &rhs)
+{
+	units_sold += rhs.units_sold;
+	revenue += rhs.revenue;
+
+	return *this;
+}
+
+inline double Sales_data::avg_price() const
+{
+	if(units_sold)
+		return revenue / units_sold;
+	else
+		return 0;
+}
+
+std::istream &read(std::istream &is, Sales_data &item)
+{
+	double price = 0;
+
+	is >> item.bookNo >> item.units_sold >> price;
+	item.revenue = price * item.units_sold;
+
+	return is;
+}
+
+std::ostream &print(std::ostream &os, const Sales_data &item)
+{
+	os << item.isbn() << " " << item.units_sold << " " << item.revenue << " " << item.avg_price();
+
+	return os;
+}
+
+Sales_data add(const Sales_data &lhs, const Sales_data &rhs)
+{
+	Sales_data sum = lhs;
+	sum.combine(rhs);
+
+	return sum;
+}
+
+#endif
+```
+ex41.cpp
+```cpp
+#include <iostream>
+#include <string>
+#include "Sales_data_ex41.h"
+
+int main()
+{
+    Sales_data sales_data1("001-01", 1, 100);
+    Sales_data sales_data2;
+    Sales_data sales_data3("001-02");
+    Sales_data sales_data4(std::cin);
+
+    return 0;
+}
+```
+执行结果如下：
+```linux
+$ ./ex41 
+Sales_data(const std::string &s, unsigned n, double p)
+Sales_data(const std::string &s, unsigned n, double p)
+Sales_data() : Sales_data("", 0, 0)
+Sales_data(const std::string &s, unsigned n, double p)
+Sales_data(const std::string &s) : Sales_data
+Sales_data(const std::string &s, unsigned n, double p)
+Sales_data() : Sales_data("", 0, 0)
+001-03 1 100
+Sales_data(std::istream &is) : Sales_data()
+```
+
+## 7.42
+```cpp
+#include <iostream>
+#include <string>
+
+class Book 
+{
+public:
+    Book(unsigned isbn, std::string const& name, std::string const& author, std::string const& pubdate)
+        :isbn_(isbn), name_(name), author_(author), pubdate_(pubdate)
+    { }
+
+    explicit Book(std::istream &in) 
+    { 
+        in >> isbn_ >> name_ >> author_ >> pubdate_;
+    }
+
+private:
+    unsigned isbn_;
+    std::string name_;
+    std::string author_;
+    std::string pubdate_;
+};
+```
+
+## 7.43
+```cpp
+class NoDefault {
+public:
+    NoDefault(int i) { }
+};
+
+class C {
+public:
+    C() : def(0) { } // define the constructor of C.
+private:
+    NoDefault def;
+};
+```
+
+## 7.44
+非法，因为NoDefault没有默认构造函数。
+
+## 7.45
+合法，因为C有默认构造函数。
+
+## 7.46
+（a）不正确，没有构造函数时，有时可以生成默认构造函数；  
+（b）不正确，默认构造函数是没有构造函数的情况下，由编译器生成的构造函数；  
+（c）不正确，默认构造函数在一些情况下非常重要；  
+（d）不正确，当类没有显示地定义构造函数时，编译器才会隐式地定义默认构造函数。  
+
+## 7.47
