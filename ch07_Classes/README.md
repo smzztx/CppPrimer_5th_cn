@@ -1553,3 +1553,105 @@ setYourName("pezy"); // just fine.
 ```
 
 ## 7.52
+该初始化使用花括号括起来的成员初始值列表来初始化聚合类的数据成员。所以我们需要定义聚合类：
+```cpp
+struct Sales_data {
+    std::string bookNo;
+    unsigned units_sold;
+    double revenue;
+};
+```
+
+## 7.53
+```cpp
+#ifndef DEBUG_EX53_
+#define DEBUG_EX53_
+
+class Debug
+{
+public:
+	constexpr Debug(bool b = true) : hw(b), io(b), other(b){}
+	constexpr Debug(bool h, bool i, bool o) : hw(h), io(i), other(o){}
+
+	constexpr bool amy() { return hw || io || other; }
+	void set_io(bool b){io = b;}
+	void set_hw(bool b){hw = b;}
+	void set_other(bool b){other = b;}
+private:
+	bool hw;
+	bool io;
+	bool other;
+};
+
+#endif
+```
+
+## 7.54
+在C++11中，constexpr函数时隐式的const，将不能更改数据成员；C++14中没有这个特点。
+
+## 7.55
+不是，std::string不是字面值类型。
+```cpp
+#include <string>
+#include <iostream>
+#include <type_traits>
+
+struct Data {
+    int ival;
+    std::string s;
+};
+
+int main()
+{
+    std::cout << std::boolalpha;
+    std::cout << std::is_literal_type<Data>::value << std::endl;
+    // output: false
+}
+```
+
+## 7.56
+类的静态成员与类本身直接相关，而不是与类的各个对象保持关联。
+每个对象不需要存储公共数据，如果数据被改变，则每个对象都可以使用新值。
+静态数据成员可以是不完全类型；
+可以使用静态成员作为默认实参。
+
+## 7.57
+```cpp
+#ifndef ACCOUNT_EX57_H_
+#define ACCOUNT_EX57_H_
+
+#include <string>
+
+class Account
+{
+public:
+	void calculate() {amount += amount * interestRate;}
+	static double rate(){return interestRate;}
+	static void rate(double newRate){ interestRate = newRate;}
+private:
+	std::string owner;
+	double amount;
+	static double interestRate;
+	static double initRate(){return 4.0;}
+};
+double Account::interestRate = initRate();
+
+
+#endif
+```
+
+## 7.58
+```cpp
+// example.h
+class Example {
+public:
+    static double rate;
+    static const int vecSize = 20;
+    static vector<double> vec;
+};
+
+// example.C
+#include "example.h"
+double Example::rate = 6.5;
+vector<double> Example::vec(Example::vecSize);
+```
