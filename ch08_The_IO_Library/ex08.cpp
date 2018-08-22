@@ -6,6 +6,7 @@
 int main(int argc, char **argv)
 {
     std::ifstream ifs(argv[1]);
+    std::ofstream ofs(argv[2], std::ofstream::app);
 
     if(!ifs) return 1;
 
@@ -23,13 +24,13 @@ int main(int argc, char **argv)
             }
             else
             {
-                print(std::cout, total);
-                std::cout << std::endl;
+                print(ofs, total);
+                ofs << std::endl;
                 total = trans;
             }
         }
-        print(std::cout, total);
-        std::cout << std::endl;
+        print(ofs, total);
+        ofs << std::endl;
 
         return 0;
     }
