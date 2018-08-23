@@ -9,3 +9,70 @@ list<deque<int>> l;
 ```
 
 ## 9.3
+两个迭代器begin和end满足如下条件：
+它们指向同一个容器中的元素，或者是容器中的最后一个元素之后的位置，且我们可以通过反复递增begin来到达end。换句话说，end不在begin之前。
+
+## 9.4
+```cpp
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+bool find_int(vector<int>::const_iterator begin_, vector<int>::const_iterator end_, int n)
+{
+	// for(vector::const_iterator begin = begin_;begin != end_;++begin)
+	while(begin_ != end_)
+	{
+		if( *begin_ == n) return true;
+		++begin_;
+	}
+
+	return false;
+}
+
+int main()
+{
+	vector<int> vi{1,2,3,4,5,6};
+
+	cout << boolalpha << find_int(vi.begin(), vi.end(), 0) << endl;
+
+	return 0;
+}
+```
+
+## 9.5
+```cpp
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+vector<int>::const_iterator find_int(vector<int>::const_iterator begin_, vector<int>::const_iterator end_, int n)
+{
+	while(begin_ != end_)
+	{
+		if( *begin_ == n) return begin_;
+		++begin_;
+	}
+
+	return begin_;
+}
+
+int main()
+{
+	vector<int> vi{1,2,3,4,5,6};
+
+	find_int(vi.begin(), vi.end(), 0);
+
+	return 0;
+}
+```
+
+## 9.6
+```cpp
+while(iter1 != iter2)
+```
+
+## 9.7
+
