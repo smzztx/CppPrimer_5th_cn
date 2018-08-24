@@ -113,13 +113,6 @@ vector<int> v8(v7.begin(),v7.end());  //1 2 3
 
 ## 9.13
 ```cpp
-// @author @shbling @Yue Wang
-//
-// Exercise 9.13:
-// How would you initialize a vector<double> from a list<int>?
-// From a vector<int>?
-// Write code to check your answers.
-//
 #include <iostream>
 #include <string>
 #include <vector>
@@ -144,7 +137,7 @@ int main()
     for (auto i : ivc) cout << i << " ";
     cout << endl;
     for (auto d : dvc2) cout << d << " ";
-	cout << endl;
+    cout << endl;
     
     return 0;
 }
