@@ -96,3 +96,58 @@ it3：vector<int>::const_iterator，it4：vector<int>::const_iterator。
 ```
 
 ## 9.11
+```cpp
+vector<int> v1;  //v1为空
+vector<int> v2 = v1;  //v2为空
+vector<int> v3(v2);  //v3为空
+vector<int> v4(10);  //10个0
+vector<int> v5(10,1);  //10个1
+vector<int> v6{1,2,3};  //1 2 3
+vector<int> v7 = {1,2,3};  //1 2 3
+vector<int> v8(v7.begin(),v7.end());  //1 2 3
+```
+
+## 9.12
+两个容器的类型及其元素必须匹配；
+传递迭代器参数来拷贝一个范围时，就不要求容器类型相同了，只要能将要拷贝的元素转换。
+
+## 9.13
+```cpp
+// @author @shbling @Yue Wang
+//
+// Exercise 9.13:
+// How would you initialize a vector<double> from a list<int>?
+// From a vector<int>?
+// Write code to check your answers.
+//
+#include <iostream>
+#include <string>
+#include <vector>
+#include <list>
+
+using std::list; using std::vector; using std::cout; using std::endl;
+
+int main()
+{
+    list<int> ilst(5, 4);
+    vector<int> ivc(5, 5);
+
+    // from list<int> to vector<double>
+    vector<double> dvc(ilst.begin(), ilst.end());
+    for (auto i : ilst) cout << i << " ";
+    cout << endl;
+    for (auto d : dvc) cout << d << " ";
+    cout << endl;
+
+    // from vector<int> to vector<double>
+    vector<double> dvc2(ivc.begin(), ivc.end());
+    for (auto i : ivc) cout << i << " ";
+    cout << endl;
+    for (auto d : dvc2) cout << d << " ";
+	cout << endl;
+    
+    return 0;
+}
+```
+
+## 9.14
