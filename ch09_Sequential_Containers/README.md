@@ -75,4 +75,24 @@ while(iter1 != iter2)
 ```
 
 ## 9.7
+```cpp
+vector<int>::size_type
+```
 
+## 9.8
+```cpp
+list<string>::const_iterator		//read
+list<string>::iterator				//write
+```
+
+## 9.9
+begin返回容器的iterator类型，当我们需要写访问时使用；  
+cbegin返回容器的const_iterator类型，当我们不需要写访问时使用。  
+
+## 9.10
+```cpp
+it1：vector<int>::iterator，it2：vector<int>::const_iterator；
+it3：vector<int>::const_iterator，it4：vector<int>::const_iterator。
+```
+
+## 9.11
