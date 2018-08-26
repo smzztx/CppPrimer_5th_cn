@@ -1,3 +1,4 @@
+#ch03 Strings Vectors and Arrays
 ## 3.1
 ### 3.1.1
 ```cpp

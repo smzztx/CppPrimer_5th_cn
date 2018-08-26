@@ -1,3 +1,4 @@
+#ch02 Variables and Basic Types
 ## 2.1
 C++语言规定一个int至少和一个short一样大，一个long至少和一个int一样大，一个long long至少和一个long一样大。每个的最小尺寸分别为：short，16位；int，16位；long，32位；long long，64位。  
 除去布尔型和扩展的字符型外，其他整形可以划分为带符号的和无符号的两种。带符号类型可以表示正数、负数或0，无符号类型则仅能表示大于等于0的值。  
