@@ -8,7 +8,19 @@
 复合语句是指用花括号括起来的语句和声明的序列，复合语句也被称作块。  
 如果在程序的某个地方，语法上需要一条语句，但是逻辑上需要多条语句，则应使用复合语句。  
 
-## [5.3](ex03.cpp)
+## 5.3
+```cpp
+#include <iostream>
+int main()
+{
+    int sum = 0, val = 1;
+    while (val <= 10)
+        sum += val, ++val;
+    std::cout << "Sum of 1 to 10 inclusive is " << sum << std::endl;
+
+    return 0;
+}
+```
 可读性降低了
 
 ## 5.4
