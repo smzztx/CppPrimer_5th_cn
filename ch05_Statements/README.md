@@ -8,318 +8,68 @@
 复合语句是指用花括号括起来的语句和声明的序列，复合语句也被称作块。  
 如果在程序的某个地方，语法上需要一条语句，但是逻辑上需要多条语句，则应使用复合语句。  
 
-## 5.3
-```cpp
-#include <iostream>
-int main()
-{
-    int sum = 0, val = 1;
-    while (val <= 10)
-        sum += val, ++val;
-    std::cout << "Sum of 1 to 10 inclusive is " << sum << std::endl;
- 
-    return 0;
-}
-```
+## [5.3](ex03.cpp)
 可读性降低了
 
 ## 5.4
-（a）std::string::iterator iter = s.begin();  
-    while (iter != s.end()) { /* . . . */ }  
-（b）bool status;  
-while ((status = find(word))) {/* ... */}  
-if (!status) {/* ... */}  
-
-## 5.5
+（a）
 ```cpp
-#include <iostream>
-#include <vector>
-#include <string>
-
-using std::vector;
-using std::string;
-using std::cout;
-using std::endl;
-using std::cin;
-
-int main()
-{
-    vector<string> scores = {"F", "D", "C", "B", "A", "A++"};
-
-    int grade{0};
-    while (cin >> grade) {
-        string lettergrade;
-        if (grade < 60)
-            lettergrade = scores[0];
-        else {
-            lettergrade = scores[(grade - 50) / 10];
-            if (grade != 100) {
-                if (grade % 10 > 7)
-                    lettergrade += "+";
-                else if (grade % 10 < 3)
-                    lettergrade += "-";
-            }
-        }
-
-        cout << lettergrade << endl;
-    }
-
-    return 0;
-}
+std::string::iterator iter = s.begin();
+while (iter != s.end()) { /* . . . */ }
+```
+（b）
+```cpp
+bool status;
+while ((status = find(word))) {/* ... */}
+if (!status) {/* ... */}
 ```
 
-## 5.6
-```cpp
-#include <iostream>
-#include <vector>
-#include <string>
+## [5.5](ex05.cpp)
 
-using std::vector;
-using std::string;
-using std::cout;
-using std::endl;
-using std::cin;
-
-int main()
-{
-    vector<string> scores = {"F", "D", "C", "B", "A", "A++"};
-
-    int grade{0};
-    while (cin >> grade) {
-        string lettergrade = grade < 60 ? scores[0] : scores[(grade - 50) / 10];
-        lettergrade +=
-            (grade == 100 || grade < 60)
-                ? ""
-                : (grade % 10 > 7) ? "+" : (grade % 10 < 3) ? "-" : "";
-        cout << lettergrade << endl;
-    }
-
-    return 0;
-}
-```
+## [5.6](ex06.cpp)
 
 ## 5.7
-（a）if (ival1 != ival2) ival1 = ival2
-    else ival1 = ival2 = 0;
-（b）if (ival < minval)
-    {
-        minval = ival;
-        occurs = 1;
-    }
-（c）int val;
-    if (ival = get_value())
-        cout << "ival = " << ival << endl;
-    if (!ival)
-        cout << "ival = 0\n";
-（d）if (ival == 0)
-       ival = get_value();
-       
+（a）
+```cpp
+if (ival1 != ival2) ival1 = ival2
+else ival1 = ival2 = 0;
+```
+（b）
+```cpp
+if (ival < minval)
+{
+    minval = ival;
+    occurs = 1;
+}
+```
+（c）
+```cpp
+int val;
+if (ival = get_value())
+    cout << "ival = " << ival << endl;
+if (!ival)
+    cout << "ival = 0\n";
+```
+（d）
+```cpp
+if (ival == 0)
+   ival = get_value();
+```
+
 ## 5.8
 当一个if语句嵌套在另一个if语句内部时，很可能if分支会多于else分支。这时候我们怎么知道某个给定的else是和哪个if匹配呢。这个问题通常称作悬垂else。就C++而言，它规定else与离它最近的尚未匹配的if匹配的if匹配，从而消除了程序的二义性。
 
-## 5.9
-```cpp
-#include <iostream>
+## [5.9](ex09.cpp)
 
-using std::cout;
-using std::cin;
-using std::endl;
+## [5.10](ex10.cpp)
 
-int main()
-{
-	char c;
-	int aCnt = 0, eCnt = 0, iCnt = 0, oCnt = 0, uCnt = 0;
-
-	while(cin >> c)
-	{
-		if (c == 'a')
-            ++aCnt;
-        else if (c == 'e')
-            ++eCnt;
-        else if (c == 'i')
-            ++iCnt;
-        else if (c == 'o')
-            ++oCnt;
-        else if (c == 'u')
-            ++uCnt;
-	}
-	cout << "Number of vowel a: \t" << aCnt << '\n' << "Number of vowel e: \t"
-         << eCnt << '\n' << "Number of vowel i: \t" << iCnt << '\n'
-         << "Number of vowel o: \t" << oCnt << '\n' << "Number of vowel u: \t"
-         << uCnt << endl;
-	return 0;
-}
-```
-
-## 5.10
-```cpp
-#include <iostream>
-using std::cin;
-using std::cout;
-using std::endl;
-
-int main()
-{
-    unsigned aCnt = 0, eCnt = 0, iCnt = 0, oCnt = 0, uCnt = 0;
-    char ch;
-    while (cin >> ch) 
-        switch (ch) {
-            case 'a':
-            case 'A':
-                ++aCnt;
-                break;
-            case 'e':
-            case 'E':
-                ++eCnt;
-                break;
-            case 'i':
-            case 'I':
-                ++iCnt;
-                break;
-            case 'o':
-            case 'O':
-                ++oCnt;
-                break;
-            case 'u':
-            case 'U':
-                ++uCnt;
-                break;
-        }
-
-    cout << "Number of vowel a(A): \t" << aCnt << '\n'
-         << "Number of vowel e(E): \t" << eCnt << '\n'
-         << "Number of vowel i(I): \t" << iCnt << '\n'
-         << "Number of vowel o(O): \t" << oCnt << '\n'
-         << "Number of vowel u(U): \t" << uCnt << endl;
-
-    return 0;
-}
-```
-
-## 5.11
+## [5.11](ex11.cpp)
 改为：
 ```cpp
 while (cin >> std::noskipws >> ch) 
 ```
-代码如下：
-```cpp
-#include <iostream>
-using std::cin;
-using std::cout;
-using std::endl;
 
-int main()
-{
-    unsigned aCnt = 0, eCnt = 0, iCnt = 0, oCnt = 0, uCnt = 0, tabCnt = 0, newlineCnt = 0;
-    char ch;
-    while (cin >> std::noskipws >> ch)
-        switch (ch) {
-            case 'a':
-            case 'A':
-                ++aCnt;
-                break;
-            case 'e':
-            case 'E':
-                ++eCnt;
-                break;
-            case 'i':
-            case 'I':
-                ++iCnt;
-                break;
-            case 'o':
-            case 'O':
-                ++oCnt;
-                break;
-            case 'u':
-            case 'U':
-                ++uCnt;
-                break;
-            case '\n':
-                ++newlineCnt;
-                break;
-            case '\t':
-            case '\v':
-                ++tabCnt;
-                break;
-        }
-
-    cout << "Number of vowel a(A): \t" << aCnt << '\n'
-         << "Number of vowel e(E): \t" << eCnt << '\n'
-         << "Number of vowel i(I): \t" << iCnt << '\n'
-         << "Number of vowel o(O): \t" << oCnt << '\n'
-         << "Number of vowel u(U): \t" << uCnt << '\n'
-         << "Number of newline: \t" << newlineCnt << '\n'
-         << "Number of tab: \t" << tabCnt << endl;
-
-    return 0;
-}
-```
-
-## 5.12
-```cpp
-#include <iostream>
-using std::cin;
-using std::cout;
-using std::endl;
-
-int main()
-{
-    unsigned aCnt = 0, eCnt = 0, iCnt = 0, oCnt = 0, uCnt = 0, tabCnt = 0, newlineCnt = 0, ffCnt = 0, flCnt = 0, fiCnt = 0;
-    char ch, prech;
-    while (cin >> std::noskipws >> ch)
-    {
-        switch (ch) {
-            case 'a':
-            case 'A':
-                ++aCnt;
-                break;
-            case 'e':
-            case 'E':
-                ++eCnt;
-                break;
-            case 'i':
-                if(prech == 'f') ++fiCnt;
-            case 'I':
-                ++iCnt;
-                break;
-            case 'o':
-            case 'O':
-                ++oCnt;
-                break;
-            case 'u':
-            case 'U':
-                ++uCnt;
-                break;
-            case '\n':
-                ++newlineCnt;
-                break;
-            case '\t':
-            case '\v':
-                ++tabCnt;
-                break;
-            case 'f':
-                if(prech == 'f') ++ffCnt;
-                break;
-            case 'l':
-                if(prech == 'f') ++flCnt;
-                break;
-        }
-        prech = ch;
-    }
-    cout << "Number of vowel a(A): \t" << aCnt << '\n'
-         << "Number of vowel e(E): \t" << eCnt << '\n'
-         << "Number of vowel i(I): \t" << iCnt << '\n'
-         << "Number of vowel o(O): \t" << oCnt << '\n'
-         << "Number of vowel u(U): \t" << uCnt << '\n'
-         << "Number of newline: \t" << newlineCnt << '\n'
-         << "Number of tab: \t" << tabCnt << '\n'
-         << "Number of fi: \t" << fiCnt << '\n'
-         << "Number of ff: \t" << ffCnt << '\n'
-         << "Number of fl: \t" << flCnt << endl;
-
-    return 0;
-}
-```
+## [5.12](ex12.cpp)
 
 ## 5.13
 （a）加上break：  
@@ -378,43 +128,9 @@ int main()
             break;
     }
 ```
+[部分测试代码](ex13.cpp)
 
-## 5.14
-```cpp
-#include <iostream>
-#include <string>
-
-using std::string;
-using std::cout;
-using std::cin;
-using std::endl;
-
-int main()
-{
-	string s,pres,max_string;
-	unsigned int cnt = 1,max_cnt = 1;
-
-	while(cin >> s)
-	{
-		if(s == pres)
-		{
-			++cnt;
-		}else
-		{
-			if(cnt > max_cnt)
-			{
-				max_cnt = cnt;
-				max_string = pres;
-			}
-			cnt = 1;
-		}
-		pres = s;
-	}
-
-	(max_cnt > 1) ? (cout << max_string << ":" << max_cnt << endl) : (cout << "no repeat" << endl);
-	return 0;
-}
-```
+## [5.14](ex14.cpp)
 
 ## 5.15
 （a）ix只能在for循环内部使用，如果要在外部使用，需要定义在for循环外：  
@@ -458,40 +174,7 @@ while (i != size)
 ```
 我更趋向于while，因为只需要判断条件，更加简洁。
 
-## 5.17
-```cpp
-#include <iostream>
-#include <vector>
-
-using std::cout;
-using std::endl;
-using std::vector;
-
-bool function(vector<int> v1,vector<int> v2)
-{
-	for(decltype(v1.size()) i = 0,sz1 = v1.size(),sz2 = v2.size();i != sz1 && i != sz2;++i)
-	{
-		if(v1[i] != v2[i])
-		{
-			cout << "false" << endl;
-			return false;
-		}
-	}
-	cout << "true" << endl;
-	return true;
-}
-
-int main()
-{
-	vector<int> v1{0,1,2,3,4,5,6,7,8,9};
-	vector<int> v2{0,1,2,3};
-
-	function(v1,v2);
-
-	return 0;
-}
-
-```
+## [5.17](ex17.cpp)
 
 ## 5.18
 （a）加上花括号：
@@ -520,93 +203,11 @@ int ival;
     } while (ival);
 ```
 
-## 5.19
-```cpp
-#include <iostream>
-#include <string>
+## [5.19](ex19.cpp)
 
-using std::cin;
-using std::cout;
-using std::endl;
-using std::string;
+## [5.20](ex20.cpp)
 
-int main()
-{
-	do
-	{
-		string s1,s2;
-		cin >> s1 >> s2;
-		(s1.size() < s2.size()) ? (cout << s1 << endl) : (cout << s2 << endl);
-	}while(cin);
-
-	return 0;
-}
-```
-
-## 5.20
-```cpp
-#include <iostream>
-#include <string>
-
-using std::cin;
-using std::cout;
-using std::endl;
-using std::string;
-
-int main()
-{
-	string repeat_s,pre_s,s;
-	while(cin >> s)
-	{
-		if(s == pre_s)
-		{
-			repeat_s = s;
-			cout << repeat_s << endl;
-			break;
-		}
-		pre_s = s;
-	}
-	if(repeat_s.empty())
-	{
-		cout << "no repeat" << endl;
-	}
-
-	return 0;
-}
-```
-
-## 5.21
-```cpp
-#include <iostream>
-#include <string>
-
-using std::cin;
-using std::cout;
-using std::endl;
-using std::string;
-
-int main()
-{
-	string repeat_s,pre_s,s;
-	while(cin >> s)
-	{
-		if(!isupper(s[0])) continue;
-		if(s == pre_s)
-		{
-			repeat_s = s;
-			cout << repeat_s << endl;
-			break;
-		}
-		pre_s = s;
-	}
-	if(repeat_s.empty())
-	{
-		cout << "no repeat" << endl;
-	}
-
-	return 0;
-}
-```
+## [5.21](ex21.cpp)
 
 ## 5.22
 ```cpp
@@ -616,19 +217,7 @@ do
 ｝while(sz <= 0);
 ```
 
-## 5.23
-```cpp
-#include <iostream>
-
-int main()
-{
-	int i1,i2;
-	std::cin >> i1 >> i2;
-	std::cout << i1/i2 << std::endl;
-
-	return 0; 
-}
-```
+## [5.23](ex23.cpp)
 运行结果：
 
 ```sh
@@ -637,24 +226,7 @@ $ ./ex23
 Floating point exception (core dumped)
 ```
 
-## 5.24
-```cpp
-#include <iostream>
-#include <stdexcept>
-
-int main()
-{
-	int i1,i2;
-	std::cin >> i1 >> i2;
-	if(i2 == 0)
-	{
-		throw std::runtime_error("divisor can't be 0");
-	}
-	std::cout << i1/i2 << std::endl;
-
-	return 0; 
-}
-```
+## [5.24](ex24.cpp)
 运行结果：
 
 ```sh
@@ -665,37 +237,7 @@ terminate called after throwing an instance of 'std::runtime_error'
 Aborted (core dumped)
 ```
 
-## 5.25
-```cpp
-#include <iostream>
-#include <stdexcept>
-
-int main()
-{
-	int i1,i2;
-	while(std::cin >> i1 >> i2)
-	{
-		try
-		{
-			if(i2 == 0)
-			{
-				throw std::runtime_error("divisor can't be 0");
-			}
-			std::cout << i1/i2 << std::endl;
-		}catch(std::runtime_error err)
-		{
-			std::cout << err.what()
-					  << "\ntry again? enter y or n" << std::endl;
-			char c;
-			std::cin >> c;
-			if(!std::cin || c == 'n') break;
-		}
-	}
-	
-
-	return 0; 
-}
-```
+## [5.25](ex25.cpp)
 运行结果：
 ```sh
 $ ./ex25 
