@@ -144,3 +144,65 @@ int main()
 ```
 
 ## 9.14
+```cpp
+#include <iostream>
+#include <list>
+#include <vector>
+
+using namespace std;
+
+int main()
+{
+	list<char *> l1 = {"aaa","bbb","ccc"};
+	vector<string> v1;
+
+	v1.assign(l1.begin(),l1.end());
+
+	for(auto s : v1)	cout << s << " ";
+	cout << endl;
+
+	return 0;
+}
+```
+
+## 9.15
+```cpp
+#include <vector>
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+	vector<int> v1 = {1,2,3};
+	vector<int> v2 = {1,3};
+
+	cout << boolalpha << (v1 == v2) << endl;
+
+	return 0;
+}
+```
+
+## 9.16
+```cpp
+#include <vector>
+#include <iostream>
+#include <list>
+
+using namespace std;
+
+int main()
+{
+	vector<int> v1 = {1,2,3};
+	list<int> l1 = {1,2,3};
+
+	cout << boolalpha << (vector<int>(l1.begin(),l1.end()) == v1) << endl;
+
+	return 0;
+}
+```
+
+## 9.17
+c1和c2不能是无序容器，且容器类型要相同，最后，元素类型要支持运算符。
+
+## 9.18
