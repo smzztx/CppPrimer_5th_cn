@@ -206,3 +206,113 @@ int main()
 c1和c2不能是无序容器，且容器类型要相同，最后，元素类型要支持运算符。
 
 ## 9.18
+```cpp
+#include <string>
+#include <deque>
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+	string s;
+	deque<string> deque1;
+
+	while(cin >> s)
+		deque1.push_back(s);
+
+	for(auto iter = deque1.cbegin(); iter != deque1.cend(); ++iter)
+		cout << *iter << " ";
+	cout << endl;
+
+	return 0;
+}
+```
+
+## 9.19
+只需讲deque替换为list。
+```cpp
+#include <string>
+#include <list>
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+	string s;
+	list<string> list1;
+
+	while(cin >> s)
+		list1.push_back(s);
+
+	for(auto iter = list1.cbegin(); iter != list1.cend(); ++iter)
+		cout << *iter << " ";
+	cout << endl;
+	
+	return 0;
+}
+```
+
+## 9.20
+```cpp
+#include <string>
+#include <list>
+#include <deque>
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+	list<int> list1 = {1,2,3,4,5,6};
+	deque<int> deque_odd, deque_even;
+
+	for(const auto i : list1)
+		(i % 2 == 0) ? deque_even.push_back(i) : deque_odd.push_back(i);
+
+	for(const auto i : deque_even)
+		cout << i << " ";
+	cout << endl;
+
+	for(const auto i : deque_odd)
+		cout << i << " ";
+	cout << endl;
+	
+	return 0;
+}
+```
+
+## 9.21
+还是一样的操作，实现的是在vector的一个特定位置反复插入元素。
+
+## 9.22
+问题：
+1.循环不会停止；
+2.迭代器在插入操作后会变化。
+```cpp
+// cause the reallocation will lead the iterators and references
+// after the insertion point to invalid. Thus, we need to call reserver at first.
+
+#include <iostream>
+#include <vector>
+
+void double_and_insert(std::vector<int>& v, int some_val)
+{
+    auto mid = [&]{ return v.begin() + v.size() / 2; };
+    for (auto curr = v.begin(); curr != mid(); ++curr)
+        if (*curr == some_val)
+            ++(curr = v.insert(curr, 2 * some_val));
+}
+
+int main()
+{
+    std::vector<int> v{ 1, 9, 1, 9, 9, 9, 1, 1 };
+    double_and_insert(v, 1);
+
+    for (auto i : v) 
+        std::cout << i << std::endl;
+}
+```
+
+## 9.23
