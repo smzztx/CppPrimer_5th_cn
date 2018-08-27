@@ -11,14 +11,14 @@ int main()
 	deque<int> deque_odd, deque_even;
 
 	for(const auto i : list1)
-		(i % 2 == 0) ? deque_even.push_back(i) : deque_odd.push_back(i);
+		(i % 2) ? deque_odd.push_back(i) : deque_even.push_back(i);
 		//(i & 0x1 ? deque_odd : deque_even).push_back(i);
 
-	for(const auto i : deque_even)
+	for(const auto i : deque_odd)
 		cout << i << " ";
 	cout << endl;
 
-	for(const auto i : deque_odd)
+	for(const auto i : deque_even)
 		cout << i << " ";
 	cout << endl;
 	

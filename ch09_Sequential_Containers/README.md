@@ -269,13 +269,14 @@ int main()
 	deque<int> deque_odd, deque_even;
 
 	for(const auto i : list1)
-		(i % 2 == 0) ? deque_even.push_back(i) : deque_odd.push_back(i);
+		(i % 2) ? deque_odd.push_back(i) : deque_even.push_back(i);
+		//(i & 0x1 ? deque_odd : deque_even).push_back(i);
 
-	for(const auto i : deque_even)
+	for(const auto i : deque_odd)
 		cout << i << " ";
 	cout << endl;
 
-	for(const auto i : deque_odd)
+	for(const auto i : deque_even)
 		cout << i << " ";
 	cout << endl;
 	
@@ -284,7 +285,7 @@ int main()
 ```
 
 ## 9.21
-还是一样的操作，实现的是在vector的一个特定位置反复插入元素。
+还是一样的操作，实现的是在vector的一个特定位置反复插入元素。具体请查看本节使用insert返回值的内容。
 
 ## 9.22
 问题：
@@ -316,3 +317,71 @@ int main()
 ```
 
 ## 9.23
+同一个元素的拷贝。
+
+## 9.24
+```cpp
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int main()
+{
+	// vector<int> v1 = {1};
+	vector<int> v1;
+
+	cout << v1.at(0) << endl;		//terminate called after throwing an instance of 'std::out_of_range'   what():  vector::_M_range_check
+	cout << v1[0] << endl;			//Segmentation fault (core dumped)
+	cout << v1.front() << endl;		//Segmentation fault (core dumped)
+	cout << *v1.begin() << endl;	//Segmentation fault (core dumped)
+
+	return 0;
+}
+```
+
+## 9.25
+如果elem1与elem2相等，则一个元素都不会删除；  
+如果elem2是尾后迭代器，则会从elem1元素删除到最后一个元素；  
+如果elem1与elem2都是尾后迭代器，则一个元素都不会删除。  
+
+## 9.26
+```cpp
+#include <iostream>
+#include <vector>
+#include <list>
+
+using namespace std;
+
+int main()
+{
+	int ia[] = { 0, 1, 1, 2, 3, 5, 8, 13, 21, 55, 89 };
+
+	vector<int> v1(ia, end(ia));
+	list<int> l1(ia, end(ia));
+
+	for(auto iter = l1.begin(); iter != l1.end(); )
+	{		
+		if(*iter % 2) iter = l1.erase(iter);
+		else ++iter;
+	}
+
+	for(auto iter = v1.begin(); iter != v1.end(); )
+	{	
+			if(*iter % 2 == 0) iter = v1.erase(iter);
+			else ++iter;
+	}
+	
+	for(const auto i : l1)
+		cout << i << " ";
+	cout << endl;
+
+	for(const auto i : v1)
+		cout << i << " ";
+	cout << endl;
+
+	return 0;
+}
+```
+
+## 9.27
