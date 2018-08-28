@@ -458,4 +458,119 @@ int main()
 ```
 
 ## 9.29
+会添加75个新元素，并对新元素进行初始化；  
+后面90个元素会被丢弃。  
 
+## 9.30
+如果元素类型的类类型，则元素类型必须提供一个默认构造函数。
+
+## 9.31
+list:
+```cpp
+#include <list>
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+	list<int> l1 = {0,1,2,3,4,5,6,7,8,9};
+	auto iter = l1.begin();
+
+	while(iter != l1.end())
+	{
+		if(*iter % 2)
+		{
+			iter = l1.insert(iter, *iter);
+			++iter;
+			++iter;
+		}else
+		{
+			iter = l1.erase(iter);
+		}
+	}
+
+	for(const auto i : l1)
+		cout << i << " ";
+	cout << endl;
+
+	return 0;
+}
+```
+
+forward_list:
+```cpp
+#include <forward_list>
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+	forward_list<int> flst = {0,1,2,3,4,5,6,7,8,9};
+	auto iter = flst.begin();
+	auto prev = flst.before_begin();
+
+	while(iter != flst.end())
+	{
+		if(*iter % 2)
+		{
+			iter = flst.insert_after(iter, *iter);
+			prev = iter;
+			++iter;
+		}else
+		{
+			iter = flst.erase_after(prev);
+		}
+	}
+
+	for(const auto i : flst)
+		cout << i << " ";
+	cout << endl;
+
+	return 0;
+}
+```
+
+## 9.32
+不合法，insert中的参数运行顺序是未定义的，我们不知道iter运行的是iter+1的状态还是未+1的状态。
+
+## 9.33
+```cpp
+#include <vector>
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+	vector<int> v1 = {0,1,2,3,4,5,6,7,8,9};
+	auto iter = v1.begin();
+
+	while(iter != v1.end())
+	{
+		++iter;
+		// iter = v1.insert(iter, 42);
+		v1.insert(iter, 42);
+		++iter;
+	}
+
+	for(const auto i : v1)
+		cout << i << " ";
+	cout << endl;
+
+	return 0;
+}
+```
+插入操作：如果存储空间被重新分配，则迭代器全部失效；如果没有重新分配，插入位置之后的迭代器全部失效。
+运行结果为：
+```sh
+$ ./ex33 *** Error in `./ex33': munmap_chunk(): invalid pointer: 0x0000000002118040 ***
+Aborted (core dumped)
+```
+
+## 9.34
+会无限循环，当碰到第一个奇数时，iter从inert()中得到插入元素的迭代器，++iter后，迭代器指向的还是之前碰到的那个奇数，下次循环中还是检查这个奇数，程序陷入无限循环。  
+在测试代码中，如果取消打印行的注释，会一直打印1。  
+
+## 9.35
