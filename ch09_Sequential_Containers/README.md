@@ -574,3 +574,38 @@ Aborted (core dumped)
 在测试代码中，如果取消打印行的注释，会一直打印1。  
 
 ## 9.35
+容器的size是指它已经保存的元素的数目；而capacity则是在不分配新的内存空间的前提下最多可以保存多少元素。  
+
+## 9.36
+不可能。
+
+## 9.37
+list所占的空间不是连续的；array是固定size的。
+
+## 9.38
+```cpp
+#include <iostream>
+#include <vector>
+#include <string>
+
+using namespace std;
+
+int main()
+{
+	vector<string> v;
+	
+	for (string buffer; cin >> buffer; v.push_back(buffer))
+		cout << v.size() << " " << v.capacity() << endl;
+
+	return 0;
+}
+```
+
+## 9.39
+为svec预留1024的空间，将输入添加到svec中，将svec的size增加当前size的一半。  
+
+## 9.40
+读入了256词、512词时，size增加到384、768，capacity不变；  
+读入1000词或1048词后，size增加到1500、1572，capacity至少增大到可以容纳当前size。  
+
+## 9.41
