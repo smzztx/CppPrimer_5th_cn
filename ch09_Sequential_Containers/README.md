@@ -609,3 +609,157 @@ int main()
 读入1000词或1048词后，size增加到1500、1572，capacity至少增大到可以容纳当前size。  
 
 ## 9.41
+```cpp
+#include <iostream>
+#include <vector>
+#include <string>
+
+using namespace std;
+
+int main()
+{
+	vector<char> vc = {'a','b','c'};
+	string s(vc.begin(), vc.end());
+
+	for(const auto c : vc)
+		cout << c << " ";
+	cout << endl;
+
+	return 0;
+}
+```
+
+## 9.42
+```cpp
+string s;
+s.reserve(100);
+```
+
+## 9.43
+在gcc上编译失败。
+```cpp
+//it can't compile it on gcc.
+#include <string>
+#include <iostream>
+
+using namespace std;
+
+void replace_with_str(string &s, const string &oldVal, const string &newVal)
+{
+	auto iter = s.begin();
+
+	while(iter != s.end())
+	{
+		if(oldVal == string(iter, iter+oldVal.size()))
+		{
+			iter = s.erase(iter, iter+oldVal.size());
+			iter = s.insert(iter, newVal.begin(), newVal.end());
+			iter += newVal.size();
+		}else
+			++iter;
+	}
+}
+
+int main()
+{
+	string s("tho thru");
+
+	replace_with_str(s, "tho", "though");
+	cout << s << endl;
+
+	replace_with_str(s, "thru", "through");
+	cout << s << endl;
+
+	return 0;
+}
+```
+
+## 9.44
+```cpp
+#include <string>
+#include <iostream>
+
+using namespace std;
+
+void replace_with_str(string &s, const string &oldVal, const string &newVal)
+{
+	// auto iter = s.begin();
+	string::size_type index = 0;
+
+	while(index != s.size())
+	{
+		if(oldVal == string(s, index, oldVal.size()))
+		{
+			s.replace(index, oldVal.size(), newVal);
+		}
+		++index;
+	}
+}
+
+int main()
+{
+	string s("tho thru tho");
+
+	replace_with_str(s, "tho", "though");
+	cout << s << endl;
+
+	replace_with_str(s, "thru", "through");
+	cout << s << endl;
+
+	return 0;
+}
+```
+
+## 9.45
+```cpp
+#include <string>
+#include <iostream>
+
+using namespace std;
+
+string add_pre_post(const string &name, const string &pre, const string &post)
+{
+	string s = name;
+	s.insert(s.begin(), pre.cbegin(), pre.cend());
+	return s.append(post);
+}
+
+int main()
+{
+	string name("tx");
+
+	cout << add_pre_post(name, "Mr.", "Jr.") << endl;
+
+	cout << add_pre_post("TX", "Mr.", "Jr.") << endl;
+
+	return 0;
+}
+````
+
+## 9.46
+```cpp
+#include <string>
+#include <iostream>
+
+using namespace std;
+
+string add_pre_post(const string &name, const string &pre, const string &post)
+{
+	string s = name;
+	s.insert(0, pre);
+	return s.insert(s.size(), post);
+}
+
+int main()
+{
+	string name("tx");
+
+	cout << add_pre_post(name, "Mr.", "Jr.") << endl;
+
+	cout << add_pre_post("TX", "Mr.", "Jr.") << endl;
+
+	return 0;
+}
+```
+
+## 9.47
