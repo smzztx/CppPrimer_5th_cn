@@ -241,4 +241,253 @@ int main()
 ```
 
 ## 10.13
+```cpp
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+vector<string> &elimDups(vector<string> &words)
+{
+	sort(words.begin(), words.end());
+	auto end_unique = unique(words.begin(), words.end());
+	words.erase(end_unique, words.end());
+	return words;
+}
+
+bool greater_than_5(const string &s)
+{
+	return s.size() >= 5;
+}
+
+int main()
+{
+	vector<string> vs = {"d","c","b","a","a","c","e","bb","aa","aaa","aaaaa"};
+
+	auto iter = partition(vs.begin(), vs.end(), greater_than_5);
+	for(const auto s : vs)
+		cout << s << " ";
+	cout << endl;
+
+	vs.erase(iter, vs.end());
+	for(const auto s : vs)
+		cout << s << " ";
+	cout << endl;
+
+	return 0;
+}
+```
+
+## 10.14
+```cpp
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+	auto add_int = [](int x, int y){return x + y;};
+	cout << add_int(1, 2) << endl;
+	
+	return 0;
+}
+```
+
+## 10.15
+```cpp
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+	int x = 1;
+	auto add_int = [x](int y){return x + y;};
+
+	cout << add_int(2) << endl;
+	
+	return 0;
+}
+```
+
+## 10.16
+```cpp
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+vector<string> &elimDups(vector<string> &words)
+{
+	sort(words.begin(), words.end());
+	auto end_unique = unique(words.begin(), words.end());
+	words.erase(end_unique, words.end());
+	return words;
+}
+
+void biggies(vector<string> &words, vector<string>::size_type sz)
+{
+	elimDups(words);
+	stable_sort(words.begin(), words.end(),
+		[](const string &a, const string &b)
+			{ return a.size() < b.size(); });
+	auto wc = find_if(words.begin(), words.end(),
+		[sz](const string &a)
+			{ return a.size() >= sz; });
+	auto count = words.end() - wc;
+	cout << count << endl;
+	for(const auto s : words)
+		cout << s << " ";
+	cout << endl;
+}
+
+int main()
+{
+	vector<string> vs = {"d","c","b","a","a","c","e","bb","aa","aaa","aaaaa"};
+
+	biggies(vs, 5);
+
+	return 0;
+}
+```
+
+## 10.17
+```cpp
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+#include "../ch07_Classes/Sales_data_ex26.h"
+#include <sstream>
+#include <fstream>
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+	vector<string> v1;
+
+	ifstream is("../ch08_The_IO_Library/book_sales");
+	string buf;
+
+	if(!is)
+	{
+		cerr << "open error" << endl;
+		return -1;
+	}
+
+	while(getline(is, buf))
+		v1.push_back(buf);
+
+	vector<Sales_data> v2;
+	for(const auto &s : v1)
+	{
+		// cout << s << endl;
+		istringstream iss(s);
+		v2.push_back(Sales_data(iss));
+	}
+
+	stable_sort(v2.begin(), v2.end(), []
+		(const Sales_data &sales_data1, const Sales_data &sales_data2)
+			{ return sales_data1.isbn() < sales_data2.isbn(); });
+
+	for(const auto s : v2)
+		cout << s.isbn() << endl;
+
+	return 0;
+}
+```
+
+## 10.18
+```cpp
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+vector<string> &elimDups(vector<string> &words)
+{
+	sort(words.begin(), words.end());
+	auto end_unique = unique(words.begin(), words.end());
+	words.erase(end_unique, words.end());
+	return words;
+}
+
+void biggies(vector<string> &words, vector<string>::size_type sz)
+{
+	elimDups(words);
+	stable_sort(words.begin(), words.end(),
+		[](const string &a, const string &b)
+			{ return a.size() < b.size(); });
+	auto wc = partition(words.begin(), words.end(),
+		[sz](const string &a)
+			{ return a.size() >= sz; });
+	auto count = wc - words.begin();
+	cout << count << endl;
+	for(const auto s : words)
+		cout << s << " ";
+	cout << endl;
+}
+
+int main()
+{
+	vector<string> vs = {"d","c","b","a","a","c","e","bb","aa","aaa","aaaaa"};
+
+	biggies(vs, 5);
+
+	return 0;
+}
+```
+
+## 10.19
+```cpp
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+vector<string> &elimDups(vector<string> &words)
+{
+	sort(words.begin(), words.end());
+	auto end_unique = unique(words.begin(), words.end());
+	words.erase(end_unique, words.end());
+	return words;
+}
+
+void biggies(vector<string> &words, vector<string>::size_type sz)
+{
+	elimDups(words);
+	stable_sort(words.begin(), words.end(),
+		[](const string &a, const string &b)
+			{ return a.size() < b.size(); });
+	auto wc = partition(words.begin(), words.end(),
+		[sz](const string &a)
+			{ return a.size() >= sz; });
+	auto count = wc - words.begin();
+	cout << count << endl;
+	for(const auto s : words)
+		cout << s << " ";
+	cout << endl;
+}
+
+int main()
+{
+	vector<string> vs = {"d","c","b","a","a","c","e","bb","aa","aaa","aaaaa"};
+
+	biggies(vs, 5);
+
+	return 0;
+}
+```
+
+## 10.20
 
