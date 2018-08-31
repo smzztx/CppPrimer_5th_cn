@@ -150,3 +150,95 @@ int main()
 改变容器大小可能会导致迭代器失效，而且每种容器都有自己的特性，改变容器大小可能需要使用不同的方法，不改变容器大小使得算法更加通用。  
 
 ## 10.11
+```cpp
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+vector<string> &elimDups(vector<string> &words)
+{
+	sort(words.begin(), words.end());
+	auto end_unique = unique(words.begin(), words.end());
+	words.erase(end_unique, words.end());
+	return words;
+}
+
+bool isShorter(const string &s1, const string &s2)
+{
+	return s1.size() < s2.size();
+}
+
+int main()
+{
+	vector<string> vs = {"d","c","b","a","a","c","e","bb","aa","aaa"};
+
+	for(const auto s : elimDups(vs))
+		cout << s << " ";
+	cout << endl;
+
+	stable_sort(vs.begin(), vs.end(), isShorter);
+
+	for(const auto s : vs)
+		cout << s << " ";
+	cout << endl;
+
+	return 0;
+}
+```
+
+## 10.12
+```cpp
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+#include "../ch07_Classes/Sales_data_ex26.h"
+#include <sstream>
+#include <fstream>
+#include <iostream>
+
+using namespace std;
+
+bool compareIsbn(const Sales_data &sales_data1, const Sales_data &sales_data2)
+{
+	return sales_data1.isbn() < sales_data2.isbn();
+}
+
+int main()
+{
+	vector<string> v1;
+
+	ifstream is("../ch08_The_IO_Library/book_sales");
+	string buf;
+
+	if(!is)
+	{
+		cerr << "open error" << endl;
+		return -1;
+	}
+
+	while(getline(is, buf))
+		v1.push_back(buf);
+
+	vector<Sales_data> v2;
+	for(const auto &s : v1)
+	{
+		// cout << s << endl;
+		istringstream iss(s);
+		v2.push_back(Sales_data(iss));
+	}
+
+	stable_sort(v2.begin(), v2.end(), compareIsbn);
+
+	for(const auto s : v2)
+		cout << s.isbn() << endl;
+
+	return 0;
+}
+```
+
+## 10.13
+
