@@ -490,4 +490,59 @@ int main()
 ```
 
 ## 10.20
+```cpp
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int main()
+{
+	vector<string> vs = {"d","c","b","a","a","c","e","bb","aa","aaa","aaaaa"};
+	string::size_type sz = 6;
+
+	cout << count_if(vs.begin(), vs.end(),
+		[sz](const string &s)
+			{ return s.size() >=sz; }) << endl;
+
+	return 0;
+}
+```
+
+## 10.21
+```cpp
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int main()
+{
+	int i = 6;
+
+	auto reduce_i = [&i]() -> bool 
+	{
+		if(i <= 0)
+			return false;
+		else
+		{
+			--i;
+			return true;
+		}
+	};
+
+	while(reduce_i())
+	{
+		cout << i << endl;
+	}
+
+	return 0;
+}
+```
+
+## 10.22
 
