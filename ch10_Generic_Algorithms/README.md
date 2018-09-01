@@ -545,4 +545,95 @@ int main()
 ```
 
 ## 10.22
+```cpp
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
 
+using namespace std;
+bool judge_size(string &s, string::size_type sz)
+{
+	return s.size() >= sz;
+}
+
+int main()
+{
+	vector<string> vs = {"d","c","b","a","a","c","e","bb","aa","aaa","aaaaa"};
+
+	cout << count_if(vs.begin(), vs.end(), bind(judge_size, placeholders::_1, 6)) << endl;
+
+	return 0;
+}
+```
+
+## 10.23
+假设要绑定的函数有n个参数，绑定取n + 1个参数。另外一个是函数本身的绑定。
+
+## 10.24
+```cpp
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+bool check_size(string &s, int sz)
+{
+	return s.size() < sz;
+}
+
+int main()
+{
+	vector<int> vi = {1,2,3,4,5,6};
+	string s("aaaa");
+
+	auto iter = find_if(vi.begin(), vi.end(), bind(check_size, s, placeholders::_1));
+
+	cout << *iter << endl;
+
+	return 0;
+}
+```
+
+## 10.25
+```cpp
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+vector<string> &elimDups(vector<string> &words)
+{
+	sort(words.begin(), words.end());
+	auto end_unique = unique(words.begin(), words.end());
+	words.erase(end_unique, words.end());
+	return words;
+}
+
+bool check_size(const string &s, string::size_type sz)
+{
+	return s.size() >= sz;
+}
+
+int main()
+{
+	vector<string> vs = {"d","c","b","a","a","c","e","bb","aa","aaa","aaaaa"};
+
+	auto iter = partition(vs.begin(), vs.end(), bind(check_size, placeholders::_1, 5));
+	for(const auto s : vs)
+		cout << s << " ";
+	cout << endl;
+
+	vs.erase(iter, vs.end());
+	for(const auto s : vs)
+		cout << s << " ";
+	cout << endl;
+
+	return 0;
+}
+```
+
+## 10.26
