@@ -101,7 +101,7 @@ int main()
 }
 ```
 ## 10.7
-（a）
+（a）10.4.1中说明back_inserter(vec)
 ```cpp
 copy(lst.cbegin(), lst.cend(), back_inserter(vec));
 ```
@@ -637,3 +637,65 @@ int main()
 ```
 
 ## 10.26
+back_inserter创建一个使用push_back的迭代器；  
+front_inserter创建一个使用push+front的迭代器；  
+inserter创建一个使用insert的迭代器。此函数接受第二个参数，这个参数必须是一个指向给定容器的迭代器。元素将被插入到给定迭代器所表示的元素之前。  
+
+## 10.27
+```cpp
+#include <iostream>
+#include <vector>
+#include <list>
+#include <algorithm>
+
+using namespace std;
+
+int main()
+{
+	vector<int> v1 = {1,1,1,2,3,4,5};
+	list<int> l1;
+
+	unique_copy(v1.begin(),v1.end(),back_inserter(l1));
+
+	for(const auto i : l1)
+		cout << i << " ";
+	cout << endl;
+
+	return 0;
+}
+```
+
+## 10.28
+```cpp
+#include <iostream>
+#include <vector>
+#include <list>
+#include <algorithm>
+
+using namespace std;
+
+int main()
+{
+	vector<int> v1 = {1,2,3,4,5,6,7,8,9};
+	list<int> l1,l2,l3;
+
+	copy(v1.begin(),v1.end(),back_inserter(l1));
+	for(const auto i : l1)
+		cout << i << " ";
+	cout << endl;
+
+	copy(v1.begin(),v1.end(),front_inserter(l2));
+	for(const auto i : l2)
+		cout << i << " ";
+	cout << endl;
+
+	copy(v1.begin(),v1.end(),inserter(l3,l3.begin()));
+	for(const auto i : l3)
+		cout << i << " ";
+	cout << endl;
+
+	return 0;
+}
+```
+
+## 10.29
