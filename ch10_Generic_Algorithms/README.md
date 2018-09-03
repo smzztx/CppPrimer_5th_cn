@@ -699,3 +699,138 @@ int main()
 ```
 
 ## 10.29
+```cpp
+#include <iostream>
+#include <iterator>
+#include <fstream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int main()
+{
+	ifstream ifs("../ch08_The_IO_Library/data");
+	istream_iterator<string> str_istream_iter(ifs), eof;
+	vector<string> v1(str_istream_iter, eof);
+	ostream_iterator<string> cout_iter(cout, " ");
+	copy(v1.begin(), v1.end(), cout_iter);
+	cout << endl;
+
+	return 0;
+}
+```
+
+## 10.30
+```cpp
+#include <iostream>
+#include <iterator>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int main()
+{
+	istream_iterator<int> int_cin(cin), eof;
+	vector<int> v1(int_cin, eof);
+	sort(v1.begin(), v1.end());
+	ostream_iterator<int> cout_iter(cout, " ");
+	copy(v1.begin(), v1.end(), cout_iter);
+	cout << endl;
+
+	return 0;
+}
+```
+
+## 10.31
+```cpp
+#include <iostream>
+#include <iterator>
+#include <vector>
+#include <algorithm>
+#include "../ch01_Getting_Started/Sales_item.h"
+
+using namespace std;
+
+int main()
+{
+	istream_iterator<Sales_item> int_cin(cin), eof;
+	vector<Sales_item> v1(int_cin, eof);
+	sort(v1.begin(), v1.end(), compareIsbn);
+	// for(const auto s : v1)
+	// 	cout << s.isbn() << endl;
+	cout << endl;
+	for(auto beg = v1.cbegin(), end = beg; beg != v1.cend(); beg = end)
+	{
+		end = find_if(beg, v1.cend(), [beg](const Sales_item &sale_item){ return sale_item.isbn() != beg->isbn(); });
+		cout << accumulate(beg, end, Sales_item(beg->isbn())) << endl;
+	}
+
+	return 0;
+}
+```
+
+## 10.32
+之前谓词处写了sale_item != *beg，找了半天才发现这是检查3个成员变量的。
+```cpp
+#include <iostream>
+#include <iterator>
+#include <fstream>
+#include <vector>
+#include <algorithm>
+#include "../ch01_Getting_Started/Sales_item.h"
+
+using namespace std;
+
+int main()
+{
+	istream_iterator<Sales_item> int_cin(cin), eof;
+	vector<Sales_item> v1(int_cin, eof);
+	sort(v1.begin(), v1.end(), compareIsbn);
+	// for(const auto s : v1)
+	// 	cout << s.isbn() << endl;
+	cout << endl;
+	for(auto beg = v1.cbegin(), end = beg; beg != v1.cend(); beg = end)
+	{
+		end = find_if(beg, v1.cend(), [beg](const Sales_item &sale_item){ return sale_item.isbn() != beg->isbn(); });
+		cout << accumulate(beg, end, Sales_item(beg->isbn())) << endl;
+	}
+
+	return 0;
+}
+```
+
+## 10.33
+```cpp
+#include <iostream>
+#include <iterator>
+#include <fstream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int main(int argc, char **argv)
+{
+	if(argc != 4) return -1;
+
+	ifstream ifs(argv[1]);
+	istream_iterator<int> int_istream_iter(ifs), eof;
+	vector<int> v1(int_istream_iter, eof);
+	
+	ofstream ofs_odd("argv[2]");
+	ostream_iterator<int> odd_iter(ofs_odd, "\n");
+	copy_if(v1.begin(), v1.end(), odd_iter, [](int i){return i % 2; });
+	ofs_odd.close();
+
+	ofstream ofs_even("argv[3]");
+	ostream_iterator<int> even_iter(ofs_even, "\n");
+	copy_if(v1.begin(), v1.end(), even_iter, [](int i){return !(i % 2); });
+	ofs_even.close();
+
+	return 0;
+}
+```
+
+## 10.34
