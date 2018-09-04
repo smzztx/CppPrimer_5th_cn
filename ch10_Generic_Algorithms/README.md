@@ -834,3 +834,92 @@ int main(int argc, char **argv)
 ```
 
 ## 10.34
+```cpp
+#include <iostream>
+#include <iterator>
+#include <vector>
+
+using namespace std;
+
+int main()
+{
+	vector<int> v1 = {1,2,3,4,5,6,7,8};
+
+	for(auto r_iter = v1.crbegin(); r_iter != v1.crend(); ++r_iter)
+		cout << *r_iter << " ";
+	cout << endl;
+
+	return 0;
+}
+```
+
+## 10.35
+```cpp
+#include <iostream>
+#include <iterator>
+#include <vector>
+
+using namespace std;
+
+int main()
+{
+	vector<int> v1 = {1,2,3,4,5,6,7,8};
+
+	for(auto iter = v1.end()-1; iter != v1.begin()-1; --iter)
+		cout << *iter << " ";
+	cout << endl;
+
+	return 0;
+}
+```
+
+## 10.36
+```cpp
+#include <iostream>
+#include <iterator>
+#include <list>
+#include <algorithm>
+
+using namespace std;
+
+int main()
+{
+	list<int> l1 = {1,2,3,4,5,6,7,8,0};
+
+	// for(auto r_iter = l1.crbegin(); r_iter != l1.crend(); ++r_iter)
+	// 	cout << *r_iter << " ";
+	// cout << endl;
+
+	auto r_iter = find(l1.crbegin(), l1.crend(), 0);
+	// r_iter.base();
+	cout << distance(r_iter, l1.crend()) << endl;
+	// cout << l1.end() - l1.begin() << endl;
+
+	return 0;
+}
+```
+
+## 10.37
+```cpp
+#include <iostream>
+#include <iterator>
+#include <vector>
+#include <list>
+#include <algorithm>
+
+using namespace std;
+
+int main()
+{
+	vector<int> v1 = {1,2,3,4,5,6,7,8,9,0};
+	list<int> l1(v1.crbegin()+2,v1.crbegin()+7);
+
+	for(const auto i : l1)
+		cout << i << " ";
+	cout << endl;
+
+	return 0;
+}
+```
+
+## 10.38
