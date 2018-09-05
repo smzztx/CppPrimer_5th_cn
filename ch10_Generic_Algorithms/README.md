@@ -923,3 +923,55 @@ int main()
 ```
 
 ## 10.38
+输入迭代器：==、!=、++、*、->；  
+输出迭代器：++、*；  
+前项迭代器：==、!=、++、*、->；  
+双向迭代器：==、!=、++、--、*、->；  
+随机访问迭代器：==、!=、++、--、*、->、<、<=、>、>=、+、+=、-、-=、-、iter[n]、*(iter[n])。  
+
+## 10.39
+list术语双向迭代器；vector属于随机访问迭代器。  
+
+## 10.40
+copy：前两个参数为输入迭代器，第三个参数为输出迭代器；  
+reverse：双向迭代器；  
+unique：前向迭代器。  
+
+## 10.41
+```cpp
+replace(beg, end, old_val, new_val); // 在beg与end之间，如果是old_val则替换为new_val
+replace_if(beg, end, pred, new_val); // 在beg与end之间，如果满足谓词条件则替换为new_val
+replace_copy(beg, end, dest, old_val, new_val); // 在beg与end之间，如果是old_val则替换为new_val，不改变原始值，将结果复制到dest
+replace_copy_if(beg, end, dest, pred, new_val); // 在beg与end之间，如果满足谓词条件则替换为new_val，不改变原始值，将结果复制到dest
+```
+
+## 10.42
+```cpp
+#include <iostream>
+#include <string>
+#include <list>
+#include <algorithm>
+
+using namespace std;
+
+list<string> &elimDups(list<string> &words)
+{
+	// sort(words.begin(), words.end());
+	words.sort();
+	words.unique();
+	// auto end_unique = unique(words.begin(), words.end());
+	// words.erase(end_unique, words.end());
+	return words;
+}
+
+int main()
+{
+	list<string> vs = {"d","c","b","a","a","c","e"};
+
+	for(const auto s : elimDups(vs))
+		cout << s << " ";
+	cout << endl;
+
+	return 0;
+}
+```
