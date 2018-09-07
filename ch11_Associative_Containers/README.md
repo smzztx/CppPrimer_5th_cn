@@ -32,8 +32,7 @@ int main()
 ```
 
 ## 11.4
-由于C++在标准库STL中也定义了ispunct函数，定义于std命名空间，且是一个模板函数。由于程序直接通过using namespace std导入了std命名空间，程序默认使用STL库中的ispunct，导致编译器直接使用了未特化的模板函数，并未使用cctype库中的此函数，因此编译无法通过。正如SO上所说的，为了避免此类问题出现，我们应该尽量避免直接使用using namespace std;，由于std命名空间定义了很多标识符，直接导入全部的std命名空间会产生意想不到的冲突。
-[摘自](https://www.jianshu.com/p/3f5f8432ec2a)
+经过研究发现，实际使用的是<ctype.h>中的ispunct，这个是全局变量。<cctype>是std::ispunct (<cctype>)和std::ispunct (<clocale>)，会有重载的问题。
 ```cpp
 #include <map>
 #include <string>
@@ -69,3 +68,36 @@ map包括关键字-值对；set只有关键字。
 ## 11.6
 set：是关联容器，查找较快；list：是顺序容器，查找关键字是和容器的大小有关系。
 [list vs set](http://stackoverflow.com/questions/2302681/c-stl-list-vs-set)
+
+## 11.7
+```cpp
+#include <map>
+#include <string>
+#include <vector>
+#include <iostream>
+
+int main()
+{
+	std::map<std::string, std::vector<std::string>> familys;
+	std::string last_name, first_name;
+
+	std::cin >> last_name;
+	while(std::cin >> first_name)
+	{
+		familys[last_name].push_back(first_name);
+	}
+
+	for(const auto f : familys)
+	{
+		std::cout << f.first << std::endl;
+		for(const auto s : f.second)
+			std::cout << s << " ";
+		std::cout << std::endl;
+	}
+
+	return 0;
+}
+```
+
+## 11.8
+```cpp
