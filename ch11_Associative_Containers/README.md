@@ -101,3 +101,146 @@ int main()
 
 ## 11.8
 ```cpp
+#include <string>
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+int main()
+{
+	std::vector<std::string> vs;
+	std::string s;
+	std::cin >> s;
+	vs.push_back(s);
+	while(std::cin >> s)
+	{
+		if(std::find(vs.begin(), vs.end(), s) == vs.end())
+			vs.push_back(s);
+	}
+
+	for(const auto &s : vs)
+		std::cout << s << " ";
+	std::cout << std::endl;
+
+	return 0;
+}
+```
+
+## 11.9
+```cpp
+std::map<std::string, std::list<std::size_t>> word_and_line;
+```
+
+## 11.10
+vector<int>::iterator可以，因为可以使用<；  
+list<int>::iterator不能，未定义<。  
+
+## 11.11
+```cpp
+#include <set>
+#include <iostream>
+#include <string>
+#include "../ch07_Classes/Sales_data_ex26.h"
+
+bool compareIsbn(const Sales_data &sales_data1, const Sales_data &sales_data2)
+{
+	return sales_data1.isbn() < sales_data2.isbn();
+}
+
+int main()
+{
+	using COMPAREISBN = bool (*)(const Sales_data &sales_data1, const Sales_data &sales_data2);
+	// std::multiset<Sales_data, decltype(compareIsbn)*> bookstore(compareIsbn);
+	std::multiset<Sales_data, COMPAREISBN> bookstore(compareIsbn);
+
+	return 0;
+}
+```
+
+## 11.12
+```cpp
+#include <utility>
+#include <string>
+#include <vector>
+#include <iostream>
+
+int main()
+{
+	std::vector<std::pair<std::string, int>> vp;
+	int i;
+	std::string s;
+
+	while(std::cin >> s >> i)
+	{
+		vp.push_back(std::pair<std::string, int>(s, i));
+	}
+
+	for(const auto &p : vp)
+		std::cout << p.first << " " << p.second << std::endl;	
+
+	return 0;
+}
+```
+
+## 11.13
+```cpp
+#include <utility>
+#include <string>
+#include <vector>
+#include <iostream>
+
+int main()
+{
+	std::vector<std::pair<std::string, int>> vp;
+	int i;
+	std::string s;
+
+	while(std::cin >> s >> i)
+	{
+		// vp.push_back(std::pair<std::string, int>(s, i));
+		// std::pair<std::string, int> p(s, i); vp.push_back(p);
+		// vp.push_back({s, i});
+		// vp.push_back(make_pair(s, i));
+		// std::pair<std::string, int> p = {s, i}; vp.push_back(p);
+		vp.emplace_back(s, i);
+	}
+
+	for(const auto &p : vp)
+		std::cout << p.first << " " << p.second << std::endl;	
+
+	return 0;
+}
+```
+
+## 11.14
+```cpp
+#include <map>
+#include <string>
+#include <vector>
+#include <iostream>
+#include <utility>
+
+int main()
+{
+	std::map<std::string, std::vector<std::pair<std::string, std::string>>> familys;
+	std::string last_name, first_name, birthday;
+
+	std::cin >> last_name;
+	while(std::cin >> first_name >> birthday)
+	{
+		familys[last_name].emplace_back(first_name, birthday);
+	}
+
+	for(const auto f : familys)
+	{
+		std::cout << f.first << std::endl;
+		for(const auto p : f.second)
+			std::cout << p.first << " " << p.second << std::endl;
+		std::cout << std::endl;
+	}
+
+	return 0;
+}
+```
+
+## 11.15
