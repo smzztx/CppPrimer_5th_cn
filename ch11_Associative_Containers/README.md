@@ -244,3 +244,47 @@ int main()
 ```
 
 ## 11.15
+mapped_type：vector<int>；  
+key_type：int；  
+value_type：pair<const int, vector<int>>。  
+
+## 11.16
+```cpp
+#include <map>
+#include <string>
+#include <iostream>
+
+int main()
+{
+	std::map<int, std::string> m = {{1,"aa"}};
+	std::map<int, std::string>::iterator m_iter = m.begin();
+
+	m_iter->second = "bb";
+	std::cout << m_iter->second <<std::endl;
+
+	return 0;
+}
+```
+
+## 11.17
+```cpp
+copy(v.begin(), v.end(), inserter(c, c.end())); //合法
+copy(v.begin(), v.end(), back_inserter(c)); //非法,set中没有push_back()
+copy(c.begin(), c.end(), inserter(v, v.end())); //合法
+copy(c.begin(), c.end(), back_inserter(v)); //合法
+```
+
+## 11.18
+```cpp
+map<string, size_t>::const_iterator map_it = word_count.cbegin();
+```
+
+## 11.19
+```cpp
+using COMPAREISBN = bool (*)(const Sales_data &sales_data1, const Sales_data &sales_data2);
+// std::multiset<Sales_data, decltype(compareIsbn)*> bookstore(compareIsbn);
+std::multiset<Sales_data, COMPAREISBN> bookstore(compareIsbn);
+std::multiset<Sales_data, COMPAREISBN>::iterator bookstore_iter = bookstore.begin();
+```
+
+## 11.20
