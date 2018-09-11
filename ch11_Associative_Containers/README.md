@@ -288,3 +288,191 @@ std::multiset<Sales_data, COMPAREISBN>::iterator bookstore_iter = bookstore.begi
 ```
 
 ## 11.20
+之前的程序更容易理解，更加简洁。
+```cpp
+#include <map>
+#include <string>
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+	map<string, size_t> word_count;
+	string word;
+	while(cin >> word)
+	{
+		auto ret = word_count.insert({word, 1});
+		if(!ret.second)
+			++ret.first->second;
+	}
+		// ++word_count[word];
+
+	for(const auto &w : word_count)
+		cout << w.first << "," << w.second << endl;
+
+	return 0;
+}
+```
+
+## 11.21
+```cpp
+word_count.insert({word, 0})//得到insert的返回值
+word_count.insert({word, 0}).first//得到map的迭代器
+word_count.insert({word, 0}).first->second//map中size_t的值
+++word_count.insert({word, 0}).first->second//递增该值
+```
+
+## 11.22
+```cpp
+#include <map>
+#include <vector>
+#include <string>
+#include <iostream>
+#include <utility>
+
+int main()
+{
+	std::map<std::string, std::vector<int>> m1;
+	std::pair<std::string, std::vector<int>> p1({"aaa", {1,2,3,4}});
+	std::pair<std::map<std::string, std::vector<int>>::iterator, bool> ret = m1.insert(p1);
+	// std::pair<std::map<std::string, std::vector<int>>::iterator, bool> ret = m1.insert({"aaa", {1,2,3,4}});
+
+	return 0;
+}
+```
+
+## 11.23
+```cpp
+#include <map>
+#include <string>
+#include <vector>
+#include <iostream>
+
+int main()
+{
+	std::multimap<std::string, std::vector<std::string>> familys;
+	std::string last_name, first_name;
+	std::vector<std::string> vs;
+
+	std::cin >> last_name;
+	while(std::cin >> first_name)
+	{
+		vs.push_back(first_name);
+		// familys[last_name].push_back(first_name);
+	}
+	familys.insert({last_name, vs});
+
+	for(const auto f : familys)
+	{
+		std::cout << f.first << std::endl;
+		for(const auto s : f.second)
+			std::cout << s << " ";
+		std::cout << std::endl;
+	}
+
+	return 0;
+}
+```
+
+## 11.24
+在m中添加一个关键字为0的元素，并对其进行初始化。  
+
+##  11.25
+在访问v的第0个元素时超出范围。  
+
+## 11.26
+可以用key_type类型来对一个map进行下标操作；  
+下标操作返回的类型是mapped_type。  
+```cpp
+#include <map>
+#include <iostream>
+#include <string>
+
+int main()
+{
+	std::map<int, std::string> m1({{1, "aaa"}});
+	std::map<int, std::string>::key_type i1 = 1;
+	std::map<int, std::string>::mapped_type s1;
+
+	s1 = m1[i1];
+	std::cout << i1 << " " << s1 << std::endl;
+
+	return 0;
+}
+```
+
+## 11.27
+查看特定元素的关键字是否在容器中用find；  
+要统计该元素的关键字有多少个用count。  
+
+## 11.28
+```cpp
+#include <map>
+#include <vector>
+#include <string>
+#include <iostream>
+
+int main()
+{
+	std::map<std::string, std::vector<int>> m1 = {{"aa", {1,2,3,4,5}}};
+	std::map<std::string, std::vector<int>>::iterator m_iter = m1.find("aa");
+
+	return 0;
+}
+```
+
+## 11.29
+如果没有元素与给定关键字匹配，则lower_bound和upper_bound会返回相等的迭代器——都指向给定关键字的插入点，能保持容器中元素顺序的插入位置。  
+如果equal_range未匹配到元素，则两个迭代器都指向关键字可以插入的位置。  
+
+## 11.30
+第一个迭代器解引用后得到书名。  
+
+## 11.31
+```cpp
+#include <map>
+#include <string>
+#include <iostream>
+
+int main()
+{
+	std::multimap<std::string, std::string> m1 = {{"aa", "abc"}, {"aa", "bcd"}, {"aa", "cde"}};
+
+	m1.erase(m1.find("aa"));
+
+	for (const auto &p : m1)
+		std::cout << p.first << " " << p.second << std::endl;
+
+	return 0;
+}
+```
+
+## 11.32
+```cpp
+#include <map>
+#include <string>
+#include <iostream>
+#include <set>
+
+int main()
+{
+	std::multimap<std::string, std::string> m1 = {{"bb", "lalala"}, {"aa", "bcd"}, {"aa", "abc"}, {"aa", "cde"}};
+
+	std::map<std::string, std::multiset<std::string>> order_m1;
+	for(const auto p : m1)
+		order_m1[p.first].insert(p.second);
+
+	for (const auto &p : order_m1)
+	{
+		std::cout << p.first << std::endl;
+		for(const auto s : p.second)
+			std::cout << s << " ";
+		std::cout << std::endl;
+	}
+
+	return 0;
+}
+```
+
+## 11.33
