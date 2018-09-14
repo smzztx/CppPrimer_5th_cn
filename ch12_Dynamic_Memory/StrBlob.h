@@ -1,10 +1,3 @@
-## 12.1
-b1包含4个元素；  
-b2被销毁。  
-
-## 12.2
-strblob.h
-```cpp
 #ifndef STRBLOB_H_
 #define STRBLOB_H_
 
@@ -73,33 +66,3 @@ void StrBlob::pop_back()
 }
 
 #endif
-```
-ex02.cpp
-```cpp
-#include "StrBlob.h"
-#include <iostream>
-
-int main()
-{
-	StrBlob b1 = {"a", "an", "the"};
-	const StrBlob b2 = {"a", "b", "c"};
-
-	std::cout << b1.back() << std::endl;
-	std::cout << b2.back() << std::endl;
-
-	return 0;
-}
-```
-
-## 12.03
-不需要，添加进去虽然编译器不会报错，但是这样不符合类使用者的使用习惯。  
-
-## 12.04
-可以忽略，本身i就是大于0的。  
-
-## 12.05
-使用explicit之后  
-优点：我们可以清楚地知道使用的是哪种类型；  
-缺点：不易使用，需要显示地初始化。  
-
-## 12.06
