@@ -103,3 +103,96 @@ int main()
 缺点：不易使用，需要显示地初始化。  
 
 ## 12.06
+```cpp
+#include <string>
+#include <iostream>
+#include <vector>
+
+std::vector<int> *create_vi()
+{
+	return new std::vector<int>;
+}
+
+void push_vi(std::vector<int> *p)
+{
+	int i;
+	while(std::cin >> i)
+		p->push_back(i);
+}
+
+void print_vi(std::vector<int> *p)
+{
+	for(const auto i : (*p))
+		std::cout << i << std::endl;
+}
+
+int main()
+{
+	auto p = create_vi();
+	push_vi(p);
+	print_vi(p);
+	delete p;
+
+	return 0;
+}
+```
+
+## 12.07
+```cpp
+#include <string>
+#include <iostream>
+#include <vector>
+#include <memory>
+
+std::shared_ptr<std::vector<int>> create_vi()
+{
+	return std::make_shared<std::vector<int>>();
+}
+
+void push_vi(std::shared_ptr<std::vector<int>> p)
+{
+	int i;
+	while(std::cin >> i)
+		p->push_back(i);
+}
+
+void print_vi(std::shared_ptr<std::vector<int>> p)
+{
+	for(const auto i : (*p))
+		std::cout << i << std::endl;
+}
+
+int main()
+{
+	auto p = create_vi();
+	push_vi(p);
+	print_vi(p);
+	// delete p;
+
+	return 0;
+}
+```
+
+## 12.08
+指针p被转换成bool值，new的内存没有被delete，内存没有被释放。  
+
+## 12.09
+r=q后r所指的内存没有释放，应该先delete r，再r=q；  
+第二段代码内存会自动释放。  
+
+## 12.10
+正确。
+
+## 12.11
+离开process时，p指向的内存会被释放，再使用p指针时会出现错误。  
+
+## 12.12
+（a）合法，将智能指针赋值给process；  
+（b）不合法，shared_ptr初始化内置指针时需要使用直接初始化的形式；  
+（c）不合法，shared_ptr初始化内置指针时需要使用直接初始化的形式；  
+（d）合法。  
+
+## 12.13
+sp和p指向的是同一个内存，释放了p所指向的内存后，再使用sp调用对象时可能会出错。  
+
+## 12.14
