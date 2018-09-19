@@ -1,4 +1,4 @@
-#include "StrBlob_ex21.h"
+#include "StrBlob_ex22.h"
 #include <iostream>
 
 int main()

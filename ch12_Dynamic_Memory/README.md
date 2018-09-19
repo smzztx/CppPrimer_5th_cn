@@ -621,7 +621,7 @@ int main()
 之前的版本更好，更容易读懂。
 
 ## 12.22
-StrBlob_ex21.h
+StrBlob_ex22.h
 ```cpp
 #ifndef STRBLOB_H_
 #define STRBLOB_H_
@@ -741,9 +741,9 @@ ConstStrBlobPtr StrBlob::end()
 
 #endif
 ```
-ex21.cpp
+ex22.cpp
 ```cpp
-#include "StrBlob_ex21.h"
+#include "StrBlob_ex22.h"
 #include <iostream>
 
 int main()
@@ -764,3 +764,44 @@ int main()
 ```
 
 ## 12.23
+ex23_1.cpp
+```cpp
+#include <string>
+#include <iostream>
+#include <cstring>
+
+int main()
+{
+	const char a[] = "aaa";
+	const char b[] = "bbb";
+	char *pca = new char[strlen("aaa" "bbb")+1];
+
+	std::strcat(pca, a);
+	std::strcat(pca, b);
+	std::cout << std::string(pca) << std::endl;
+	delete [] pca;
+
+	return 0;
+}
+```
+ex23_2.cpp
+```cpp
+#include <string>
+#include <iostream>
+#include <cstring>
+
+int main()
+{
+	std::string a = "aaa";
+	std::string b = "bbb";
+	std::string *ps = new std::string;
+
+	*ps = a + b;
+	std::cout << *ps << std::endl;
+	delete ps;
+
+	return 0;
+}
+```
+
+## 12.24
