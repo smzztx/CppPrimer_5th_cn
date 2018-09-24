@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include <>
+#include "TextQuery_ex27.h"
 
 void runQueries(std::ifstream &infile)
 {
@@ -10,6 +10,7 @@ void runQueries(std::ifstream &infile)
         std::string s;
         if (!(std::cin >> s) || s == "q") break;
         print(std::cout, tq.query(s)) << std::endl;
+        // tq.query(s);
     }
 }
 
