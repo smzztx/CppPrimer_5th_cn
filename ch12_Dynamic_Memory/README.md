@@ -867,3 +867,380 @@ int main()
 ```
 
 ## 12.27
+TextQuery_ex27.h
+```cpp
+#ifndef TEXTQUERY_H_
+#define TEXTQUERY_H_
+
+#include <string>
+#include <vector>
+#include <map>
+#include <fstream>
+#include <sstream>
+#include <set>
+#include <memory>
+#include <iostream>
+#include <algorithm>
+#include <iterator>
+
+class QueryResult;
+
+class TextQuery
+{
+public:
+	using line_no = std::vector<std::string>::size_type;
+	TextQuery(std::ifstream&);
+	QueryResult query(const std::string&) const;
+private:
+	std::shared_ptr<std::vector<std::string>> file;
+	std::map<std::string, std::shared_ptr<std::set<line_no>>> wm;
+};
+
+class QueryResult
+{
+	friend std::ostream& print(std::ostream&, const QueryResult&);
+public:
+	QueryResult(std::string s, std::shared_ptr<std::set<TextQuery::line_no>> p, std::shared_ptr<std::vector<std::string>> f) : sought(s), lines(p), file(f) { }
+private:
+	std::string sought;
+	std::shared_ptr<std::set<TextQuery::line_no>> lines;
+	std::shared_ptr<std::vector<std::string>> file;
+};
+
+TextQuery::TextQuery(std::ifstream &ifs) : file(new std::vector<std::string>)
+{
+	std::string text;
+
+	while(std::getline(ifs, text))
+	{
+		file->push_back(text);
+		int n = file->size() - 1;
+		std::istringstream line(text);
+		std::string text;
+		while(line >> text)
+		{
+			std::string word;
+			std::copy_if(text.begin(), text.end(), std::back_inserter(word), isalpha);
+			// std::cout << word << std::endl;
+			auto &lines = wm[word];
+			if(!lines)
+				lines.reset(new std::set<line_no>);
+			lines->insert(n);
+		}
+	}
+}
+
+QueryResult TextQuery::query(const std::string &sought) const
+{
+	static std::shared_ptr<std::set<TextQuery::line_no>> nodata(new std::set<TextQuery::line_no>);
+	auto loc = wm.find(sought);
+	if(loc == wm.end())
+		return QueryResult(sought, nodata, file);
+	else
+		return QueryResult(sought, loc->second, file);
+	// QueryResult QR;
+	// auto count = word_line.count(s);
+	// QR.count = count;
+	// auto iter = word_line.find(s);
+
+	// while(count)
+	// {
+	// 	QR.line_num.insert(iter->second);
+	// 	++iter;
+	// 	--count;
+	// }
+
+	// return QR;
+	// // for(auto iter = word_line.lower_bound(s), end = word_line.upper_bound(s); iter != end; ++iter)
+	// // {
+	// // 	line_num.insert(iter->second);
+	// // }
+}
+
+std::ostream &print(std::ostream &os, const QueryResult &qr)
+{
+	os << qr.sought << " occurs " << qr.lines->size() << " " /*<< make_plural(qr.lines->size(), "time", "s")*/ << std::endl;
+	for(auto num : *qr.lines)
+		os << "\t(line " << num + 1 << ") " << *(qr.file->begin() + num) << std::endl;
+	return os;
+}
+
+#endif
+```
+
+ex27.cpp
+```cpp
+#include <iostream>
+#include <string>
+#include "TextQuery_ex27.h"
+
+void runQueries(std::ifstream &infile)
+{
+    TextQuery tq(infile);
+    while (true) {
+        std::cout << "enter word to look for, or q to quit: ";
+        std::string s;
+        if (!(std::cin >> s) || s == "q") break;
+        print(std::cout, tq.query(s)) << std::endl;
+        // tq.query(s);
+    }
+}
+
+int main()
+{
+    std::ifstream file("storyDataFile");
+    runQueries(file);
+}
+```
+
+## 12.28
+略。
+
+## 12.29
+```cpp
+do{
+    std::cout << "enter word to look for, or q to quit: ";
+    std::string s;
+    if (!(std::cin >> s) || s == "q") break;
+    print(std::cout, tq.query(s)) << std::endl;
+    // tq.query(s);
+}while (true);
+```
+更喜欢while，更加习惯，看起来更简单。
+
+## 12.30
+见12.27。
+
+## 12.31
+vector不能确保元素的唯一性，所以这里set更好。
+
+## 12.32
+TextQuery_ex32.h
+```cpp
+#ifndef TEXTQUERY_H_
+#define TEXTQUERY_H_
+
+#include <string>
+#include <vector>
+#include <map>
+#include <fstream>
+#include <sstream>
+#include <set>
+#include <memory>
+#include <iostream>
+#include <algorithm>
+#include <iterator>
+#include "StrBlob_ex22.h"
+
+class QueryResult;
+
+class TextQuery
+{
+public:
+	using line_no = std::vector<std::string>::size_type;
+	TextQuery(std::ifstream&);
+	QueryResult query(const std::string&) const;
+private:
+	StrBlob file;
+	std::map<std::string, std::shared_ptr<std::set<line_no>>> wm;
+};
+
+class QueryResult
+{
+	friend std::ostream& print(std::ostream&, const QueryResult&);
+public:
+	QueryResult(std::string s, std::shared_ptr<std::set<TextQuery::line_no>> p, StrBlob f) : sought(s), lines(p), file(f) { }
+private:
+	std::string sought;
+	std::shared_ptr<std::set<TextQuery::line_no>> lines;
+	StrBlob file;
+};
+
+TextQuery::TextQuery(std::ifstream &ifs){
+	std::string text;
+
+	while(std::getline(ifs, text))
+	{
+		file.push_back(text);
+		int n = file.size() - 1;
+		std::istringstream line(text);
+		std::string text;
+		while(line >> text)
+		{
+			std::string word;
+			std::copy_if(text.begin(), text.end(), std::back_inserter(word), isalpha);
+			// std::cout << word << std::endl;
+			auto &lines = wm[word];
+			if(!lines)
+				lines.reset(new std::set<line_no>);
+			lines->insert(n);
+		}
+	}
+}
+
+QueryResult TextQuery::query(const std::string &sought) const
+{
+	static std::shared_ptr<std::set<TextQuery::line_no>> nodata(new std::set<TextQuery::line_no>);
+	auto loc = wm.find(sought);
+	if(loc == wm.end())
+		return QueryResult(sought, nodata, file);
+	else
+		return QueryResult(sought, loc->second, file);
+}
+
+std::ostream &print(std::ostream &os, const QueryResult &qr)
+{
+	os << qr.sought << " occurs " << qr.lines->size() << " " /*<< make_plural(qr.lines->size(), "time", "s")*/ << std::endl;
+	for(auto num : *qr.lines)
+	{
+		ConstStrBlobPtr p(qr.file, num);
+		os << "\t(line " << num + 1 << ") " << p.deref() << std::endl;
+	}
+		
+	return os;
+}
+
+#endif
+```
+
+ex32.cpp
+```cpp
+#include <iostream>
+#include <string>
+#include "TextQuery_ex32.h"
+
+void runQueries(std::ifstream &infile)
+{
+    TextQuery tq(infile);
+    while (true) {
+        std::cout << "enter word to look for, or q to quit: ";
+        std::string s;
+        if (!(std::cin >> s) || s == "q") break;
+        print(std::cout, tq.query(s)) << std::endl;
+        // tq.query(s);
+    }
+}
+
+int main()
+{
+    std::ifstream file("storyDataFile");
+    runQueries(file);
+}
+```
+
+## 12.33
+TextQuery_ex33.h
+```cpp
+#ifndef TEXTQUERY_H_
+#define TEXTQUERY_H_
+
+#include <string>
+#include <vector>
+#include <map>
+#include <fstream>
+#include <sstream>
+#include <set>
+#include <memory>
+#include <iostream>
+#include <algorithm>
+#include <iterator>
+#include "StrBlob_ex22.h"
+
+class QueryResult;
+
+class TextQuery
+{
+public:
+	using line_no = std::vector<std::string>::size_type;
+	TextQuery(std::ifstream&);
+	QueryResult query(const std::string&) const;
+private:
+	StrBlob file;
+	std::map<std::string, std::shared_ptr<std::set<line_no>>> wm;
+};
+
+class QueryResult
+{
+	friend std::ostream& print(std::ostream&, const QueryResult&);
+public:
+	QueryResult(std::string s, std::shared_ptr<std::set<TextQuery::line_no>> p, StrBlob f) : sought(s), lines(p), file(f) { }
+	std::set<StrBlob::size_type>::iterator begin() const { return lines->begin(); }
+	std::set<StrBlob::size_type>::iterator end() const { return lines->end(); }
+	shared_ptr<StrBlob> get_file() const { return std::make_shared<StrBlob>(file); }
+private:
+	std::string sought;
+	std::shared_ptr<std::set<TextQuery::line_no>> lines;
+	StrBlob file;
+};
+
+TextQuery::TextQuery(std::ifstream &ifs){
+	std::string text;
+
+	while(std::getline(ifs, text))
+	{
+		file.push_back(text);
+		int n = file.size() - 1;
+		std::istringstream line(text);
+		std::string text;
+		while(line >> text)
+		{
+			std::string word;
+			std::copy_if(text.begin(), text.end(), std::back_inserter(word), isalpha);
+			// std::cout << word << std::endl;
+			auto &lines = wm[word];
+			if(!lines)
+				lines.reset(new std::set<line_no>);
+			lines->insert(n);
+		}
+	}
+}
+
+QueryResult TextQuery::query(const std::string &sought) const
+{
+	static std::shared_ptr<std::set<TextQuery::line_no>> nodata(new std::set<TextQuery::line_no>);
+	auto loc = wm.find(sought);
+	if(loc == wm.end())
+		return QueryResult(sought, nodata, file);
+	else
+		return QueryResult(sought, loc->second, file);
+}
+
+std::ostream &print(std::ostream &os, const QueryResult &qr)
+{
+	os << qr.sought << " occurs " << qr.lines->size() << " " /*<< make_plural(qr.lines->size(), "time", "s")*/ << std::endl;
+	for(auto num : *qr.lines)
+	{
+		ConstStrBlobPtr p(qr.file, num);
+		os << "\t(line " << num + 1 << ") " << p.deref() << std::endl;
+	}
+		
+	return os;
+}
+
+#endif
+```
+
+ex33.cpp
+```cpp
+#include <iostream>
+#include <string>
+#include "TextQuery_ex32.h"
+
+void runQueries(std::ifstream &infile)
+{
+    TextQuery tq(infile);
+    while (true) {
+        std::cout << "enter word to look for, or q to quit: ";
+        std::string s;
+        if (!(std::cin >> s) || s == "q") break;
+        print(std::cout, tq.query(s)) << std::endl;
+        // tq.query(s);
+    }
+}
+
+int main()
+{
+    std::ifstream file("storyDataFile");
+    runQueries(file);
+}
+```

@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include "TextQuery_ex27.h"
+#include "TextQuery_ex32.h"
 
 void runQueries(std::ifstream &infile)
 {
