@@ -66,3 +66,89 @@ private:
 ```
 
 ## 13.9
+析构函数是类的一个成员函数，名字由波浪号接类名构成，它没有返回值，也不接受参数，用于释放对象所使用的资源，并销毁对象的非static数据成员；  
+类似拷贝构造函数和拷贝赋值运算符，对于某些类，和合成析构函数被用来阻止该类型的对象被销毁，如果不是这种情况，合成析构函数的函数体就为空；  
+当一个类未定义自己的析构函数时，编译器会为它定义一个合成析构函数。  
+
+## 13.10
+销毁StrBlob时shared_ptr-1，直到为0时，对象销毁，销毁StrBlobPtr不会销毁对象。  
+
+## 13.11
+```cpp
+#ifndef HASPTR_EX11_H
+#define HASPTR_EX11_H
+
+#include <string>
+
+class HasPtr {
+public:
+    HasPtr(const std::string &s = std::string()) : ps(new std::string(s)), i(0) { }
+    HasPtr(const HasPtr &hp) : ps(new std::string(*hp.ps)), i(hp.i) { }
+    HasPtr& operator=(const HasPtr &rhs_hp) {
+        if(this != &rhs_hp){
+            std::string *temp_ps = new std::string(*rhs_hp.ps);
+            delete ps;
+            ps = temp_ps;
+            i = rhs_hp.i;
+        }
+        return *this;
+    }
+    ~HasPtr()
+    {
+        delete ps;
+    }
+private:
+    std::string *ps;
+    int i;
+};
+
+#endif
+```
+
+## 13.12
+离开后accum、item1和item2销毁。  
+
+## 13.13
+```cpp
+#include <iostream>
+#include <string>
+
+struct X
+{
+	X() { std::cout << "X()" << std::endl; }
+	X(const X&) { std::cout << "X(const X&)" << std::endl; }
+	X& operator=(const X &rh)
+	{
+		std::cout << "X& operator=(const X &rh)" << std::endl;
+		return *this;
+	}
+	~X() { std::cout << "~x()" << std::endl; }
+};
+
+void func1(X x)
+{
+	std::cout << "void func1(X x)" << std::endl;
+}
+
+void func2(X &x)
+{
+	std::cout << "void func2(X &x)" << std::endl;
+}
+
+int main()
+{
+	std::cout << "x1" << std::endl;
+	X x1;
+	func1(x1);
+	std::cout << "main" << std::endl;
+	func2(x1);
+	std::cout << "main" << std::endl;
+	X *x2 = new X();
+	delete x2;
+	std::cout << "delete x2" << std::endl;
+
+	return 0;
+}
+```
+
+## 13.14
