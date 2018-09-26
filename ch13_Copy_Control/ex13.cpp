@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <vector>
 
 struct X
 {
@@ -32,8 +33,15 @@ int main()
 	func2(x1);
 	std::cout << "main" << std::endl;
 	X *x2 = new X();
+	{	
+		std::cout << "vector" << std::endl;
+		std::vector<X> v;
+		v.reserve(2);
+		v.push_back(x1);
+		v.push_back(*x2);
+	}
 	delete x2;
-	std::cout << "delete x2" << std::endl;
+	std::cout << "after delete x2" << std::endl;
 
 	return 0;
 }
