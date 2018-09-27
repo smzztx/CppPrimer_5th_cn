@@ -180,3 +180,186 @@ after delete x2
 ```
 
 ## 13.14
+输出同一个mysn。  
+
+## 13.15
+会，在拷贝初始化时会调用拷贝构造函数，能生成一个新的序号，但是，调用f函数时又生成一个新的序号，所以，新的输出结果会输出不同的mysn，但不是a、b、c的mysn。  
+
+## 13.16
+会，在拷贝初始化时会调用拷贝构造函数，能生成一个新的序号，所以，新的输出结果会输出不同的mysn，是a、b、c的mysn。  
+
+## 13.17
+ex17_1.cpp
+```cpp
+#include <iostream>
+#include <cstdlib>
+#include <string>
+
+class numbered
+{
+friend void f(numbered s);
+public:
+	numbered() : mysn(std::to_string(std::rand())) { };
+	~numbered() { };
+private:
+	std::string mysn;
+};
+
+void f(numbered s)
+{
+	std::cout << s.mysn << std::endl;
+}
+
+int main()
+{
+	numbered a, b = a, c = b;
+	f(a); f(b); f(c);
+
+	return 0;
+}
+```
+
+ex17_2.cpp
+```cpp
+#include <iostream>
+#include <cstdlib>
+#include <string>
+
+class numbered
+{
+friend void f(numbered s);
+public:
+	numbered() : mysn(std::to_string(std::rand())) { };
+	numbered(const numbered&) : mysn(std::to_string(std::rand())) { };
+	~numbered() { };
+private:
+	std::string mysn;
+};
+
+void f(numbered s)
+{
+	std::cout << s.mysn << std::endl;
+}
+
+int main()
+{
+	numbered a, b = a, c = b;
+	f(a); f(b); f(c);
+
+	return 0;
+}
+```
+
+ex17_3.cpp
+```cpp
+#include <iostream>
+#include <cstdlib>
+#include <string>
+
+class numbered
+{
+friend void f(const numbered&);
+public:
+	numbered() : mysn(std::to_string(std::rand())) { };
+	numbered(const numbered&) : mysn(std::to_string(std::rand())) { };
+	~numbered() { };
+private:
+	std::string mysn;
+};
+
+void f(const numbered &s)
+{
+	std::cout << s.mysn << std::endl;
+}
+
+int main()
+{
+	numbered a, b = a, c = b;
+	f(a); f(b); f(c);
+
+	return 0;
+}
+```
+
+## 13.18
+```cpp
+#include <iostream>
+#include <string>
+
+class Employee
+{
+friend void print(const Employee&);
+public:
+	Employee() { id = n; ++n; };
+	Employee(const std::string &s) { id = n; ++n; name = s; };
+private:
+	std::string name;
+	int id;
+	static int n;
+};
+
+void print(const Employee &e)
+{
+	std::cout << e.name << " " << e.id << std::endl;
+}
+
+int Employee::n = 0;
+
+int main()
+{
+	Employee a;
+	Employee b("bbb");
+
+	print(a);
+	print(b);
+
+	return 0;
+}
+```
+
+## 13.19
+不需要，员工在现实中不能复制。  
+```cpp
+#include <iostream>
+#include <string>
+
+class Employee
+{
+friend void print(const Employee&);
+public:
+	Employee() { id = n; ++n; };
+	Employee(const std::string &s) { id = n; ++n; name = s; };
+	Employee(const Employee&) = delete;
+	Employee &operator=(const Employee&) = delete;
+private:
+	std::string name;
+	int id;
+	static int n;
+};
+
+void print(const Employee &e)
+{
+	std::cout << e.name << " " << e.id << std::endl;
+}
+
+int Employee::n = 0;
+
+int main()
+{
+	Employee a;
+	Employee b("bbb");
+
+	print(a);
+	print(b);
+
+	return 0;
+}
+```
+
+## 13.20
+成员对象会被复制。  
+
+## 13.21
+不需要，合成拷贝控制成员已满足需求。  
+
+## 12.22
