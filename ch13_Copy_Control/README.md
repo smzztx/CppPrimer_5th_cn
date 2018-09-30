@@ -372,4 +372,198 @@ int main()
 如果未定义析构函数，将会发生内存泄漏，动态内存得不到释放，直到没有内存可以申请；如果未定义拷贝构造函数，指针将被复制，可能会多次释放同一个内存。  
 
 ## 13.25
+拷贝构造函数和拷贝赋值运算符需要使用值新建一个shared_ptr，当类销毁时，shared_ptr计数减1，当计数为0时，其指向的对象会自动销毁。  
 
+## 13.26
+StrBlob_ex26.h
+```cpp
+#ifndef STRBLOB_H_
+#define STRBLOB_H_
+
+#include <string>
+#include <initializer_list>
+#include <memory>
+#include <vector>
+#include <stdexcept>
+
+class ConstStrBlobPtr;
+
+class StrBlob
+{
+public:
+	friend class ConstStrBlobPtr;
+	typedef std::vector<std::string>::size_type size_type;
+	StrBlob();
+	StrBlob(std::initializer_list<std::string> il);
+	StrBlob(const StrBlob&);
+	StrBlob &operator=(const StrBlob&);
+	size_type size() const { return data->size(); }
+	bool empty() const { return data->empty(); }
+	void push_back(const std::string &t) { data->push_back(t); }
+	void pop_back();
+	std::string& front();
+	std::string& back();
+	const std::string& front() const;
+	const std::string& back() const;
+	ConstStrBlobPtr begin();
+	ConstStrBlobPtr end();
+private:
+	std::shared_ptr<std::vector<std::string>> data;
+	void check(size_type i, const std::string &msg) const;
+};
+
+class ConstStrBlobPtr
+{
+public:
+	ConstStrBlobPtr() : curr(0){};
+	ConstStrBlobPtr(const StrBlob &a, size_t sz = 0) : wptr(a.data), curr(sz) {}
+	std::string& deref() const;
+	ConstStrBlobPtr& incr();
+private:
+	std::shared_ptr<std::vector<std::string>> check(std::size_t, const std::string&) const;
+	std::weak_ptr<std::vector<std::string>> wptr;
+	std::size_t curr;
+};
+
+std::shared_ptr<std::vector<std::string>> ConstStrBlobPtr::check(std::size_t i, const std::string &msg) const
+{
+	auto ret = wptr.lock();
+	if(!ret)
+		throw std::runtime_error("unbound ConstStrBlobPtr");
+	if(i >= ret->size())
+		throw std::out_of_range(msg);
+	return ret;
+}
+
+std::string& ConstStrBlobPtr::deref() const
+{
+	auto p = check(curr, "dereference past end");
+	return (*p)[curr];
+}
+
+ConstStrBlobPtr& ConstStrBlobPtr::incr()
+{
+	check(curr, "increment past end of ConstStrBlobPtr");
+	++curr;
+	return *this;
+}
+
+StrBlob::StrBlob() : data(std::make_shared<std::vector<std::string>>()){}
+StrBlob::StrBlob(std::initializer_list<std::string> il) : data(std::make_shared<std::vector<std::string>>(il)){}
+StrBlob::StrBlob(const StrBlob &sb) { data = std::make_shared<std::vector<std::string>>(*sb.data); }
+StrBlob &StrBlob::operator=(const StrBlob &sb) { data = std::make_shared<std::vector<std::string>>(*sb.data); return *this; }
+
+void StrBlob::check(size_type i, const std::string &msg) const
+{
+	if(i >= data->size())
+		throw std::out_of_range(msg);
+}
+
+std::string & StrBlob::front()
+{
+	check(0, "front on empty StrBlob");
+	return data->front();
+}
+
+std::string & StrBlob::back()
+{
+	check(0, "back on empty StrBlob");
+	return data->back();
+}
+
+const std::string& StrBlob::front() const
+{
+	check(0, "front on empty StrBlob");
+	return data->front();
+}
+
+const std::string& StrBlob::back() const
+{
+	check(0, "back on empty StrBlob");
+	return data->back();
+}
+
+void StrBlob::pop_back()
+{
+	check(0, "pop_back on empty StrBlob");
+	data->pop_back();
+}
+
+ConstStrBlobPtr StrBlob::begin() { return ConstStrBlobPtr(*this); }
+
+ConstStrBlobPtr StrBlob::end()
+{
+	auto ret = ConstStrBlobPtr(*this, data->size());
+	return ret;
+}
+
+#endif
+```
+
+ex26.cpp
+```cpp
+#include "StrBlob_ex26.h"
+#include <iostream>
+
+int main()
+{
+	StrBlob b1 = {"a", "an", "the"};
+	StrBlob b2 = b1;
+
+	return 0;
+}
+```
+
+## 13.27
+HasPtr_ex27.h
+```cpp
+#ifndef HASPTR_EX11_H
+#define HASPTR_EX11_H
+
+#include <string>
+
+class HasPtr {
+public:
+    HasPtr(const std::string &s = std::string()) : ps(new std::string(s)), i(0), use(new std::size_t(1)) { }
+    HasPtr(const HasPtr &hp) : ps(new std::string(*hp.ps)), i(hp.i) { ++*use;}
+    HasPtr& operator=(const HasPtr &rhs_hp) {
+        ++*rhs_hp.use;
+        if(--*use == 0)
+        {
+            delete ps;
+            delete use;
+        }
+        ps = rhs_hp.ps;
+        i = rhs_hp.i;
+        use = rhs_hp.use;
+        return *this;
+    }
+    ~HasPtr()
+    {
+        if(--*use == 0)
+        {
+            delete ps;
+            delete use;
+        }
+    }
+private:
+    std::string *ps;
+    int i;
+    std::size_t *use;
+};
+
+#endif
+```
+ex27.cpp
+```cpp
+#include "HasPtr_ex27.h"
+
+int main()
+{
+	HasPtr hp("aaa");
+
+	return 0;
+}
+```
+
+## 13.28
