@@ -567,3 +567,221 @@ int main()
 ```
 
 ## 13.28
+ex13_28.h
+```cpp
+//
+//  ex13_28.h
+//  Exercise 13.28
+//
+//  Created by pezy on 1/20/15.
+//
+//  Given the following classes, implement a default constructor and the necessary copy-control members.
+
+#ifndef CP5_ex13_28_h
+#define CP5_ex13_28_h
+
+#include <string>
+using std::string;
+
+class TreeNode {
+public:
+    TreeNode() : value(string()), count(new int(1)), left(nullptr), right(nullptr) { }
+    TreeNode(const TreeNode &rhs) : value(rhs.value), count(rhs.count), left(rhs.left), right(rhs.right) { ++*count; }
+    TreeNode& operator=(const TreeNode &rhs);
+    ~TreeNode() {
+        if (--*count == 0) {
+            delete left;
+            delete right;
+            delete count;
+        }
+    }
+
+private:
+    std::string value;
+    int         *count;
+    TreeNode    *left;
+    TreeNode    *right;
+};
+
+class BinStrTree {
+public:
+    BinStrTree() : root(new TreeNode()) { }
+    BinStrTree(const BinStrTree &bst) : root(new TreeNode(*bst.root)) { }
+    BinStrTree& operator=(const BinStrTree &bst);
+    ~BinStrTree() { delete root; }
+
+private:
+    TreeNode *root;
+};
+
+#endif
+```
+
+ex28.cpp
+```cpp
+//
+//  ex13_28.cpp
+//  Exercise 13.28
+//
+//  Created by pezy on 1/20/15.
+//
+//  Given the following classes, implement a default constructor and the necessary copy-control members.
+
+#include "ex13_28.h"
+
+TreeNode& TreeNode::operator=(const TreeNode &rhs)
+{
+    ++*rhs.count;
+    if (--*count == 0) {
+        delete left;
+        delete right;
+        delete count;
+    }
+    value = rhs.value;
+    left = rhs.left;
+    right = rhs.right;
+    count = rhs.count;
+    return *this;
+}
+
+BinStrTree& BinStrTree::operator=(const BinStrTree &bst)
+{
+    TreeNode *new_root = new TreeNode(*bst.root);
+    delete root;
+    root = new_root;
+    return *this;
+}
+
+int main()
+{
+    return 0;
+}
+```
+
+## 13.29
+函数的参数不一样，调用的函数不一样。  
+
+## 13.30
+HasPtr_ex30.h
+```cpp
+#ifndef HASPTR_EX11_H
+#define HASPTR_EX11_H
+
+#include <string>
+#include <iostream>
+
+class HasPtr {
+friend void swap(HasPtr&, HasPtr&);
+public:
+    HasPtr(const std::string &s = std::string()) : ps(new std::string(s)), i(0) { }
+    HasPtr(const HasPtr &hp) : ps(new std::string(*hp.ps)), i(hp.i) { }
+    HasPtr& operator=(const HasPtr &rhs_hp) {
+        auto newp = new std::string(*rhs_hp.ps);
+        delete ps;
+        ps = newp;
+        i = rhs_hp.i;
+        return *this;
+    }
+    ~HasPtr()
+    {
+        delete ps;
+    }
+private:
+    std::string *ps;
+    int i;
+};
+
+inline void swap(HasPtr &lhs, HasPtr &rhs)
+{
+    using std::swap;
+    swap(lhs.ps, rhs.ps);
+    swap(lhs.i, rhs.i);
+    std::cout << "swap" << std::endl;
+}
+
+#endif
+```
+
+ex39.cpp
+```cpp
+#include "HasPtr_ex30.h"
+#include <iostream>
+
+int main()
+{
+	HasPtr hp1("aaa"),hp2("bbb");
+	swap(hp1,hp2);
+	std::cout << "main" << std::endl;
+
+	return 0;
+}
+```
+
+## 13.31
+HasPtr_ex31.h
+```cpp
+#ifndef HASPTR_EX11_H
+#define HASPTR_EX11_H
+
+#include <string>
+#include <iostream>
+
+class HasPtr {
+friend void swap(HasPtr&, HasPtr&);
+friend bool operator<(const HasPtr&, const HasPtr&);
+public:
+    HasPtr(const std::string &s = std::string()) : ps(new std::string(s)), i(0) { }
+    HasPtr(const HasPtr &hp) : ps(new std::string(*hp.ps)), i(hp.i) { }
+    HasPtr& operator=(const HasPtr &rhs_hp) {
+        auto newp = new std::string(*rhs_hp.ps);
+        delete ps;
+        ps = newp;
+        i = rhs_hp.i;
+        return *this;
+    }
+    ~HasPtr()
+    {
+        delete ps;
+    }
+private:
+    std::string *ps;
+    int i;
+};
+
+inline void swap(HasPtr &lhs, HasPtr &rhs)
+{
+    using std::swap;
+    swap(lhs.ps, rhs.ps);
+    swap(lhs.i, rhs.i);
+    std::cout << "swap" << std::endl;
+}
+
+bool operator<(const HasPtr &lhs, const HasPtr &rhs)
+{
+    std::cout << "<" << std::endl;
+    return *lhs.ps < *rhs.ps;
+}
+
+#endif
+```
+
+ex31.cpp
+```cpp
+#include "HasPtr_ex31.h"
+#include <vector>
+#include <algorithm>
+
+int main()
+{
+	HasPtr hp1("aaa"),hp2("bbb");
+	std::vector<HasPtr> vh{hp1, hp2};
+	std::sort(vh.begin(), vh.end());
+
+	return 0;
+}
+```
+
+## 13.32
+不会，类指针本身就是指针交换，没有内存分配。  
+
+## 13.33
