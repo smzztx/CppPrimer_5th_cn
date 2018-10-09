@@ -4,6 +4,8 @@
 #include <string>
 #include <set>
 
+class Folder;
+
 class Message
 {
 	friend class Folder;
@@ -22,6 +24,23 @@ private:
 	void remove_from_Folders();
 	void addFldr(Folder *f) { folders.insert(f); }
 	void remFldr(Folder *f) { folders.erase(f); }
+};
+
+class Folder
+{
+	friend void swap(Folder&, Folder&);
+	friend class Message;
+public:
+	Folder() = default;
+	Folder(const Folder &);
+	Folder& operator=(const Folder&);
+	~Folder();
+private:
+	std::set<Message*> msgs;
+	void add_to_Message(const Folder&);
+	void remove_from_Message();
+	void addMsg(Message *m) { msgs.insert(m); }
+	void remMsg(Message *m) { msgs.erase(m); }
 };
 
 void Message::save(Folder &f)
@@ -64,6 +83,51 @@ Message& Message::operator=(const Message &rhs)
 	contents = rhs.contents;
 	folders = rhs.folders;
 	add_to_Folders(rhs);
+	return *this;
+}
+
+// void swap(Message &lhs, Message &rhs)
+// {
+// 	using std::swap;
+// 	for(auto f : lhs.folders)
+// 		f->remMsg(&lhs);
+// 	for(auto f : rhs.folders)
+// 		f->remMsg(&rhs);
+// 	swap(lhs.folders, rhs.folders);
+// 	swap(lhs.contents, rhs.contents);
+// 	for(auto f : lhs.folders)
+// 		f->addMsg(&lhs);
+// 	for(auto f : rhs.folders)
+// 		f->addMsg(&rhs);
+// }
+
+void Folder::add_to_Message(const Folder &f)
+{
+	for(auto m : f.msgs)
+		m->addFldr(this);
+}
+
+Folder::Folder(const Folder &f) : msgs(f.msgs)
+{
+	add_to_Message(f);
+}
+
+void Folder::remove_from_Message()
+{
+	for(auto m : msgs)
+		m->remFldr(this);
+}
+
+Folder::~Folder()
+{
+	remove_from_Message();
+}
+
+Folder &Folder::operator=(const Folder &rhs)
+{
+	remove_from_Message();
+	msgs = rhs.msgs;
+	add_to_Message(rhs);
 	return *this;
 }
 

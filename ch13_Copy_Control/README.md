@@ -794,13 +794,14 @@ Message_ex34.h
 #define MESSAGE_H_
 
 #include <string>
+#include <set>
 
 class Message
 {
-friend class Folder;
-friend void swap(Message&, Message&);
+	friend class Folder;
+	friend void swap(Message&, Message&);
 public:
-	explicit Message(const std::string &str = "") : contents(str);
+	explicit Message(const std::string &str = "") : contents(str) { };
 	Message(const Message&);
 	Message& operator=(const Message&);
 	~Message();
@@ -811,6 +812,8 @@ private:
 	std::set<Folder*> folders;
 	void add_to_Folders(const Message&);
 	void remove_from_Folders();
+	void addFldr(Folder *f) { folders.insert(f); }
+	void remFldr(Folder *f) { folders.erase(f); }
 };
 
 void Message::save(Folder &f)
@@ -831,7 +834,7 @@ void Message::add_to_Folders(const Message &m)
 		f->addMsg(this);
 }
 
-void Message::Message(const Message & m) : contents(m.contents), folders(m.folders)
+Message::Message(const Message & m) : contents(m.contents), folders(m.folders)
 {
 	add_to_Folders(m);
 }
@@ -856,20 +859,164 @@ Message& Message::operator=(const Message &rhs)
 	return *this;
 }
 
-void swap(Message &lhs, Message &rhs)
+#endif
+```
+
+## 13.35
+将不能正确拷贝，Message中保存的Folder信息与Folder中保存的Message信息不统一。  
+
+## 13.36
+```cpp
+#ifndef MESSAGE_H_
+#define MESSAGE_H_
+
+#include <string>
+#include <set>
+
+class Folder;
+
+class Message
 {
-	using std::swap;
-	for(auto f : lhs.folders)
-		f->remMsg(&lhs);
-	for(auto f : rhs.folders)
-		f->remMsg(&rhs);
-	swap(lhs.folders, rhs.folders);
-	swap(lhs.contents, rhs.contents);
-	for(auto f : lhs.folders)
-		f->addMsg(&lhs);
-	for(auto f : rhs.folders)
-		f->addMsg(&rhs);
+	friend class Folder;
+	friend void swap(Message&, Message&);
+public:
+	explicit Message(const std::string &str = "") : contents(str) { };
+	Message(const Message&);
+	Message& operator=(const Message&);
+	~Message();
+	void save(Folder&);
+	void remove(Folder&);
+private:
+	std::string contents;
+	std::set<Folder*> folders;
+	void add_to_Folders(const Message&);
+	void remove_from_Folders();
+	void addFldr(Folder *f) { folders.insert(f); }
+	void remFldr(Folder *f) { folders.erase(f); }
+};
+
+class Folder
+{
+	friend void swap(Folder&, Folder&);
+	friend class Message;
+public:
+	Folder() = default;
+	Folder(const Folder &);
+	Folder& operator=(const Folder&);
+	~Folder();
+private:
+	std::set<Message*> msgs;
+	void add_to_Message(const Folder&);
+	void remove_from_Message();
+	void addMsg(Message *m) { msgs.insert(m); }
+	void remMsg(Message *m) { msgs.erase(m); }
+};
+
+void Message::save(Folder &f)
+{
+	folders.insert(&f);
+	f.addMsg(this);
+}
+
+void Message::remove(Folder &f)
+{
+	folders.erase(&f);
+	f.remMsg(this);
+}
+
+void Message::add_to_Folders(const Message &m)
+{
+	for(auto f : m.folders)
+		f->addMsg(this);
+}
+
+Message::Message(const Message & m) : contents(m.contents), folders(m.folders)
+{
+	add_to_Folders(m);
+}
+
+void Message::remove_from_Folders()
+{
+	for(auto f : folders)
+		f->remMsg(this);
+}
+
+Message::~Message()
+{
+	remove_from_Folders();
+}
+
+Message& Message::operator=(const Message &rhs)
+{
+	remove_from_Folders();
+	contents = rhs.contents;
+	folders = rhs.folders;
+	add_to_Folders(rhs);
+	return *this;
+}
+
+// void swap(Message &lhs, Message &rhs)
+// {
+// 	using std::swap;
+// 	for(auto f : lhs.folders)
+// 		f->remMsg(&lhs);
+// 	for(auto f : rhs.folders)
+// 		f->remMsg(&rhs);
+// 	swap(lhs.folders, rhs.folders);
+// 	swap(lhs.contents, rhs.contents);
+// 	for(auto f : lhs.folders)
+// 		f->addMsg(&lhs);
+// 	for(auto f : rhs.folders)
+// 		f->addMsg(&rhs);
+// }
+
+void Folder::add_to_Message(const Folder &f)
+{
+	for(auto m : f.msgs)
+		m->addFldr(this);
+}
+
+Folder::Folder(const Folder &f) : msgs(f.msgs)
+{
+	add_to_Message(f);
+}
+
+void Folder::remove_from_Message()
+{
+	for(auto m : msgs)
+		m->remFldr(this);
+}
+
+Folder::~Folder()
+{
+	remove_from_Message();
+}
+
+Folder &Folder::operator=(const Folder &rhs)
+{
+	remove_from_Message();
+	msgs = rhs.msgs;
+	add_to_Message(rhs);
+	return *this;
 }
 
 #endif
 ```
+
+ex36.cpp
+```cpp
+#include "Message_ex36.h"
+
+int main()
+{
+	return 0;
+}
+```
+
+## 13.37
+同上。  
+
+## 13.38
+动态内存分配时用拷贝和交换比较好，本题中，交换是自定义的，会清除Forder中的Message再添加，因此拷贝和交换都会造成额外的消耗。  
+
+## 13.39
