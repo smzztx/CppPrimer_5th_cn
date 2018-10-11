@@ -4,12 +4,12 @@
 #include <string>
 #include <utility>
 #include <memory>
-#include <initializer_list>
 
 class StrVec
 {
 public:
 	StrVec() : elements(nullptr), first_free(nullptr), cap(nullptr) { }
+	StrVec(std::initializer_list<std::string>);
 	StrVec(const StrVec&);
 	StrVec &operator=(const StrVec&);
 	~StrVec();
@@ -31,6 +31,13 @@ private:
 	std::string *first_free;
 	std::string *cap;
 };
+
+StrVec::StrVec(std::initializer_list<std::string> il)
+{
+	auto newdata = alloc_n_copy(il.begin(), il.end());
+	elements = newdata.first;
+	first_free = cap = newdata.second;
+}
 
 void StrVec::push_back(const std::string &s)
 {
