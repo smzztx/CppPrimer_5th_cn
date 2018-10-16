@@ -1309,3 +1309,283 @@ int main()
 first_free为尾后指针，如果使用前置递增会空出一个位置。  
 
 ## 13.42
+TextQuery_ex42.h
+```cpp
+#ifndef TEXTQUERY_H_
+#define TEXTQUERY_H_
+
+#include <string>
+// #include <vector>
+#include "StrVec_ex40.h"
+#include <map>
+#include <fstream>
+#include <sstream>
+#include <set>
+#include <memory>
+#include <iostream>
+#include <algorithm>
+#include <iterator>
+
+
+class QueryResult;
+
+class TextQuery
+{
+public:
+	using line_no = size_t;
+	TextQuery(std::ifstream&);
+	QueryResult query(const std::string&) const;
+private:
+	std::shared_ptr<StrVec> file;
+	std::map<std::string, std::shared_ptr<std::set<line_no>>> wm;
+};
+
+class QueryResult
+{
+	friend std::ostream& print(std::ostream&, const QueryResult&);
+public:
+	QueryResult(std::string s, std::shared_ptr<std::set<TextQuery::line_no>> p, std::shared_ptr<StrVec> f) : sought(s), lines(p), file(f) { }
+private:
+	std::string sought;
+	std::shared_ptr<std::set<TextQuery::line_no>> lines;
+	std::shared_ptr<StrVec> file;
+};
+
+TextQuery::TextQuery(std::ifstream &ifs) : file(new StrVec)
+{
+	std::string text;
+
+	while(std::getline(ifs, text))
+	{
+		file->push_back(text);
+		int n = file->size() - 1;
+		std::istringstream line(text);
+		std::string text;
+		while(line >> text)
+		{
+			std::string word;
+			std::copy_if(text.begin(), text.end(), std::back_inserter(word), isalpha);
+			// std::cout << word << std::endl;
+			auto &lines = wm[word];
+			if(!lines)
+				lines.reset(new std::set<line_no>);
+			lines->insert(n);
+		}
+	}
+}
+
+QueryResult TextQuery::query(const std::string &sought) const
+{
+	static std::shared_ptr<std::set<TextQuery::line_no>> nodata(new std::set<TextQuery::line_no>);
+	auto loc = wm.find(sought);
+	if(loc == wm.end())
+		return QueryResult(sought, nodata, file);
+	else
+		return QueryResult(sought, loc->second, file);
+	// QueryResult QR;
+	// auto count = word_line.count(s);
+	// QR.count = count;
+	// auto iter = word_line.find(s);
+
+	// while(count)
+	// {
+	// 	QR.line_num.insert(iter->second);
+	// 	++iter;
+	// 	--count;
+	// }
+
+	// return QR;
+	// // for(auto iter = word_line.lower_bound(s), end = word_line.upper_bound(s); iter != end; ++iter)
+	// // {
+	// // 	line_num.insert(iter->second);
+	// // }
+}
+
+std::ostream &print(std::ostream &os, const QueryResult &qr)
+{
+	os << qr.sought << " occurs " << qr.lines->size() << " " /*<< make_plural(qr.lines->size(), "time", "s")*/ << std::endl;
+	for(auto num : *qr.lines)
+		os << "\t(line " << num + 1 << ") " << *(qr.file->begin() + num) << std::endl;
+	return os;
+}
+
+#endif
+```
+
+ex42.cpp
+```cpp
+#include <iostream>
+#include <string>
+#include "TextQuery_ex42.h"
+
+void runQueries(std::ifstream &infile)
+{
+    TextQuery tq(infile);
+    while (true) {
+        std::cout << "enter word to look for, or q to quit: ";
+        std::string s;
+        if (!(std::cin >> s) || s == "q") break;
+        print(std::cout, tq.query(s)) << std::endl;
+        // tq.query(s);
+    }
+}
+
+int main()
+{
+    std::ifstream file("../ch12_Dynamic_Memory/storyDataFile");
+    runQueries(file);
+}
+```
+
+## 13.43
+StrVec_ex43.h
+```cpp
+#ifndef STRVEC_H_
+#define STRVEC_H_
+
+#include <string>
+#include <utility>
+#include <memory>
+#include <algorithm>
+
+class StrVec
+{
+public:
+	StrVec() : elements(nullptr), first_free(nullptr), cap(nullptr) { }
+	StrVec(std::initializer_list<std::string>);
+	StrVec(const StrVec&);
+	StrVec &operator=(const StrVec&);
+	~StrVec();
+	void push_back(const std::string&);
+	size_t size() const { return first_free - elements; }
+	size_t capacity() const { return cap - elements; }
+	std::string *begin() const { return elements; }
+	std::string *end() const { return first_free; }
+	void reserve(size_t n);
+	void resize(size_t n);
+	void resize(size_t n, const std::string &s);
+private:
+	std::allocator<std::string> alloc;
+	void chk_n_alloc() { if(size() == capacity()) reallocate(); }
+	std::pair<std::string*, std::string*> alloc_n_copy(const std::string*, const std::string*);
+	void free();
+	void reallocate();
+	std::string *elements;
+	std::string *first_free;
+	std::string *cap;
+};
+
+StrVec::StrVec(std::initializer_list<std::string> il)
+{
+	auto newdata = alloc_n_copy(il.begin(), il.end());
+	elements = newdata.first;
+	first_free = cap = newdata.second;
+}
+
+void StrVec::push_back(const std::string &s)
+{
+	chk_n_alloc();
+	alloc.construct(first_free++, s);
+}
+
+std::pair<std::string*,std::string*> StrVec::alloc_n_copy(const std::string *b, const std::string *e)
+{
+	auto data = alloc.allocate(e-b);
+	return {data, uninitialized_copy(b, e, data)};
+}
+
+void StrVec::free()
+{
+	if(elements)
+	{
+		std::for_each(elements, first_free, [this](std::string &p){ alloc.destroy(&p); });
+		// for(auto p = first_free; p != elements; )
+		// 	alloc.destroy(--p);
+		alloc.deallocate(elements, cap-elements);
+	}
+}
+
+StrVec::StrVec(const StrVec &s)
+{
+	auto newdata = alloc_n_copy(s.begin(), s.end());
+	elements = newdata.first;
+	first_free = cap = newdata.second;
+}
+
+StrVec::~StrVec()
+{
+	free();
+}
+
+void StrVec::reserve(size_t n)
+{
+	if(n > capacity()) return;
+	auto newdata = alloc.allocate(n);
+	auto dest = newdata;
+	auto elem = elements;
+	for(size_t i = 0; i != size(); ++i)
+		alloc.construct(dest++, std::move(*elem++));
+	free();
+	elements = newdata;
+	first_free = dest;
+	cap = elements + n;
+}
+
+void StrVec::resize(size_t n)
+{
+	resize(n,std::string());
+}
+
+void StrVec::resize(size_t n, const std::string &s)
+{
+	if(n < size())
+	{
+		while(n < size())
+			alloc.destroy(--first_free);
+	}else if(n > size())
+	{
+		while(n > size())
+			push_back(s);
+			// alloc.construct(first_free, s);
+	}
+}
+
+StrVec &StrVec::operator=(const StrVec &rhs)
+{
+	auto data = alloc_n_copy(rhs.begin(), rhs.end());
+	free();
+	elements = data.first;
+	first_free = cap = data.second;
+	return *this;
+}
+
+void StrVec::reallocate()
+{
+	auto newcapacity = size() ? 2 * size() : 1;
+	auto newdata = alloc.allocate(newcapacity);
+	auto dest = newdata;
+	auto elem = elements;
+	for(size_t i = 0; i != size(); ++i)
+		alloc.construct(dest++, std::move(*elem++));
+	free();
+	elements = newdata;
+	first_free = dest;
+	cap = elements + newcapacity;
+}
+
+#endif
+```
+
+ex43.cpp
+```cpp
+#include "StrVec_ex43.h"
+
+int main()
+{
+	StrVec s({"aaa", "bbb"});
+
+	return 0;
+}
+```
+
+## 13.44
