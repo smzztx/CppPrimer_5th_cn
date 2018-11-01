@@ -4,6 +4,7 @@
 #include <memory>
 #include <algorithm>
 #include <cstring>
+#include <iostream>
 
 class String
 {
@@ -54,7 +55,7 @@ String::String(const String &rhs)
 	auto newstr = alloc_n_copy(rhs.begin(), rhs.end());
 	elements = newstr.first;
 	first_free = newstr.second;
-
+	std::cout << "String(const String &rhs)" << std::endl;
 }
 
 void String::free()
@@ -72,6 +73,7 @@ String& String::operator=(const String& rhs)
 	free();
 	elements = newstr.first;
 	first_free = newstr.second;
+	std::cout << "String& operator=(const String& rhs)" << std::endl;
 	return *this;
 }
 

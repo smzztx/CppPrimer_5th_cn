@@ -1589,3 +1589,334 @@ int main()
 ```
 
 ## 13.44
+String_ex44.h
+```cpp
+#ifndef STRING_H_
+#define STRING_H_
+
+#include <memory>
+#include <algorithm>
+#include <cstring>
+
+class String
+{
+public:
+	String();
+	String(const char*);
+	String(const String&);
+	String& operator=(const String&);
+	char *begin() const { return elements; }
+	char *end() const { return first_free; }
+	~String();
+private:
+	std::pair<char*, char*> alloc_n_copy(const char*, const char*);
+	void free();
+
+	std::allocator<char> alloc;
+	char *elements;
+	char *first_free;
+};
+
+std::pair<char*, char*> String::alloc_n_copy(const char *begin, const char *end)
+{
+	char *p = alloc.allocate(end - begin);
+	// for(auto iter = begin; iter != end; ++iter)
+	// 	alloc.construct(iter, *iter);
+	return{p, std::uninitialized_copy(begin, end, p)};
+}
+
+String::String(const char* cp)
+{
+	size_t n = strlen(cp);
+	auto newstr = alloc_n_copy(cp, cp + n);
+	elements = newstr.first;
+	first_free = newstr.second;
+	// char* p = alloc.allocate(n);
+
+	// for(int i = 0; i < n; ++i)
+	// 	alloc.construct(p+i, *(cp+i));
+}
+
+String::String()
+{
+	String("");
+}
+
+String::String(const String &rhs)
+{
+	auto newstr = alloc_n_copy(rhs.begin(), rhs.end());
+	elements = newstr.first;
+	first_free = newstr.second;
+
+}
+
+void String::free()
+{
+	if(elements)
+	{
+		std::for_each(elements, first_free, [this](char cp){ alloc.destroy(&cp); });
+		alloc.deallocate(elements, first_free - elements);
+	}
+}
+
+String& String::operator=(const String& rhs)
+{
+	auto newstr = alloc_n_copy(rhs.begin(), rhs.end());
+	free();
+	elements = newstr.first;
+	first_free = newstr.second;
+	return *this;
+}
+
+String::~String()
+{
+	// for(auto iter = elements; iter != first_free; )
+	// 	alloc.destroy(--iter);
+	free();
+}
+
+#endif
+```
+
+ex44.cpp
+```cpp
+#include "String_ex44.h"
+
+int main()
+{
+	return 0;
+}
+```
+
+## 13.45
+左值引用是绑定到左值上的引用，左值持久；  
+右值引用是绑定到右值上的引用，右值短暂，右值引用可以绑定到要求转换的表达式、字面值常量或是返回右值的表达式上。  
+
+## 13.46
+```cpp
+int f();
+vector<int> vi(100);
+int&& r1 = f();
+int& r2 = vi[0];
+int& r3 = r1;
+int&& r4 = vi[0] * f();
+```
+
+## 13.47
+String_ex47.h
+```cpp
+#ifndef STRING_H_
+#define STRING_H_
+
+#include <memory>
+#include <algorithm>
+#include <cstring>
+#include <iostream>
+
+class String
+{
+public:
+	String();
+	String(const char*);
+	String(const String&);
+	String& operator=(const String&);
+	char *begin() const { return elements; }
+	char *end() const { return first_free; }
+	~String();
+private:
+	std::pair<char*, char*> alloc_n_copy(const char*, const char*);
+	void free();
+
+	std::allocator<char> alloc;
+	char *elements;
+	char *first_free;
+};
+
+std::pair<char*, char*> String::alloc_n_copy(const char *begin, const char *end)
+{
+	char *p = alloc.allocate(end - begin);
+	// for(auto iter = begin; iter != end; ++iter)
+	// 	alloc.construct(iter, *iter);
+	return{p, std::uninitialized_copy(begin, end, p)};
+}
+
+String::String(const char* cp)
+{
+	size_t n = strlen(cp);
+	auto newstr = alloc_n_copy(cp, cp + n);
+	elements = newstr.first;
+	first_free = newstr.second;
+	// char* p = alloc.allocate(n);
+
+	// for(int i = 0; i < n; ++i)
+	// 	alloc.construct(p+i, *(cp+i));
+}
+
+String::String()
+{
+	String("");
+}
+
+String::String(const String &rhs)
+{
+	auto newstr = alloc_n_copy(rhs.begin(), rhs.end());
+	elements = newstr.first;
+	first_free = newstr.second;
+	std::cout << "String(const String &rhs)" << std::endl;
+}
+
+void String::free()
+{
+	if(elements)
+	{
+		std::for_each(elements, first_free, [this](char cp){ alloc.destroy(&cp); });
+		alloc.deallocate(elements, first_free - elements);
+	}
+}
+
+String& String::operator=(const String& rhs)
+{
+	auto newstr = alloc_n_copy(rhs.begin(), rhs.end());
+	free();
+	elements = newstr.first;
+	first_free = newstr.second;
+	std::cout << "String& operator=(const String& rhs)" << std::endl;
+	return *this;
+}
+
+String::~String()
+{
+	// for(auto iter = elements; iter != first_free; )
+	// 	alloc.destroy(--iter);
+	free();
+}
+
+#endif
+```
+
+ex47.cpp
+```cpp
+#include "String_ex47.h"
+
+int main()
+{
+	return 0;
+}
+```
+
+## 13.48
+String_ex47.h
+```cpp
+#ifndef STRING_H_
+#define STRING_H_
+
+#include <memory>
+#include <algorithm>
+#include <cstring>
+#include <iostream>
+
+class String
+{
+public:
+	String();
+	String(const char*);
+	String(const String&);
+	String& operator=(const String&);
+	char *begin() const { return elements; }
+	char *end() const { return first_free; }
+	~String();
+private:
+	std::pair<char*, char*> alloc_n_copy(const char*, const char*);
+	void free();
+
+	std::allocator<char> alloc;
+	char *elements;
+	char *first_free;
+};
+
+std::pair<char*, char*> String::alloc_n_copy(const char *begin, const char *end)
+{
+	char *p = alloc.allocate(end - begin);
+	// for(auto iter = begin; iter != end; ++iter)
+	// 	alloc.construct(iter, *iter);
+	return{p, std::uninitialized_copy(begin, end, p)};
+}
+
+String::String(const char* cp)
+{
+	size_t n = strlen(cp);
+	auto newstr = alloc_n_copy(cp, cp + n);
+	elements = newstr.first;
+	first_free = newstr.second;
+	// char* p = alloc.allocate(n);
+
+	// for(int i = 0; i < n; ++i)
+	// 	alloc.construct(p+i, *(cp+i));
+}
+
+String::String()
+{
+	String("");
+}
+
+String::String(const String &rhs)
+{
+	auto newstr = alloc_n_copy(rhs.begin(), rhs.end());
+	elements = newstr.first;
+	first_free = newstr.second;
+	std::cout << "String(const String &rhs)" << std::endl;
+}
+
+void String::free()
+{
+	if(elements)
+	{
+		std::for_each(elements, first_free, [this](char cp){ alloc.destroy(&cp); });
+		alloc.deallocate(elements, first_free - elements);
+	}
+}
+
+String& String::operator=(const String& rhs)
+{
+	auto newstr = alloc_n_copy(rhs.begin(), rhs.end());
+	free();
+	elements = newstr.first;
+	first_free = newstr.second;
+	std::cout << "String& operator=(const String& rhs)" << std::endl;
+	return *this;
+}
+
+String::~String()
+{
+	// for(auto iter = elements; iter != first_free; )
+	// 	alloc.destroy(--iter);
+	free();
+}
+
+#endif
+```
+
+ex48.cpp
+```cpp
+#include "String_ex47.h"
+#include <vector>
+
+int main()
+{
+	std::vector<String> v;
+	v.push_back("aaa");
+	v.push_back("bbb");
+
+	return 0;
+}
+```
+
+运行结果如下，显示被拷贝了3次（只执行了两次拷贝，vector有扩容）。  
+```sh
+$ ./ex48 
+String(const String &rhs)
+String(const String &rhs)
+String(const String &rhs)
+```
+
+## 13.49
