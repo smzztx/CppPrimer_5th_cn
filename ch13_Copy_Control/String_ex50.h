@@ -62,6 +62,7 @@ String::String(const String &rhs)
 
 String::String(String &&s) noexcept : alloc(std::move(s.alloc)), elements(std::move(s.elements)), first_free(std::move(s.first_free))
 {
+	std::cout << "String::String(String &&s) noexcept" << std::endl;
 	s.elements = s.first_free = nullptr;
 }
 
@@ -86,6 +87,7 @@ String& String::operator=(const String& rhs)
 
 String& String::operator=(String &&rhs) noexcept
 {
+	std::cout << "String& String::operator=(String &&rhs) noexcept" << std::endl;
 	if(&rhs != this)
 	{
 		free();

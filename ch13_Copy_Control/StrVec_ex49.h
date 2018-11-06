@@ -12,9 +12,9 @@ public:
 	StrVec() : elements(nullptr), first_free(nullptr), cap(nullptr) { }
 	StrVec(std::initializer_list<std::string>);
 	StrVec(const StrVec&);
-	StrVec(StrVec &&s) NOEXCEPT : alloc(std::move(s.alloc)),elements(std::move(s.elements)),first_free(std::move(s.first_free)),cap(std::move(s.cap)) { s.elements = s.first_free = s.cap = nullptr; }
+	StrVec(StrVec &&s) noexcept : alloc(std::move(s.alloc)), elements(std::move(s.elements)), first_free(std::move(s.first_free)), cap(std::move(s.cap)) { s.elements = s.first_free = s.cap = nullptr; }
 	StrVec &operator=(const StrVec&);
-	StrVec &operator=(StrVec&&);
+	StrVec &operator=(StrVec&&) noexcept;
 	~StrVec();
 	void push_back(const std::string&);
 	size_t size() const { return first_free - elements; }
@@ -119,9 +119,18 @@ StrVec &StrVec::operator=(const StrVec &rhs)
 	return *this;
 }
 
-StrVec &StrVec::operator=(const StrVec &&rhs)
+StrVec &StrVec::operator=(StrVec &&rhs) noexcept
 {
-
+	if(this != &rhs)
+	{
+		free();
+		alloc = std::move(rhs.alloc);
+		elements = std::move(rhs.elements);
+		first_free = std::move(rhs.first_free);
+		cap = std::move(rhs.cap);
+		rhs.elements = rhs.first_free = rhs.cap = nullptr;
+	}
+	return *this;
 }
 
 void StrVec::reallocate()
