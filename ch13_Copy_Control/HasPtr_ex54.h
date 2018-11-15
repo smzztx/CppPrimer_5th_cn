@@ -11,13 +11,14 @@ public:
     HasPtr(const std::string &s = std::string()) : ps(new std::string(s)), i(0) { }
     HasPtr(const HasPtr &hp) : ps(new std::string(*hp.ps)), i(hp.i) { }
     HasPtr(HasPtr &&hp) noexcept : ps(std::move(hp.ps)), i(std::move(hp.i)) { hp.ps = nullptr; }
-    HasPtr& operator=(const HasPtr &rhs_hp) {
-        auto newp = new std::string(*rhs_hp.ps);
-        delete ps;
-        ps = newp;
-        i = rhs_hp.i;
-        return *this;
-    }
+    HasPtr& operator=(HasPtr rhs);
+    // HasPtr& operator=(const HasPtr &rhs_hp) {
+    //     auto newp = new std::string(*rhs_hp.ps);
+    //     delete ps;
+    //     ps = newp;
+    //     i = rhs_hp.i;
+    //     return *this;
+    // }
     HasPtr& operator=(HasPtr &&rhs_hp) noexcept
     {
         if(this != &rhs_hp)

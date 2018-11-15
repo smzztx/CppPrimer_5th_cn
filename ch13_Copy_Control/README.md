@@ -2528,4 +2528,378 @@ hp = std::move(hp2);经过move后，是右值，移动构造函数为精确匹�
 
 ## 13.53
 交换操作需要给另一个不需要的变量赋值。  
+HasPtr_ex53.h
 ```cpp
+#ifndef HASPTR_EX11_H
+#define HASPTR_EX11_H
+
+#include <string>
+#include <iostream>
+
+class HasPtr {
+friend void swap(HasPtr&, HasPtr&);
+friend bool operator<(const HasPtr&, const HasPtr&);
+public:
+    HasPtr(const std::string &s = std::string()) : ps(new std::string(s)), i(0) { }
+    HasPtr(const HasPtr &hp) : ps(new std::string(*hp.ps)), i(hp.i) { }
+    HasPtr(HasPtr &&hp) noexcept : ps(std::move(hp.ps)), i(std::move(hp.i)) { hp.ps = nullptr; }
+    HasPtr& operator=(const HasPtr &rhs_hp) {
+        auto newp = new std::string(*rhs_hp.ps);
+        delete ps;
+        ps = newp;
+        i = rhs_hp.i;
+        return *this;
+    }
+    HasPtr& operator=(HasPtr &&rhs_hp) noexcept
+    {
+        if(this != &rhs_hp)
+        {
+            delete ps;
+            ps = std::move(rhs_hp.ps);
+            i = rhs_hp.i;
+        }
+        return *this;
+    }
+    ~HasPtr()
+    {
+        delete ps;
+    }
+private:
+    std::string *ps;
+    int i;
+};
+
+inline void swap(HasPtr &lhs, HasPtr &rhs)
+{
+    using std::swap;
+    swap(lhs.ps, rhs.ps);
+    swap(lhs.i, rhs.i);
+    std::cout << "swap" << std::endl;
+}
+
+bool operator<(const HasPtr &lhs, const HasPtr &rhs)
+{
+    std::cout << "<" << std::endl;
+    return *lhs.ps < *rhs.ps;
+}
+
+#endif
+```
+
+ex53.cpp
+```cpp
+#include "HasPtr_ex53.h"
+#include <vector>
+#include <algorithm>
+
+int main()
+{
+	HasPtr hp1("aaa"),hp2("bbb");
+	std::vector<HasPtr> vh{hp1, hp2};
+	std::sort(vh.begin(), vh.end());
+
+	return 0;
+}
+```
+
+## 13.54
+HasPtr_ex54.h
+```cpp
+#ifndef HASPTR_EX11_H
+#define HASPTR_EX11_H
+
+#include <string>
+#include <iostream>
+
+class HasPtr {
+friend void swap(HasPtr&, HasPtr&);
+friend bool operator<(const HasPtr&, const HasPtr&);
+public:
+    HasPtr(const std::string &s = std::string()) : ps(new std::string(s)), i(0) { }
+    HasPtr(const HasPtr &hp) : ps(new std::string(*hp.ps)), i(hp.i) { }
+    HasPtr(HasPtr &&hp) noexcept : ps(std::move(hp.ps)), i(std::move(hp.i)) { hp.ps = nullptr; }
+    HasPtr& operator=(HasPtr rhs);
+    // HasPtr& operator=(const HasPtr &rhs_hp) {
+    //     auto newp = new std::string(*rhs_hp.ps);
+    //     delete ps;
+    //     ps = newp;
+    //     i = rhs_hp.i;
+    //     return *this;
+    // }
+    HasPtr& operator=(HasPtr &&rhs_hp) noexcept
+    {
+        if(this != &rhs_hp)
+        {
+            delete ps;
+            ps = std::move(rhs_hp.ps);
+            i = rhs_hp.i;
+        }
+        return *this;
+    }
+    ~HasPtr()
+    {
+        delete ps;
+    }
+private:
+    std::string *ps;
+    int i;
+};
+
+inline void swap(HasPtr &lhs, HasPtr &rhs)
+{
+    using std::swap;
+    swap(lhs.ps, rhs.ps);
+    swap(lhs.i, rhs.i);
+    std::cout << "swap" << std::endl;
+}
+
+bool operator<(const HasPtr &lhs, const HasPtr &rhs)
+{
+    std::cout << "<" << std::endl;
+    return *lhs.ps < *rhs.ps;
+}
+
+#endif
+```
+
+ex54.cpp
+```cpp
+#include "HasPtr_ex54.h"
+#include <vector>
+#include <algorithm>
+
+int main()
+{
+	HasPtr hp1("aaa"),hp2("bbb");
+	std::vector<HasPtr> vh{hp1, hp2};
+	std::sort(vh.begin(), vh.end());
+
+	return 0;
+}
+```
+```sh
+error: ambiguous overload for ‘operator=’ (operand types are ‘HasPtr’ and ‘std::remove_reference<HasPtr&>::type {aka HasPtr}’)
+```
+
+## 13.55
+StrBlob_ex55.h
+```cpp
+#ifndef STRBLOB_H_
+#define STRBLOB_H_
+
+#include <string>
+#include <initializer_list>
+#include <memory>
+#include <vector>
+#include <stdexcept>
+
+class ConstStrBlobPtr;
+
+class StrBlob
+{
+public:
+	friend class ConstStrBlobPtr;
+	typedef std::vector<std::string>::size_type size_type;
+	StrBlob();
+	StrBlob(std::initializer_list<std::string> il);
+	StrBlob(const StrBlob&);
+	StrBlob &operator=(const StrBlob&);
+	size_type size() const { return data->size(); }
+	bool empty() const { return data->empty(); }
+	void push_back(const std::string &t) { data->push_back(t); }
+	void push_back(std::string &&t) { data->push_back(t); }
+	void pop_back();
+	std::string& front();
+	std::string& back();
+	const std::string& front() const;
+	const std::string& back() const;
+	ConstStrBlobPtr begin();
+	ConstStrBlobPtr end();
+private:
+	std::shared_ptr<std::vector<std::string>> data;
+	void check(size_type i, const std::string &msg) const;
+};
+
+class ConstStrBlobPtr
+{
+public:
+	ConstStrBlobPtr() : curr(0){};
+	ConstStrBlobPtr(const StrBlob &a, size_t sz = 0) : wptr(a.data), curr(sz) {}
+	std::string& deref() const;
+	ConstStrBlobPtr& incr();
+private:
+	std::shared_ptr<std::vector<std::string>> check(std::size_t, const std::string&) const;
+	std::weak_ptr<std::vector<std::string>> wptr;
+	std::size_t curr;
+};
+
+std::shared_ptr<std::vector<std::string>> ConstStrBlobPtr::check(std::size_t i, const std::string &msg) const
+{
+	auto ret = wptr.lock();
+	if(!ret)
+		throw std::runtime_error("unbound ConstStrBlobPtr");
+	if(i >= ret->size())
+		throw std::out_of_range(msg);
+	return ret;
+}
+
+std::string& ConstStrBlobPtr::deref() const
+{
+	auto p = check(curr, "dereference past end");
+	return (*p)[curr];
+}
+
+ConstStrBlobPtr& ConstStrBlobPtr::incr()
+{
+	check(curr, "increment past end of ConstStrBlobPtr");
+	++curr;
+	return *this;
+}
+
+StrBlob::StrBlob() : data(std::make_shared<std::vector<std::string>>()){}
+StrBlob::StrBlob(std::initializer_list<std::string> il) : data(std::make_shared<std::vector<std::string>>(il)){}
+StrBlob::StrBlob(const StrBlob &sb) { data = std::make_shared<std::vector<std::string>>(*sb.data); }
+StrBlob &StrBlob::operator=(const StrBlob &sb) { data = std::make_shared<std::vector<std::string>>(*sb.data); return *this; }
+
+void StrBlob::check(size_type i, const std::string &msg) const
+{
+	if(i >= data->size())
+		throw std::out_of_range(msg);
+}
+
+std::string & StrBlob::front()
+{
+	check(0, "front on empty StrBlob");
+	return data->front();
+}
+
+std::string & StrBlob::back()
+{
+	check(0, "back on empty StrBlob");
+	return data->back();
+}
+
+const std::string& StrBlob::front() const
+{
+	check(0, "front on empty StrBlob");
+	return data->front();
+}
+
+const std::string& StrBlob::back() const
+{
+	check(0, "back on empty StrBlob");
+	return data->back();
+}
+
+void StrBlob::pop_back()
+{
+	check(0, "pop_back on empty StrBlob");
+	data->pop_back();
+}
+
+ConstStrBlobPtr StrBlob::begin() { return ConstStrBlobPtr(*this); }
+
+ConstStrBlobPtr StrBlob::end()
+{
+	auto ret = ConstStrBlobPtr(*this, data->size());
+	return ret;
+}
+
+#endif
+```
+
+ex55.cpp
+```cpp
+#include "StrBlob_ex55.h"
+#include <iostream>
+
+int main()
+{
+	StrBlob b1 = {"a", "an", "the"};
+	StrBlob b2 = b1;
+
+	return 0;
+}
+```
+
+## 13.56
+ret是一个左值，使用ret.sorted()时，调用的是左值sorted，还是本函数，这会导致进入死循环，堆栈溢出。  
+
+## 13.57
+可以使用，Foo(*this)是右值，会调用右值版本sorted。  
+
+## 13.58
+Foo_ex58.h
+```cpp
+#ifndef FOO_H_
+#define FOO_H_
+
+#include <algorithm>
+#include <iostream>
+
+class Foo
+{
+public:
+	Foo sorted() &&;
+	Foo sorted() const &;
+private:
+	std::vector<int> data;
+};
+
+Foo Foo::sorted() &&
+{
+	std::cout << "Foo Foo::sorted() &&" << std::endl;
+	sort(data.begin(), data.end());
+	return *this;
+}
+
+Foo Foo::sorted() const &
+{
+	std::cout << "Foo Foo::sorted() const &" << std::endl;
+	
+	// Foo ret(*this);
+	// sort(ret.data.begin(), ret.data.end());
+	// return ret;
+
+	//56
+	// Foo ret(*this);
+	// return ret.sorted();
+
+	//57
+	return Foo(*this).sorted();
+}
+
+#endif
+```
+
+ex58.cpp
+```cpp
+#include "Foo_ex58.h"
+
+int main()
+{
+	Foo foo;
+	foo.sorted();
+
+	return 0;
+}
+```
+
+ex56运行结果:
+```sh
+$ ./ex58 
+Foo Foo::sorted() const &
+...
+...
+...
+Foo Foo::sorted() const &
+Foo Foo::sorted() const &
+Segmentation fault (core dumped)
+```
+
+ex57运行结果:
+```sh
+$ ./ex58 
+Foo Foo::sorted() const &
+Foo Foo::sorted() &&
+```
