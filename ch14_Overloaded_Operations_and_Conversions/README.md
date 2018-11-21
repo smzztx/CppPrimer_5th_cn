@@ -466,3 +466,495 @@ operator+需要创建新对象；operator+=只使用一个对象。调用operato
 参见14.5，暂不添加。
 
 ## 14.16
+StrBlob_ex16.h
+```cpp
+#ifndef STRBLOB_H_
+#define STRBLOB_H_
+
+#include <string>
+#include <initializer_list>
+#include <memory>
+#include <vector>
+#include <stdexcept>
+
+class ConstStrBlobPtr;
+
+class StrBlob
+{
+friend class ConstStrBlobPtr;
+friend bool operator==(const StrBlob &lhs, const StrBlob &rhs);
+friend bool operator!=(const StrBlob &lhs, const StrBlob &rhs);
+public:
+	typedef std::vector<std::string>::size_type size_type;
+	StrBlob();
+	StrBlob(std::initializer_list<std::string> il);
+	StrBlob(const StrBlob&);
+	StrBlob &operator=(const StrBlob&);
+	size_type size() const { return data->size(); }
+	bool empty() const { return data->empty(); }
+	void push_back(const std::string &t) { data->push_back(t); }
+	void push_back(std::string &&t) { data->push_back(t); }
+	void pop_back();
+	std::string& front();
+	std::string& back();
+	const std::string& front() const;
+	const std::string& back() const;
+	ConstStrBlobPtr begin();
+	ConstStrBlobPtr end();
+private:
+	std::shared_ptr<std::vector<std::string>> data;
+	void check(size_type i, const std::string &msg) const;
+};
+
+class ConstStrBlobPtr
+{
+friend bool operator==(const ConstStrBlobPtr &lhs, const ConstStrBlobPtr &rhs);
+friend bool operator!=(const ConstStrBlobPtr &lhs, const ConstStrBlobPtr &rhs);
+public:
+	ConstStrBlobPtr() : curr(0){};
+	ConstStrBlobPtr(const StrBlob &a, size_t sz = 0) : wptr(a.data), curr(sz) {}
+	std::string& deref() const;
+	ConstStrBlobPtr& incr();
+private:
+	std::shared_ptr<std::vector<std::string>> check(std::size_t, const std::string&) const;
+	std::weak_ptr<std::vector<std::string>> wptr;
+	std::size_t curr;
+};
+
+std::shared_ptr<std::vector<std::string>> ConstStrBlobPtr::check(std::size_t i, const std::string &msg) const
+{
+	auto ret = wptr.lock();
+	if(!ret)
+		throw std::runtime_error("unbound ConstStrBlobPtr");
+	if(i >= ret->size())
+		throw std::out_of_range(msg);
+	return ret;
+}
+
+std::string& ConstStrBlobPtr::deref() const
+{
+	auto p = check(curr, "dereference past end");
+	return (*p)[curr];
+}
+
+ConstStrBlobPtr& ConstStrBlobPtr::incr()
+{
+	check(curr, "increment past end of ConstStrBlobPtr");
+	++curr;
+	return *this;
+}
+
+StrBlob::StrBlob() : data(std::make_shared<std::vector<std::string>>()){}
+StrBlob::StrBlob(std::initializer_list<std::string> il) : data(std::make_shared<std::vector<std::string>>(il)){}
+StrBlob::StrBlob(const StrBlob &sb) { data = std::make_shared<std::vector<std::string>>(*sb.data); }
+StrBlob &StrBlob::operator=(const StrBlob &sb) { data = std::make_shared<std::vector<std::string>>(*sb.data); return *this; }
+
+void StrBlob::check(size_type i, const std::string &msg) const
+{
+	if(i >= data->size())
+		throw std::out_of_range(msg);
+}
+
+std::string & StrBlob::front()
+{
+	check(0, "front on empty StrBlob");
+	return data->front();
+}
+
+std::string & StrBlob::back()
+{
+	check(0, "back on empty StrBlob");
+	return data->back();
+}
+
+const std::string& StrBlob::front() const
+{
+	check(0, "front on empty StrBlob");
+	return data->front();
+}
+
+const std::string& StrBlob::back() const
+{
+	check(0, "back on empty StrBlob");
+	return data->back();
+}
+
+void StrBlob::pop_back()
+{
+	check(0, "pop_back on empty StrBlob");
+	data->pop_back();
+}
+
+ConstStrBlobPtr StrBlob::begin() { return ConstStrBlobPtr(*this); }
+
+ConstStrBlobPtr StrBlob::end()
+{
+	auto ret = ConstStrBlobPtr(*this, data->size());
+	return ret;
+}
+
+bool operator==(const StrBlob &lhs, const StrBlob &rhs)
+{
+	return *lhs.data == *rhs.data;
+}
+
+bool operator!=(const StrBlob &lhs, const StrBlob &rhs)
+{
+	return !(lhs == rhs);
+}
+
+bool operator==(const ConstStrBlobPtr &lhs, const ConstStrBlobPtr &rhs)
+{
+	auto lret = lhs.wptr.lock(), rret = rhs.wptr.lock();
+
+	return lret == rret && lhs.curr == rhs.curr;
+}
+
+bool operator!=(const ConstStrBlobPtr &lhs, const ConstStrBlobPtr &rhs)
+{
+	return !(lhs == rhs);
+}
+
+#endif
+```
+  
+ex16_1.cpp  
+```cpp
+#include "StrBlob_ex16.h"
+#include <iostream>
+
+int main()
+{
+	StrBlob b1 = {"a", "an", "the"};
+	StrBlob b2 = b1;
+
+	return 0;
+}
+```
+
+StrVec_ex16.h
+```cpp
+#ifndef STRVEC_H_
+#define STRVEC_H_
+
+#include <string>
+#include <utility>
+#include <memory>
+#include <algorithm>
+
+class StrVec
+{
+friend bool operator==(StrVec &lhs, StrVec &rhs);
+friend bool operator!=(StrVec &lhs, StrVec &rhs);
+public:
+	StrVec() : elements(nullptr), first_free(nullptr), cap(nullptr) { }
+	StrVec(std::initializer_list<std::string>);
+	StrVec(const StrVec&);
+	StrVec(StrVec &&s) noexcept : alloc(std::move(s.alloc)), elements(std::move(s.elements)), first_free(std::move(s.first_free)), cap(std::move(s.cap)) { s.elements = s.first_free = s.cap = nullptr; }
+	StrVec &operator=(const StrVec&);
+	StrVec &operator=(StrVec&&) noexcept;
+	~StrVec();
+	void push_back(const std::string&);
+	size_t size() const { return first_free - elements; }
+	size_t capacity() const { return cap - elements; }
+	std::string *begin() const { return elements; }
+	std::string *end() const { return first_free; }
+	void reserve(size_t n);
+	void resize(size_t n);
+	void resize(size_t n, const std::string &s);
+private:
+	std::allocator<std::string> alloc;
+	void chk_n_alloc() { if(size() == capacity()) reallocate(); }
+	std::pair<std::string*, std::string*> alloc_n_copy(const std::string*, const std::string*);
+	void free();
+	void reallocate();
+	std::string *elements;
+	std::string *first_free;
+	std::string *cap;
+};
+
+StrVec::StrVec(std::initializer_list<std::string> il)
+{
+	auto newdata = alloc_n_copy(il.begin(), il.end());
+	elements = newdata.first;
+	first_free = cap = newdata.second;
+}
+
+void StrVec::push_back(const std::string &s)
+{
+	chk_n_alloc();
+	alloc.construct(first_free++, s);
+}
+
+std::pair<std::string*,std::string*> StrVec::alloc_n_copy(const std::string *b, const std::string *e)
+{
+	auto data = alloc.allocate(e-b);
+	return {data, uninitialized_copy(b, e, data)};
+}
+
+void StrVec::free()
+{
+	if(elements)
+	{
+		std::for_each(elements, first_free, [this](std::string &p){ alloc.destroy(&p); });
+		// for(auto p = first_free; p != elements; )
+		// 	alloc.destroy(--p);
+		alloc.deallocate(elements, cap-elements);
+	}
+}
+
+StrVec::StrVec(const StrVec &s)
+{
+	auto newdata = alloc_n_copy(s.begin(), s.end());
+	elements = newdata.first;
+	first_free = cap = newdata.second;
+}
+
+StrVec::~StrVec()
+{
+	free();
+}
+
+void StrVec::reserve(size_t n)
+{
+	if(n > capacity()) return;
+	auto newdata = alloc.allocate(n);
+	auto dest = newdata;
+	auto elem = elements;
+	for(size_t i = 0; i != size(); ++i)
+		alloc.construct(dest++, std::move(*elem++));
+	free();
+	elements = newdata;
+	first_free = dest;
+	cap = elements + n;
+}
+
+void StrVec::resize(size_t n)
+{
+	resize(n,std::string());
+}
+
+void StrVec::resize(size_t n, const std::string &s)
+{
+	if(n < size())
+	{
+		while(n < size())
+			alloc.destroy(--first_free);
+	}else if(n > size())
+	{
+		while(n > size())
+			push_back(s);
+			// alloc.construct(first_free, s);
+	}
+}
+
+StrVec &StrVec::operator=(const StrVec &rhs)
+{
+	auto data = alloc_n_copy(rhs.begin(), rhs.end());
+	free();
+	elements = data.first;
+	first_free = cap = data.second;
+	return *this;
+}
+
+StrVec &StrVec::operator=(StrVec &&rhs) noexcept
+{
+	if(this != &rhs)
+	{
+		free();
+		alloc = std::move(rhs.alloc);
+		elements = std::move(rhs.elements);
+		first_free = std::move(rhs.first_free);
+		cap = std::move(rhs.cap);
+		rhs.elements = rhs.first_free = rhs.cap = nullptr;
+	}
+	return *this;
+}
+
+void StrVec::reallocate()
+{
+	auto newcapacity = size() ? 2 * size() : 1;
+	auto newdata = alloc.allocate(newcapacity);
+	auto dest = newdata;
+	auto elem = elements;
+	for(size_t i = 0; i != size(); ++i)
+		alloc.construct(dest++, std::move(*elem++));
+	free();
+	elements = newdata;
+	first_free = dest;
+	cap = elements + newcapacity;
+}
+
+bool operator==(StrVec &lhs, StrVec &rhs)
+{
+	return lhs.size() == rhs.size() && std::equal(lhs.begin(), lhs.end(), rhs.begin());
+}
+
+bool operator!=(StrVec &lhs, StrVec &rhs)
+{
+	return !(lhs == rhs);
+}
+
+#endif
+```
+  
+ex16_2.cpp  
+```cpp
+#include "StrVec_ex16.h"
+
+int main()
+{
+	StrVec s({"aaa", "bbb"});
+
+	return 0;
+}
+```
+  
+String_ex16.h  
+```cpp
+#ifndef STRING_H_
+#define STRING_H_
+
+#include <memory>
+#include <algorithm>
+#include <cstring>
+#include <iostream>
+
+class String
+{
+friend std::ostream &operator<<(std::ostream &os, const String &s);
+friend bool operator==(const String lhs, const String rhs);
+friend bool operator!=(const String lhs, const String rhs);
+public:
+	String();
+	String(const char*);
+	String(const String&);
+	String(String&&) noexcept;
+	String& operator=(const String&);
+	String& operator=(String&&) noexcept;
+	char *begin() const { return elements; }
+	char *end() const { return first_free; }
+	~String();
+private:
+	std::pair<char*, char*> alloc_n_copy(const char*, const char*);
+	void free();
+
+	std::allocator<char> alloc;
+	char *elements;
+	char *first_free;
+};
+
+std::pair<char*, char*> String::alloc_n_copy(const char *begin, const char *end)
+{
+	char *p = alloc.allocate(end - begin);
+	return{p, std::uninitialized_copy(begin, end, p)};
+}
+
+String::String(const char* cp)
+{
+	size_t n = strlen(cp);
+	auto newstr = alloc_n_copy(cp, cp + n);
+	elements = newstr.first;
+	first_free = newstr.second;
+}
+
+String::String()
+{
+	String("");
+}
+
+String::String(const String &rhs)
+{
+	auto newstr = alloc_n_copy(rhs.begin(), rhs.end());
+	elements = newstr.first;
+	first_free = newstr.second;
+	std::cout << "String(const String &rhs)" << std::endl;
+}
+
+String::String(String &&s) noexcept : alloc(std::move(s.alloc)), elements(std::move(s.elements)), first_free(std::move(s.first_free))
+{
+	std::cout << "String::String(String &&s) noexcept" << std::endl;
+	s.elements = s.first_free = nullptr;
+}
+
+void String::free()
+{
+	if(elements)
+	{
+		std::for_each(elements, first_free, [this](char cp){ alloc.destroy(&cp); });
+		alloc.deallocate(elements, first_free - elements);
+	}
+}
+
+String& String::operator=(const String& rhs)
+{
+	auto newstr = alloc_n_copy(rhs.begin(), rhs.end());
+	free();
+	elements = newstr.first;
+	first_free = newstr.second;
+	std::cout << "String& operator=(const String& rhs)" << std::endl;
+	return *this;
+}
+
+String& String::operator=(String &&rhs) noexcept
+{
+	std::cout << "String& String::operator=(String &&rhs) noexcept" << std::endl;
+	if(&rhs != this)
+	{
+		free();
+		alloc = std::move(rhs.alloc);
+		elements = std::move(rhs.elements);
+		first_free = std::move(rhs.first_free);
+		rhs.elements = rhs.first_free = nullptr;
+	}
+	return *this;
+}
+
+String::~String()
+{
+	free();
+}
+
+std::ostream &operator<<(std::ostream &os, const String &s)
+{
+	for(auto iter = s.elements; iter != s.first_free; ++iter)
+	{
+		os << *iter ;
+	}
+	return os;
+}
+
+bool operator==(const String lhs, const String rhs)
+{
+	return (lhs.first_free - lhs.elements) == (rhs.first_free - rhs.elements) && std::equal(lhs.begin(), lhs.end(), rhs.begin());
+}
+
+bool operator!=(const String lhs, const String rhs)
+{
+	return !(lhs == rhs);
+}
+
+#endif
+```
+  
+ex16_3.cpp
+```cpp
+#include "String_ex16.h"
+#include <vector>
+#include <iostream>
+
+int main()
+{
+	std::vector<String> v;
+	v.push_back("aaa");
+	v.push_back("bbb");
+	std::cout << v[1] << std::endl;
+
+	return 0;
+}
+```
+
+## 14.17
+参见14.5。  
+
+## 14.18

@@ -151,7 +151,7 @@ void StrVec::reallocate()
 
 bool operator==(StrVec &lhs, StrVec &rhs)
 {
-	return std::equal(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
+	return lhs.size() == rhs.size() && std::equal(lhs.begin(), lhs.end(), rhs.begin());
 }
 
 bool operator!=(StrVec &lhs, StrVec &rhs)
