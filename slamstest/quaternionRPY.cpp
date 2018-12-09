@@ -40,7 +40,7 @@ void QuaternionToEulerAngles(double qx, double qy, double qz, double qw)
  
 int main()
 {
-    QuaternionToEulerAngles(0, 0, -0.78104, 0.624481);
+    QuaternionToEulerAngles(0, 0, -1, 0);
     EulerAnglesToQuaternion(0,0,-1.7926);
     return 0;
 }

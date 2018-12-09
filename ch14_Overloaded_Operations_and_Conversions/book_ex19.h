@@ -9,6 +9,7 @@ class Book {
     friend std::ostream& operator<<(std::ostream&, const Book&);
     friend bool operator==(const Book&, const Book&);
     friend bool operator!=(const Book&, const Book&);
+    friend bool operator<(const Book&, const Book&);
 
 public:
     Book() = default;
@@ -16,7 +17,7 @@ public:
     Book(std::istream &in) { in >> *this; }
 
 private:
-    unsigned no_;
+    unsigned int no_;
     std::string name_;
     std::string author_;
     std::string pubdate_;
@@ -26,6 +27,6 @@ std::istream& operator>>(std::istream&, Book&);
 std::ostream& operator<<(std::ostream&, const Book&);
 bool operator==(const Book&, const Book&);
 bool operator!=(const Book&, const Book&);
-
+bool operator<(const Book&, const Book&);
 
 #endif // CP5_CH14_EX14_05_H

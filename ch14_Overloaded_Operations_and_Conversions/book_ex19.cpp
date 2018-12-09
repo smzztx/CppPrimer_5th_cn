@@ -1,4 +1,4 @@
-#include "book_ex05.h"
+#include "book_ex19.h"
 
 std::istream& operator>>(std::istream &in, Book &book)
 {
@@ -20,4 +20,9 @@ bool operator==(const Book &lhs, const Book &rhs)
 bool operator!=(const Book &lhs, const Book &rhs)
 {
     return !(lhs == rhs);
+}
+
+bool operator<(const Book &lhs, const Book &rhs)
+{
+	return lhs.no_ < rhs.no_;
 }

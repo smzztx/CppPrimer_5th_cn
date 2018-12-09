@@ -23,7 +23,7 @@ def quaternion_to_euler_angle(w, x, y, z):
 if __name__=='__main__':
 	x = 0
 	y = 0
-	z = -0.78104
-	w = 0.624481
+	z = -1
+	w = 0
 
 	print quaternion_to_euler_angle(w, x, y, z)
