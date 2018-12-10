@@ -1645,3 +1645,464 @@ Sales_data operator+(const Sales_data &lhs, const Sales_data &rhs)
 本题中+和+=都用到了临时变量。  
 
 ## 14.22
+Sales_data_ex22.h
+```cpp
+#ifndef SALES_DATA_H_
+#define SALES_DATA_H_
+
+#include <string>
+
+struct Sales_data;
+
+std::istream &operator>>(std::istream &is, Sales_data &item);
+std::ostream &operator<<(std::ostream &os, const Sales_data &item);
+Sales_data operator+(const Sales_data &lhs, const Sales_data &rhs);
+
+struct Sales_data
+{
+friend std::istream& operator>>(std::istream&, Sales_data&);
+friend std::ostream& operator<<(std::ostream&, const Sales_data&);
+friend Sales_data operator+(const Sales_data&, const Sales_data&);
+public:
+	Sales_data(const std::string &s, unsigned n, double p) : bookNo(s), units_sold(n), revenue(p*n){std::cout << "Sales_data(const std::string &s, unsigned n, double p)" << std::endl;}
+	Sales_data() : Sales_data("", 0, 0){std::cout << "Sales_data() : Sales_data(\"\", 0, 0)" << std::endl;}
+	Sales_data(const std::string &s) : Sales_data(s, 0, 0){std::cout << "Sales_data(const std::string &s) : Sales_data" << std::endl;}
+	Sales_data(std::istream &is) : Sales_data(){/*read(is, *this);*/ is >> *this; std::cout << "Sales_data(std::istream &is) : Sales_data()" << std::endl;}
+	std::string isbn() const {return bookNo;}
+	Sales_data& operator=(const std::string&);
+    Sales_data& operator+=(const Sales_data&);
+    Sales_data& operator-=(const Sales_data&);
+private:
+	inline double avg_price() const;
+
+    std::string bookNo;
+    unsigned units_sold = 0;
+    double revenue = 0.0;
+};
+
+inline double Sales_data::avg_price() const
+{
+	if(units_sold)
+		return revenue / units_sold;
+	else
+		return 0;
+}
+
+Sales_data& Sales_data::operator=(const std::string &s)
+{
+	*this = Sales_data(s);
+	return *this;
+}
+
+Sales_data& Sales_data::operator+=(const Sales_data &rhs)
+{
+	units_sold += rhs.units_sold;
+	revenue += rhs.revenue;
+
+	return *this;
+}
+
+Sales_data& Sales_data::operator-=(const Sales_data &rhs)
+{
+	units_sold -= rhs.units_sold;
+	revenue -= rhs.revenue;
+
+	return *this;
+}
+
+std::istream &operator>>(std::istream &is, Sales_data &item)
+{
+	double price = 0;
+
+	is >> item.bookNo >> item.units_sold >> price;
+	if(is)
+		item.revenue = price * item.units_sold;
+	else
+		item = Sales_data();
+
+	return is;
+}
+
+std::ostream &operator<<(std::ostream &os, const Sales_data &item)
+{
+	os << item.isbn() << " " << item.units_sold << " " << item.revenue << " " << item.avg_price();
+
+	return os;
+}
+
+Sales_data operator+(const Sales_data &lhs, const Sales_data &rhs)
+{
+	Sales_data sum = lhs;
+	sum += rhs;
+
+	return sum;
+}
+
+#endif
+```
+  
+ex22.cpp
+```cpp
+#include <iostream>
+#include <string>
+#include "Sales_data_ex22.h"
+
+int main()
+{
+    Sales_data sales_data1("001-01", 1, 100);
+    Sales_data sales_data2;
+    Sales_data sales_data3("001-02");
+    Sales_data sales_data4(std::cin);
+    std::cout << sales_data4 << std::endl;
+
+    return 0;
+}
+```
+
+## 14.23
+StrVec_ex23.h
+```cpp
+#ifndef STRVEC_H_
+#define STRVEC_H_
+
+#include <string>
+#include <utility>
+#include <memory>
+#include <algorithm>
+
+class StrVec
+{
+friend bool operator==(StrVec &lhs, StrVec &rhs);
+friend bool operator!=(StrVec &lhs, StrVec &rhs);
+friend bool operator<(StrVec &lhs, StrVec &rhs);
+friend bool operator>(StrVec &lhs, StrVec &rhs);
+friend bool operator<=(StrVec &lhs, StrVec &rhs);
+friend bool operator>=(StrVec &lhs, StrVec &rhs);
+public:
+	StrVec() : elements(nullptr), first_free(nullptr), cap(nullptr) { }
+	StrVec(std::initializer_list<std::string>);
+	StrVec(const StrVec&);
+	StrVec(StrVec &&s) noexcept : alloc(std::move(s.alloc)), elements(std::move(s.elements)), first_free(std::move(s.first_free)), cap(std::move(s.cap)) { s.elements = s.first_free = s.cap = nullptr; }
+	StrVec &operator=(const StrVec&);
+	StrVec &operator=(StrVec&&) noexcept;
+	StrVec &operator=(std::initializer_list<std::string>);
+	~StrVec();
+	void push_back(const std::string&);
+	size_t size() const { return first_free - elements; }
+	size_t capacity() const { return cap - elements; }
+	std::string *begin() const { return elements; }
+	std::string *end() const { return first_free; }
+	void reserve(size_t n);
+	void resize(size_t n);
+	void resize(size_t n, const std::string &s);
+private:
+	std::allocator<std::string> alloc;
+	void chk_n_alloc() { if(size() == capacity()) reallocate(); }
+	std::pair<std::string*, std::string*> alloc_n_copy(const std::string*, const std::string*);
+	void free();
+	void reallocate();
+	std::string *elements;
+	std::string *first_free;
+	std::string *cap;
+};
+
+StrVec::StrVec(std::initializer_list<std::string> il)
+{
+	auto newdata = alloc_n_copy(il.begin(), il.end());
+	elements = newdata.first;
+	first_free = cap = newdata.second;
+}
+
+void StrVec::push_back(const std::string &s)
+{
+	chk_n_alloc();
+	alloc.construct(first_free++, s);
+}
+
+std::pair<std::string*,std::string*> StrVec::alloc_n_copy(const std::string *b, const std::string *e)
+{
+	auto data = alloc.allocate(e-b);
+	return {data, uninitialized_copy(b, e, data)};
+}
+
+void StrVec::free()
+{
+	if(elements)
+	{
+		std::for_each(elements, first_free, [this](std::string &p){ alloc.destroy(&p); });
+		// for(auto p = first_free; p != elements; )
+		// 	alloc.destroy(--p);
+		alloc.deallocate(elements, cap-elements);
+	}
+}
+
+StrVec::StrVec(const StrVec &s)
+{
+	auto newdata = alloc_n_copy(s.begin(), s.end());
+	elements = newdata.first;
+	first_free = cap = newdata.second;
+}
+
+StrVec::~StrVec()
+{
+	free();
+}
+
+void StrVec::reserve(size_t n)
+{
+	if(n > capacity()) return;
+	auto newdata = alloc.allocate(n);
+	auto dest = newdata;
+	auto elem = elements;
+	for(size_t i = 0; i != size(); ++i)
+		alloc.construct(dest++, std::move(*elem++));
+	free();
+	elements = newdata;
+	first_free = dest;
+	cap = elements + n;
+}
+
+void StrVec::resize(size_t n)
+{
+	resize(n,std::string());
+}
+
+void StrVec::resize(size_t n, const std::string &s)
+{
+	if(n < size())
+	{
+		while(n < size())
+			alloc.destroy(--first_free);
+	}else if(n > size())
+	{
+		while(n > size())
+			push_back(s);
+			// alloc.construct(first_free, s);
+	}
+}
+
+StrVec &StrVec::operator=(const StrVec &rhs)
+{
+	auto data = alloc_n_copy(rhs.begin(), rhs.end());
+	free();
+	elements = data.first;
+	first_free = cap = data.second;
+	return *this;
+}
+
+StrVec &StrVec::operator=(StrVec &&rhs) noexcept
+{
+	if(this != &rhs)
+	{
+		free();
+		alloc = std::move(rhs.alloc);
+		elements = std::move(rhs.elements);
+		first_free = std::move(rhs.first_free);
+		cap = std::move(rhs.cap);
+		rhs.elements = rhs.first_free = rhs.cap = nullptr;
+	}
+	return *this;
+}
+
+StrVec &StrVec::operator=(std::initializer_list<std::string> il)
+{
+	auto data = alloc_n_copy(il.begin(), il.end());
+	free();
+	elements = data.first;
+	first_free = cap = data.second;
+
+	return *this;
+}
+
+void StrVec::reallocate()
+{
+	auto newcapacity = size() ? 2 * size() : 1;
+	auto newdata = alloc.allocate(newcapacity);
+	auto dest = newdata;
+	auto elem = elements;
+	for(size_t i = 0; i != size(); ++i)
+		alloc.construct(dest++, std::move(*elem++));
+	free();
+	elements = newdata;
+	first_free = dest;
+	cap = elements + newcapacity;
+}
+
+bool operator==(StrVec &lhs, StrVec &rhs)
+{
+	return lhs.size() == rhs.size() && std::equal(lhs.begin(), lhs.end(), rhs.begin());
+}
+
+bool operator!=(StrVec &lhs, StrVec &rhs)
+{
+	return !(lhs == rhs);
+}
+
+bool operator<(StrVec &lhs, StrVec &rhs)
+{
+	return std::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
+}
+
+bool operator>(StrVec &lhs, StrVec &rhs)
+{
+	return rhs < lhs;
+}
+
+bool operator<=(StrVec &lhs, StrVec &rhs)
+{
+	return !(rhs < lhs);
+}
+
+bool operator>=(StrVec &lhs, StrVec &rhs)
+{
+	return !(lhs < rhs);
+}
+
+#endif
+```
+  
+ex23.cpp
+```cpp
+#include "StrVec_ex23.h"
+
+int main()
+{
+	StrVec s({"aaa", "bbb"});
+
+	return 0;
+}
+```
+
+## 14.24
+book_ex24.h
+```cpp
+#ifndef CP5_CH14_EX14_05_H
+#define CP5_CH14_EX14_05_H
+
+#include <iostream>
+#include <string>
+
+class Book {
+    friend std::istream& operator>>(std::istream&, Book&);
+    friend std::ostream& operator<<(std::ostream&, const Book&);
+    friend bool operator==(const Book&, const Book&);
+    friend bool operator!=(const Book&, const Book&);
+    friend bool operator<(const Book&, const Book&);
+    friend bool operator>(const Book&, const Book&);
+    friend bool operator<=(const Book&, const Book&);
+    friend bool operator>=(const Book&, const Book&);
+
+public:
+    Book() = default;
+    Book(unsigned no, std::string name, std::string author, std::string pubdate):no_(no), name_(name), author_(author), pubdate_(pubdate) { }
+    Book(std::istream &in) { in >> *this; }
+    Book& operator=(const Book&);
+    Book& operator=(const Book&&) noexcept;
+
+private:
+    unsigned int no_;
+    std::string name_;
+    std::string author_;
+    std::string pubdate_;
+};
+
+std::istream& operator>>(std::istream&, Book&);
+std::ostream& operator<<(std::ostream&, const Book&);
+bool operator==(const Book&, const Book&);
+bool operator!=(const Book&, const Book&);
+bool operator<(const Book&, const Book&);
+bool operator>(const Book&, const Book&);
+bool operator<=(const Book&, const Book&);
+bool operator>=(const Book&, const Book&);
+
+#endif // CP5_CH14_EX14_05_H
+```
+  
+book_ex24.cpp
+```cpp
+#include "book_ex24.h"
+
+Book& Book::operator=(const Book &rhs)
+{
+        this->no_ = rhs.no_;
+        this->name_ = rhs.name_;
+        this->author_ = rhs.author_;
+        this->pubdate_ = rhs.pubdate_;
+
+    return *this;
+}
+
+Book& Book::operator=(const Book &&rhs) noexcept
+{
+    if(this != &rhs)
+    {
+        this->no_ = rhs.no_;
+        this->name_ = rhs.name_;
+        this->author_ = rhs.author_;
+        this->pubdate_ = rhs.pubdate_;
+    }
+
+    return *this;
+}
+
+std::istream& operator>>(std::istream &in, Book &book)
+{
+    in >> book.no_ >> book.name_ >> book.author_ >> book.pubdate_;
+    return in;
+}
+
+std::ostream& operator<<(std::ostream &out, const Book &book)
+{
+    out << book.no_ << " " << book.name_ << " " << book.author_ << " " << book.pubdate_;
+    return out;
+}
+
+bool operator==(const Book &lhs, const Book &rhs)
+{
+    return lhs.no_ == rhs.no_;
+}
+
+bool operator!=(const Book &lhs, const Book &rhs)
+{
+    return !(lhs == rhs);
+}
+
+bool operator<(const Book &lhs, const Book &rhs)
+{
+	return lhs.no_ < rhs.no_;
+}
+
+bool operator>(const Book &lhs, const Book &rhs)
+{
+	return rhs < lhs;
+}
+
+bool operator<=(const Book &lhs, const Book &rhs)
+{
+	return !(rhs < lhs);
+}
+
+bool operator>=(const Book &lhs, const Book &rhs)
+{
+	return !(lhs < rhs);
+}
+```
+  
+ex24.cpp
+```cpp
+#include "book_ex24.h"
+
+int main()
+{
+    Book book1(123, "CP5", "Lippman", "2012");
+    Book book2(123, "CP5", "Lippman", "2012");
+
+    if (book1 == book2)
+        std::cout << book1 << std::endl;
+}
+```
+  
+## 14.25
+参见14.24。  
+  
+## 14.26
