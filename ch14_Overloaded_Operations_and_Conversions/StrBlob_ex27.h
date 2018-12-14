@@ -18,12 +18,15 @@ friend bool operator<(const StrBlob &lhs, const StrBlob &rhs);
 friend bool operator>(const StrBlob &lhs, const StrBlob &rhs);
 friend bool operator<=(const StrBlob &lhs, const StrBlob &rhs);
 friend bool operator>=(const StrBlob &lhs, const StrBlob &rhs);
+
 public:
 	typedef std::vector<std::string>::size_type size_type;
 	StrBlob();
 	StrBlob(std::initializer_list<std::string> il);
 	StrBlob(const StrBlob&);
 	StrBlob &operator=(const StrBlob&);
+	std::string& operator[](size_t n) { return (*data)[n]; }
+	const std::string& operator[](size_t n) const { return (*data)[n]; }
 	size_type size() const { return data->size(); }
 	bool empty() const { return data->empty(); }
 	void push_back(const std::string &t) { data->push_back(t); }
@@ -35,8 +38,7 @@ public:
 	const std::string& back() const;
 	ConstStrBlobPtr begin();
 	ConstStrBlobPtr end();
-	std::string& operator[](size_t n) { return (*data)[n]; }
-	const std::string& operator[](size_t n) const { return (*data)[n]; }
+	
 private:
 	std::shared_ptr<std::vector<std::string>> data;
 	void check(size_type i, const std::string &msg) const;
@@ -51,6 +53,10 @@ public:
 	ConstStrBlobPtr(const StrBlob &a, size_t sz = 0) : wptr(a.data), curr(sz) {}
 	std::string& deref() const;
 	ConstStrBlobPtr& incr();
+	ConstStrBlobPtr &operator++();
+	ConstStrBlobPtr &operator--();
+	ConstStrBlobPtr operator++(int);
+	ConstStrBlobPtr operator--(int);
 private:
 	std::shared_ptr<std::vector<std::string>> check(std::size_t, const std::string&) const;
 	std::weak_ptr<std::vector<std::string>> wptr;
@@ -78,6 +84,34 @@ ConstStrBlobPtr& ConstStrBlobPtr::incr()
 	check(curr, "increment past end of ConstStrBlobPtr");
 	++curr;
 	return *this;
+}
+
+ConstStrBlobPtr &ConstStrBlobPtr::operator++()
+{
+	check(curr, "increment past end of ConstStrBlobPtr");
+	++curr;
+	return *this;
+}
+
+ConstStrBlobPtr &ConstStrBlobPtr::operator--()
+{
+	--curr;
+	check(curr, "decrement past begin of ConstStrBlobPtr");
+	return *this;
+}
+
+ConstStrBlobPtr ConstStrBlobPtr::operator++(int)
+{
+	ConstStrBlobPtr ret = *this;
+	++*this;
+	return ret;
+}
+
+ConstStrBlobPtr ConstStrBlobPtr::operator--(int)
+{
+	ConstStrBlobPtr ret = *this;
+	--*this;
+	return ret;
 }
 
 StrBlob::StrBlob() : data(std::make_shared<std::vector<std::string>>()){}
