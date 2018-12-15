@@ -2906,3 +2906,377 @@ int main()
 const的StrBlob不能改变成员变量，而递增和递减运算符需要改变其状态，本身就是矛盾的。
   
 ## 14.30
+>为你的StrBlob类和在12.1.6节练习12.22中定义的ConstStrBlobPtr类分别添加解引用运算符和箭头运算符。注意：因为ConstStrBlobPtr的数据成员指向const vector，所以ConstStrBlobPtr中的运算符必须返回常量引用。
+
+StrBlob_ex30.h
+```cpp
+#ifndef STRBLOB_H_
+#define STRBLOB_H_
+
+#include <string>
+#include <initializer_list>
+#include <memory>
+#include <vector>
+#include <stdexcept>
+
+class ConstStrBlobPtr;
+
+class StrBlob
+{
+friend class ConstStrBlobPtr;
+friend bool operator==(const StrBlob &lhs, const StrBlob &rhs);
+friend bool operator!=(const StrBlob &lhs, const StrBlob &rhs);
+friend bool operator<(const StrBlob &lhs, const StrBlob &rhs);
+friend bool operator>(const StrBlob &lhs, const StrBlob &rhs);
+friend bool operator<=(const StrBlob &lhs, const StrBlob &rhs);
+friend bool operator>=(const StrBlob &lhs, const StrBlob &rhs);
+
+public:
+	typedef std::vector<std::string>::size_type size_type;
+	StrBlob();
+	StrBlob(std::initializer_list<std::string> il);
+	StrBlob(const StrBlob&);
+	StrBlob &operator=(const StrBlob&);
+	std::string& operator[](size_t n) { return (*data)[n]; }
+	const std::string& operator[](size_t n) const { return (*data)[n]; }
+	size_type size() const { return data->size(); }
+	bool empty() const { return data->empty(); }
+	void push_back(const std::string &t) { data->push_back(t); }
+	void push_back(std::string &&t) { data->push_back(t); }
+	void pop_back();
+	std::string& front();
+	std::string& back();
+	const std::string& front() const;
+	const std::string& back() const;
+	ConstStrBlobPtr begin();
+	ConstStrBlobPtr end();
+	
+private:
+	std::shared_ptr<std::vector<std::string>> data;
+	void check(size_type i, const std::string &msg) const;
+};
+
+class ConstStrBlobPtr
+{
+friend bool operator==(const ConstStrBlobPtr &lhs, const ConstStrBlobPtr &rhs);
+friend bool operator!=(const ConstStrBlobPtr &lhs, const ConstStrBlobPtr &rhs);
+public:
+	ConstStrBlobPtr() : curr(0){};
+	ConstStrBlobPtr(const StrBlob &a, size_t sz = 0) : wptr(a.data), curr(sz) {}
+	std::string& deref() const;
+	ConstStrBlobPtr& incr();
+	ConstStrBlobPtr &operator++();
+	ConstStrBlobPtr &operator--();
+	ConstStrBlobPtr operator++(int);
+	ConstStrBlobPtr operator--(int);
+	const std::string &operator*() const
+	{
+		auto p = check(curr, "dereference past end");
+		return (*p)[curr];
+	}
+	const std::string *operator->() const
+	{
+		return &this->operator*();
+	}
+private:
+	std::shared_ptr<std::vector<std::string>> check(std::size_t, const std::string&) const;
+	std::weak_ptr<std::vector<std::string>> wptr;
+	std::size_t curr;
+};
+
+std::shared_ptr<std::vector<std::string>> ConstStrBlobPtr::check(std::size_t i, const std::string &msg) const
+{
+	auto ret = wptr.lock();
+	if(!ret)
+		throw std::runtime_error("unbound ConstStrBlobPtr");
+	if(i >= ret->size())
+		throw std::out_of_range(msg);
+	return ret;
+}
+
+std::string& ConstStrBlobPtr::deref() const
+{
+	auto p = check(curr, "dereference past end");
+	return (*p)[curr];
+}
+
+ConstStrBlobPtr& ConstStrBlobPtr::incr()
+{
+	check(curr, "increment past end of ConstStrBlobPtr");
+	++curr;
+	return *this;
+}
+
+ConstStrBlobPtr &ConstStrBlobPtr::operator++()
+{
+	check(curr, "increment past end of ConstStrBlobPtr");
+	++curr;
+	return *this;
+}
+
+ConstStrBlobPtr &ConstStrBlobPtr::operator--()
+{
+	--curr;
+	check(curr, "decrement past begin of ConstStrBlobPtr");
+	return *this;
+}
+
+ConstStrBlobPtr ConstStrBlobPtr::operator++(int)
+{
+	ConstStrBlobPtr ret = *this;
+	++*this;
+	return ret;
+}
+
+ConstStrBlobPtr ConstStrBlobPtr::operator--(int)
+{
+	ConstStrBlobPtr ret = *this;
+	--*this;
+	return ret;
+}
+
+StrBlob::StrBlob() : data(std::make_shared<std::vector<std::string>>()){}
+StrBlob::StrBlob(std::initializer_list<std::string> il) : data(std::make_shared<std::vector<std::string>>(il)){}
+StrBlob::StrBlob(const StrBlob &sb) { data = std::make_shared<std::vector<std::string>>(*sb.data); }
+StrBlob &StrBlob::operator=(const StrBlob &sb) { data = std::make_shared<std::vector<std::string>>(*sb.data); return *this; }
+
+void StrBlob::check(size_type i, const std::string &msg) const
+{
+	if(i >= data->size())
+		throw std::out_of_range(msg);
+}
+
+std::string & StrBlob::front()
+{
+	check(0, "front on empty StrBlob");
+	return data->front();
+}
+
+std::string & StrBlob::back()
+{
+	check(0, "back on empty StrBlob");
+	return data->back();
+}
+
+const std::string& StrBlob::front() const
+{
+	check(0, "front on empty StrBlob");
+	return data->front();
+}
+
+const std::string& StrBlob::back() const
+{
+	check(0, "back on empty StrBlob");
+	return data->back();
+}
+
+void StrBlob::pop_back()
+{
+	check(0, "pop_back on empty StrBlob");
+	data->pop_back();
+}
+
+ConstStrBlobPtr StrBlob::begin() { return ConstStrBlobPtr(*this); }
+
+ConstStrBlobPtr StrBlob::end()
+{
+	auto ret = ConstStrBlobPtr(*this, data->size());
+	return ret;
+}
+
+bool operator==(const StrBlob &lhs, const StrBlob &rhs)
+{
+	return *lhs.data == *rhs.data;
+}
+
+bool operator!=(const StrBlob &lhs, const StrBlob &rhs)
+{
+	return !(lhs == rhs);
+}
+
+bool operator<(const StrBlob &lhs, const StrBlob &rhs)
+{
+	return std::lexicographical_compare(lhs.data->begin(), lhs.data->end(), rhs.data->begin(), rhs.data->end());
+}
+
+bool operator>(const StrBlob &lhs, const StrBlob &rhs)
+{
+	return rhs < lhs;
+}
+
+bool operator<=(const StrBlob &lhs, const StrBlob &rhs)
+{
+	return !(rhs < lhs);
+}
+
+bool operator>=(const StrBlob &lhs, const StrBlob &rhs)
+{
+	return !(lhs < rhs);
+}
+
+bool operator==(const ConstStrBlobPtr &lhs, const ConstStrBlobPtr &rhs)
+{
+	auto lret = lhs.wptr.lock(), rret = rhs.wptr.lock();
+
+	return lret == rret && lhs.curr == rhs.curr;
+}
+
+bool operator!=(const ConstStrBlobPtr &lhs, const ConstStrBlobPtr &rhs)
+{
+	return !(lhs == rhs);
+}
+
+#endif
+```
+  
+ex30.cpp
+```cpp
+#include "StrBlob_ex30.h"
+#include <iostream>
+
+int main()
+{
+	StrBlob b1 = {"a", "an", "the"};
+	StrBlob b2 = b1;
+
+	return 0;
+}
+```
+  
+## 14.31
+>我们的StrBlobPtr类没有定义拷贝构造函数、赋值运算符和析构函数，为什么？
+
+StrBlobPtr的数据成员的类型为std::weak_ptr<std::vector<std::string>>和内置类型，前者有自己的三个函数，后者也无需定义，使用默认的即可。
+  
+## 14.32
+>定义一个类令其含有指向StrBlobPtr对象的指针，为这个类定义重载的建投运算符。
+
+```cpp
+class MyClass
+{
+public:
+	std::string* operator->() const
+	{
+		return ptr->operator->();
+	}
+private:
+	StrBlobPtr *ptr;
+}
+```
+  
+## 14.33
+>一个重载的函数调用运算符应该接受几个运算对象？
+
+可以接受的对象为0-256个。
+
+## 14.34
+>定义一个函数对象类，令其执行if-then-else的操作：该类的调用运算符接受三个形参，它首先检查第一个形参，如果成功返回第二个形参的值，如果不成功返回第三个形参的值。
+
+```cpp
+#include <string>
+#include <iostream>
+
+using std::string;
+
+struct if_then_else
+{
+	string operator()(bool b, string first_result, string second_result)
+	{
+		return b ? first_result : second_result;
+	}
+};
+
+int main()
+{
+	if_then_else if_object;
+	std::cout << if_object(true, "aaa", "bbb") << std::endl;
+
+	return 0;
+}
+```
+  
+## 14.35
+>编写一个类似PrintString的类，令其从istream中读取一行输入，然后返回一个表示我们所读内容的string。如果读取失败，返回空string。
+
+```cpp
+#include <string>
+#include <iostream>
+
+using std::string;
+
+class ReadString
+{
+public:
+	ReadString(std::istream &i = std::cin) : is(i) {}
+	const string &operator()()
+	{
+		is >> s;
+		return s;
+	}
+private:
+	std::istream &is;
+	string s;
+};
+
+int main()
+{
+	ReadString ReadObject;
+	std::cout << ReadObject() << std::endl;
+
+	return 0;
+}
+```
+  
+## 14.36
+>使用前一个练习定义的类读取标准输入，将每一行保存为vector的一个元素。
+
+```cpp
+#include <string>
+#include <iostream>
+#include <vector>
+
+using std::string;
+
+class ReadString
+{
+public:
+	ReadString(std::istream &i = std::cin) : is(i) {}
+	string operator()()
+	{
+		std::string s;
+		std::getline(is, s);
+		return s;
+	}
+private:
+	std::istream &is;
+};
+
+int main()
+{
+	std::vector<string> vs;
+	string new_string;
+	ReadString ReadObject;
+	
+	do{
+		new_string = ReadObject();
+		vs.push_back(new_string);
+	}while(!new_string.empty());
+
+	for(auto s : vs)
+		std::cout << s << " ";
+	std::cout << std::endl;
+
+	return 0;
+}
+```
+  
+## 14.37
+>编写一个类令其检查两个值是否相等。使用该对象及标准库算法编写程序，令其替换某个序列中具有给定值的所有实例。
+
+```cpp
+
+```
+  
+## 14.38
+
+
