@@ -25,17 +25,27 @@ int main()
 
     for(std::string curr; ifs >> curr; vs.push_back(curr));
 
-    for(int i = 1, n = 0; i < 11; ++i)
+    int n = 0;
+    for(int i = 1; i < 10; ++i)
     {
     	for(auto iter = vs.begin(); iter != vs.end(); )
     	{
     		iter = std::find_if(iter+1, vs.end(), CompareString(i));
     		if(iter != vs.end()) ++n;
     	}
-    	std::cout << "length:" << i << "," << n << std::endl;
-    	n = 0;
     }
+    std::cout << "length:1-9" << "," << n << std::endl;
     	
+    n = 0;
+    for(int i = 10; i < 30; ++i)
+    {
+        for(auto iter = vs.begin(); iter != vs.end(); )
+        {
+            iter = std::find_if(iter+1, vs.end(), CompareString(i));
+            if(iter != vs.end()) ++n;
+        }
+    }
+    std::cout << "length:1-9" << "," << n << std::endl;
 
 	return 0;
 }

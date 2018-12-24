@@ -3303,5 +3303,169 @@ int main()
 ```
   
 ## 14.38
+```cpp
+#include <string>
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <algorithm>
 
+class CompareString
+{
+public:
+	CompareString(size_t n) : default_size(n) {};
+	bool operator()(const std::string &s) const
+	{
+		return default_size == s.size();
+	}
+private:
+	size_t default_size;
+};
 
+int main()
+{
+	std::ifstream ifs("../ch09_Sequential_Containers/letter.txt");
+    if (!ifs) return -1;
+
+    std::vector<std::string> vs;
+
+    for(std::string curr; ifs >> curr; vs.push_back(curr));
+
+    for(int i = 1, n = 0; i < 11; ++i)
+    {
+    	for(auto iter = vs.begin(); iter != vs.end(); )
+    	{
+    		iter = std::find_if(iter+1, vs.end(), CompareString(i));
+    		if(iter != vs.end()) ++n;
+    	}
+    	std::cout << "length:" << i << "," << n << std::endl;
+    	n = 0;
+    }
+    	
+
+	return 0;
+}
+```
+  
+## 14.39
+```cpp
+#include <string>
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <algorithm>
+
+class CompareString
+{
+public:
+	CompareString(size_t n) : default_size(n) {};
+	bool operator()(const std::string &s) const
+	{
+		return default_size == s.size();
+	}
+private:
+	size_t default_size;
+};
+
+int main()
+{
+	std::ifstream ifs("../ch09_Sequential_Containers/letter.txt");
+    if (!ifs) return -1;
+
+    std::vector<std::string> vs;
+
+    for(std::string curr; ifs >> curr; vs.push_back(curr));
+
+    int n = 0;
+    for(int i = 1; i < 10; ++i)
+    {
+    	for(auto iter = vs.begin(); iter != vs.end(); )
+    	{
+    		iter = std::find_if(iter+1, vs.end(), CompareString(i));
+    		if(iter != vs.end()) ++n;
+    	}
+    }
+    std::cout << "length:1-9" << "," << n << std::endl;
+    	
+    n = 0;
+    for(int i = 10; i < 30; ++i)
+    {
+        for(auto iter = vs.begin(); iter != vs.end(); )
+        {
+            iter = std::find_if(iter+1, vs.end(), CompareString(i));
+            if(iter != vs.end()) ++n;
+        }
+    }
+    std::cout << "length:1-9" << "," << n << std::endl;
+
+	return 0;
+}
+```
+
+## 14.40
+```cpp
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+class bigger
+{
+public:
+	bigger(vector<string>::size_type i) : default_num(i) {};
+	bool operator()(const std::string &s)
+	{
+		return s.size() >= default_num;
+	}
+private:
+	vector<string>::size_type default_num;
+};
+
+class str_compare
+{
+public:
+	bool operator()(const std::string &lhs, const std::string &rhs)
+	{
+		return lhs.size() < rhs.size();
+	}	
+};
+
+vector<string> &elimDups(vector<string> &words)
+{
+	sort(words.begin(), words.end());
+	auto end_unique = unique(words.begin(), words.end());
+	words.erase(end_unique, words.end());
+	return words;
+}
+
+		// [](const string &a, const string &b)
+		// 	{ return a.size() < b.size(); }
+void biggies(vector<string> &words, vector<string>::size_type sz)
+{
+	elimDups(words);
+	stable_sort(words.begin(), words.end(), str_compare());
+	auto wc = find_if(words.begin(), words.end(), bigger(sz));
+	auto count = words.end() - wc;
+	cout << count << endl;
+	for(const auto s : words)
+		cout << s << " ";
+	cout << endl;
+}
+// [sz](const string &a)
+// 			{ return a.size() >= sz; }
+int main()
+{
+	vector<string> vs = {"d","c","b","a","a","c","e","bb","aa","aaa","aaaaa"};
+
+	biggies(vs, 5);
+
+	return 0;
+}
+```
+  
+## 14.41
+当传递的函数使用次数少且实现简单时，使用lambda；反之则使用类。  
+  
+## 14.42
