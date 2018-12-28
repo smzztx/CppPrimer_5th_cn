@@ -3561,3 +3561,145 @@ int main()
 ```
   
 ## 14.45
+转换成string的返回值应该是bookNo；转换成double的返回值应该是revenue。
+  
+## 14.46
+不应该，类类型与转换类型之间不存在明显的映射关系，这样的类型转换可能具有误导性。应该声明成explicit，可以防止异常发生。
+  
+## 14.47
+前者没什么意义，会被编译器忽略；后者不能改变对象。
+  
+## 14.48
+应该含有向bool的类型转换运算符，应该是explicit，可以防止自动转换。
+  
+## 14.49
+book_ex49.h
+```cpp
+#ifndef CP5_CH14_EX14_05_H
+#define CP5_CH14_EX14_05_H
+
+#include <iostream>
+#include <string>
+
+class Book {
+    friend std::istream& operator>>(std::istream&, Book&);
+    friend std::ostream& operator<<(std::ostream&, const Book&);
+    friend bool operator==(const Book&, const Book&);
+    friend bool operator!=(const Book&, const Book&);
+    friend bool operator<(const Book&, const Book&);
+    friend bool operator>(const Book&, const Book&);
+    friend bool operator<=(const Book&, const Book&);
+    friend bool operator>=(const Book&, const Book&);
+
+public:
+    Book() = default;
+    Book(unsigned no, std::string name, std::string author, std::string pubdate):no_(no), name_(name), author_(author), pubdate_(pubdate) { }
+    Book(std::istream &in) { in >> *this; }
+    Book& operator=(const Book&);
+    Book& operator=(const Book&&) noexcept;
+    explicit operator bool() { return !(name_.empty()); }
+
+private:
+    unsigned int no_;
+    std::string name_;
+    std::string author_;
+    std::string pubdate_;
+};
+
+std::istream& operator>>(std::istream&, Book&);
+std::ostream& operator<<(std::ostream&, const Book&);
+bool operator==(const Book&, const Book&);
+bool operator!=(const Book&, const Book&);
+bool operator<(const Book&, const Book&);
+bool operator>(const Book&, const Book&);
+bool operator<=(const Book&, const Book&);
+bool operator>=(const Book&, const Book&);
+
+#endif // CP5_CH14_EX14_05_H
+```
+  
+book_ex49.cpp
+```cpp
+#include "book_ex49.h"
+
+Book& Book::operator=(const Book &rhs)
+{
+        this->no_ = rhs.no_;
+        this->name_ = rhs.name_;
+        this->author_ = rhs.author_;
+        this->pubdate_ = rhs.pubdate_;
+
+    return *this;
+}
+
+Book& Book::operator=(const Book &&rhs) noexcept
+{
+    if(this != &rhs)
+    {
+        this->no_ = rhs.no_;
+        this->name_ = rhs.name_;
+        this->author_ = rhs.author_;
+        this->pubdate_ = rhs.pubdate_;
+    }
+
+    return *this;
+}
+
+std::istream& operator>>(std::istream &in, Book &book)
+{
+    in >> book.no_ >> book.name_ >> book.author_ >> book.pubdate_;
+    return in;
+}
+
+std::ostream& operator<<(std::ostream &out, const Book &book)
+{
+    out << book.no_ << " " << book.name_ << " " << book.author_ << " " << book.pubdate_;
+    return out;
+}
+
+bool operator==(const Book &lhs, const Book &rhs)
+{
+    return lhs.no_ == rhs.no_;
+}
+
+bool operator!=(const Book &lhs, const Book &rhs)
+{
+    return !(lhs == rhs);
+}
+
+bool operator<(const Book &lhs, const Book &rhs)
+{
+	return lhs.no_ < rhs.no_;
+}
+
+bool operator>(const Book &lhs, const Book &rhs)
+{
+	return rhs < lhs;
+}
+
+bool operator<=(const Book &lhs, const Book &rhs)
+{
+	return !(rhs < lhs);
+}
+
+bool operator>=(const Book &lhs, const Book &rhs)
+{
+	return !(lhs < rhs);
+}
+```
+  
+ex49.cpp
+```cpp
+#include "book_ex49.h"
+
+int main()
+{
+    Book book1(123, "CP5", "Lippman", "2012");
+    Book book2(123, "CP5", "Lippman", "2012");
+
+    if (book1 == book2)
+        std::cout << book1 << std::endl;
+}
+```
+  
+## 14.50
