@@ -3689,6 +3689,7 @@ bool operator>=(const Book &lhs, const Book &rhs)
 ```
   
 ex49.cpp
+
 ```cpp
 #include "book_ex49.h"
 
@@ -3703,3 +3704,63 @@ int main()
 ```
   
 ## 14.50
+>在初始化ex1和ex2的过程中，可能用到哪些类类型的转换序列呢？说明初始化是否正确并解释原因。
+
+前者转换具有二义性，可能用到operator double()和operator float()；后者正确。
+  
+## 14.51
+>在调用calc的过程中，可能用到哪些类型转换序列呢？说明最佳可行函数是如何被选出来的。
+
+void calc(int);
+实参类型转换到形参类型有如下几个等级：
+1.精确匹配；
+2.通过const转换实现匹配；
+3.通过类型提升实现的匹配；
+4.通过算数类型转换或指针转换实现的匹配；
+5.通过类类型转换实现的匹配。
+详见6.6.1实参类型转换。
+  
+## 14.52
+>在下面的加法表达式中分别选用了哪个operator+？列出候选函数、可行函数以及为每个可行函数的实参执行的类型转换。
+
+operator+(int, double)<built-in>
+ SmallInt->int,LongDouble->double
+operator+(int, float)<built-in>
+ SmallInt->int,LongDouble->float
+SmallInt operator+(const SmallInt&, const SmallInt&)
+ 编译器只能执行一个用户定义的类型转换。
+上述加法表达式具有二义性。
+  
+LongDouble operator(const SmallInt&)
+ 精确匹配
+operator+(double, int)<built-in>
+ LongDouble->double，SmallInt->int
+operator+(float, int) <built-in>
+ LongDouble->float，SmallInt->int
+  
+## 14.53
+>假设我们已经定义了如522页的SmallInt，判断下面的加法表达式是否合法。如果合法，使用了哪个加法运算符？如果不合法，应该怎样修改代码使其合法？
+
+```cpp
+#include <cstddef>
+
+class SmallInt
+{
+friend SmallInt operator+(const SmallInt &si1, const SmallInt &si2) { SmallInt si_sum(si1.val + si2.val); return si_sum; }
+public:
+	SmallInt(int i = 0) : val(i) {}
+	operator int() const { return val; }
+private:
+	std::size_t val;
+};
+
+int main()
+{
+	SmallInt s1;
+	// double d = s1 + 3.14;
+	double d1 = s1 + SmallInt(3.14);
+	double d2 = s1.operator int() + 3.14;
+
+	return 0;
+}
+```
