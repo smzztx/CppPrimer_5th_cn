@@ -164,3 +164,35 @@ int main()
 ```
   
 ## 15.08
+表达式的静态类型在编译时总是已知的，它是变量声明时的类型或表达式生成的类型；  
+动态类型则是变量或表达式表示的内存中的对象类型。动态类型直到运行时才可知。  
+  
+## 15.09
+摘自github。
+```cpp
+    Bulk_quote bulk_quote("bulk_quote_1", 10.10, 10, 0.5);
+
+    // The pointer is of static type Quote, but it's dynamic type is Bulk Quote
+    // Because of polymorphism the Bulk Quote implementation of the net_price()
+    // method gets called.
+    Quote *quote_pointer = &bulk_quote;
+    quote_pointer->net_price(5);
+
+    // The reference is of static type Quote, but it's dynamic type is Bulk Quote
+    // Like with the pointer, the Bulk Quote implementation of the net_price()
+    // method gets called.
+    Quote &quote_reference = bulk_quote;
+    quote_reference.net_price(5);
+
+    // The static type of this variable is Quote. Here the Bulk Quote object
+    // gets upcasted. The Quote part of bulk_quote gets copied into quote, but
+    // the rest is not handled. Because of the cast the Quote implementation of
+    // the net_price() method gets called.
+    Quote quote = bulk_quote;
+    quote.net_price(5);
+```
+  
+## 15.10
+read中std::istream，std::ifstream是继承自std::istream，因此，std::istream的实例传入后会转换为std::istream。
+  
+## 15.11
