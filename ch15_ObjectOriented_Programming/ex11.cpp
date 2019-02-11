@@ -14,8 +14,13 @@ int main()
 {
 	Quote q("A1-001", 80);
 	Bulk_quote bq("A1-001", 80, 5, 0.2);
-	print_total(std::cout, q, 10);
-	print_total(std::cout, bq, 10);
+	// print_total(std::cout, q, 10);
+	// print_total(std::cout, bq, 10);
+
+	q.debug();
+	std::cout << std::endl;
+	bq.debug();
+	std::cout << std::endl;
 
 	return 0;
 }
