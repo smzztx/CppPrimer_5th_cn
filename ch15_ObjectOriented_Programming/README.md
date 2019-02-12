@@ -313,3 +313,92 @@ void print(ostream &os) { base::print(os); os << " " << i; }
 （f）调用derived中的print，运行时确定。  
   
 ## 15.15
+Disc_quote_ex15.h
+```cpp
+#ifndef DISC_QUOTE_
+#define DISC_QUOTE_
+
+#include "Quote_ex11.h"
+#include <string>
+
+class Disc_quote : public Quote
+{
+public:
+	Disc_quote() = default;
+	Disc_quote(const std::string &book, double price, std::size_t qty, double disc)
+	: Quote(book, price), quantity(qty), discount(disc) { }
+	double net_price(std::size_t) const = 0;
+protected:
+	std::size_t quantity = 0;
+	double discount = 0.0;
+};
+
+
+#endif
+```
+  
+Bulk_quote_ex15.h
+```cpp
+#ifndef BULK_QUOTE_H_
+#define BULK_QUOTE_H_
+
+#include "Disc_quote_ex15.h"
+#include <string>
+#include <iostream>
+
+class Bulk_quote : public Disc_quote
+{
+public:
+	Bulk_quote() = default;
+	Bulk_quote(const std::string &book, double price, std::size_t qty, double disc) : Disc_quote(book, price, qty, disc) { }
+	double net_price(std::size_t) const override;
+	void debug() const override;
+};
+
+double Bulk_quote::net_price(size_t cnt) const
+{
+	if(cnt > quantity) return quantity * (1 - discount) * price + (cnt - quantity)*price;
+	else return cnt * price;
+}
+
+void Bulk_quote::debug() const
+{
+	Quote::debug();
+	std::cout << "; quantity: " << quantity
+	<< "; discount: " << discount;
+}
+
+#endif
+```
+  
+ex15.cpp
+```cpp
+#include "Quote_ex11.h"
+#include "Bulk_quote_ex15.h"
+#include <iostream>
+#include <functional>
+
+double print_total(std::ostream &os, const Quote &item, size_t n)
+{
+	double ret = item.net_price(n);
+	os << "ISBN: " << item.isbn() << " # sold: " << n << " total due: " << ret << std::endl;
+	return ret;
+}
+
+int main()
+{
+	Quote q("A1-001", 80);
+	Bulk_quote bq("A1-001", 80, 5, 0.2);
+	// print_total(std::cout, q, 10);
+	// print_total(std::cout, bq, 10);
+
+	q.debug();
+	std::cout << std::endl;
+	bq.debug();
+	std::cout << std::endl;
+
+	return 0;
+}
+```
+  
+## 15.16
