@@ -484,3 +484,12 @@ Disc_quote_ex15.h:13:9: note: 	virtual double Disc_quote::net_price(std::size_t)
 ```
   
 ## 15.18
+(a)合法；  
+(b)非法；  
+(c)非法；  
+(d)合法；  
+(d)非法；  
+(f)非法。  
+只有当D公有地继承B时，用户代码才能使用派生类向基类的转换。  
+  
+## 15.19
