@@ -299,3 +299,17 @@ int main()
 有必要，如果该成员函数不希望被后续的派生类继承，则可声明成final，与当前的override没有关系。
   
 ## 15.13
+派生类中的print函数会递归调用当前print，知道内存耗尽。  
+```cpp
+void print(ostream &os) { base::print(os); os << " " << i; }
+```
+  
+## 15.14
+（a）调用base中的print，编译时确定；  
+（b）调用derived中的print，编译时确定；  
+（c）调用base中的name函数，不是虚函数，没有动态绑定，所以编译时确定；  
+（d）调用derived中的name函数，不是虚函数，没有动态绑定，所以编译时确定；  
+（e）调用base中的print，运行时确定；  
+（f）调用derived中的print，运行时确定。  
+  
+## 15.15
