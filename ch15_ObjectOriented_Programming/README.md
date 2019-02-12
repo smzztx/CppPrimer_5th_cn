@@ -110,26 +110,26 @@ int main()
 ```
   
 ## 15.07
-Bulk_quote_ex07.h
+Limit_quote_ex07.h
 ```cpp
-#ifndef BULK_QUOTE_H_
-#define BULK_QUOTE_H_
+#ifndef LIMIT_QUOTE_H_
+#define LIMIT_QUOTE_H_
 
 #include "Quote_ex03.h"
 #include <string>
 
-class Bulk_quote : public Quote
+class Limit_quote : public Quote
 {
 public:
-	Bulk_quote() = default;
-	Bulk_quote(const std::string &book, double p, std::size_t qty, double disc) : Quote(book, p), max_qty(qty), discount(disc) { }
+	Limit_quote() = default;
+	Limit_quote(const std::string &book, double p, std::size_t qty, double disc) : Quote(book, p), max_qty(qty), discount(disc) { }
 	double net_price(std::size_t) const override;
 private:
 	std::size_t max_qty = 0;
 	double discount = 0.0;
 };
 
-double Bulk_quote::net_price(size_t cnt) const
+double Limit_quote::net_price(size_t cnt) const
 {
 	if(cnt > max_qty) return max_qty * (1 - discount) * price + (cnt - max_qty)*price;
 	else return cnt * price;
@@ -141,7 +141,7 @@ double Bulk_quote::net_price(size_t cnt) const
 ex07.cpp
 ```cpp
 #include "Quote_ex03.h"
-#include "Bulk_quote_ex07.h"
+#include "Limit_quote_ex07.h"
 #include <iostream>
 #include <functional>
 
@@ -155,7 +155,7 @@ double print_total(std::ostream &os, const Quote &item, size_t n)
 int main()
 {
 	Quote q("A1-001", 80);
-	Bulk_quote bq("A1-001", 80, 5, 0.2);
+	Limit_quote bq("A1-001", 80, 5, 0.2);
 	print_total(std::cout, q, 10);
 	print_total(std::cout, bq, 10);
 
@@ -241,24 +241,24 @@ class Bulk_quote : public Quote
 {
 public:
 	Bulk_quote() = default;
-	Bulk_quote(const std::string &book, double p, std::size_t qty, double disc) : Quote(book, p), max_qty(qty), discount(disc) { }
+	Bulk_quote(const std::string &book, double p, std::size_t qty, double disc) : Quote(book, p), min_qty(qty), discount(disc) { }
 	double net_price(std::size_t) const override;
 	void debug() const override;
 private:
-	std::size_t max_qty = 0;
+	std::size_t min_qty = 0;
 	double discount = 0.0;
 };
 
 double Bulk_quote::net_price(size_t cnt) const
 {
-	if(cnt > max_qty) return max_qty * (1 - discount) * price + (cnt - max_qty)*price;
+	if(cnt >= min_qty) return cnt * (1 - discount) * price;
 	else return cnt * price;
 }
 
 void Bulk_quote::debug() const
 {
 	Quote::debug();
-	std::cout << "; max_qty: " << max_qty
+	std::cout << "; min_qty: " << min_qty
 	<< "; discount: " << discount;
 }
 
@@ -357,7 +357,7 @@ public:
 
 double Bulk_quote::net_price(size_t cnt) const
 {
-	if(cnt > quantity) return quantity * (1 - discount) * price + (cnt - quantity)*price;
+	if(cnt >= quantity) return cnt * (1 - discount) * price;
 	else return cnt * price;
 }
 
@@ -402,3 +402,85 @@ int main()
 ```
   
 ## 15.16
+Limit_quote_ex16.h
+```cpp
+#ifndef LIMIT_QUOTE_H_
+#define LIMIT_QUOTE_H_
+
+#include "Disc_quote_ex15.h"
+#include <string>
+#include <iostream>
+
+class Limit_quote : public Disc_quote
+{
+public:
+	Limit_quote() = default;
+	Limit_quote(const std::string &book, double price, std::size_t qty, double disc) : Disc_quote(book, price, qty, disc) { }
+	double net_price(std::size_t) const override;
+	void debug() const override;
+};
+
+double Limit_quote::net_price(size_t cnt) const
+{
+	if(cnt > quantity) return quantity * (1 - discount) * price + (cnt - quantity)*price;
+	else return cnt * price;
+}
+
+void Limit_quote::debug() const
+{
+	Quote::debug();
+	std::cout << "; quantity: " << quantity
+	<< "; discount: " << discount;
+}
+
+#endif
+```
+  
+ex16.cpp
+```cpp
+#include "Quote_ex11.h"
+#include "Limit_quote_ex16.h"
+#include <iostream>
+#include <functional>
+
+double print_total(std::ostream &os, const Quote &item, size_t n)
+{
+	double ret = item.net_price(n);
+	os << "ISBN: " << item.isbn() << " # sold: " << n << " total due: " << ret << std::endl;
+	return ret;
+}
+
+int main()
+{
+	Quote q("A1-001", 80);
+	Limit_quote bq("A1-001", 80, 5, 0.2);
+	print_total(std::cout, q, 10);
+	print_total(std::cout, bq, 10);
+
+	// q.debug();
+	// std::cout << std::endl;
+	// bq.debug();
+	// std::cout << std::endl;
+
+	return 0;
+}
+```
+  
+## 15.17
+```
+$ g++ -o ex17 ex17.cpp -std=c++11
+ex17.cpp: In function ‘int main()’:
+ex17.cpp:17:13: error: cannot declare variable ‘dq’ to be of abstract type ‘Disc_quote’
+  Disc_quote dq("A1-001", 80, 5, 0.2);
+             ^
+In file included from Limit_quote_ex16.h:4:0,
+                 from ex17.cpp:2:
+Disc_quote_ex15.h:7:7: note:   because the following virtual functions are pure within ‘Disc_quote’:
+ class Disc_quote : public Quote
+       ^
+Disc_quote_ex15.h:13:9: note: 	virtual double Disc_quote::net_price(std::size_t) const
+  double net_price(std::size_t) const = 0;
+         ^
+```
+  
+## 15.18
