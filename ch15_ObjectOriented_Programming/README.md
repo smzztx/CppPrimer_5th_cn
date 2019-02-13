@@ -493,3 +493,12 @@ Disc_quote_ex15.h:13:9: note: 	virtual double Disc_quote::net_price(std::size_t)
 只有当D公有地继承B时，用户代码才能使用派生类向基类的转换。  
   
 ## 15.19
+Base类：合法；  
+Pub_Derv类：合法；  
+Priv_Derv类：合法；  
+Prot_Derv类：合法；  
+Derived_from_Public类：合法；  
+Derived_from_Private类：非法；  
+Derived_from_Protected类：合法。  
+  
+## 15.20
