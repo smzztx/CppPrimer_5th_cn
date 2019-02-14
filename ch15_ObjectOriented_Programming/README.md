@@ -639,3 +639,7 @@ int main()
 参见15.21。
   
 ## 15.23
+添加 int fcn() override;  
+`bp1->fcn(); //虚调用，将在运行时调用Base::fcn`
+`bp2->fcn(); //虚调用，将在运行时调用D1::fcn`
+`bp3->fcn(); //虚调用，将在运行时调用D2::fcn`
