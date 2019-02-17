@@ -1,4 +1,4 @@
-#include "Quote_ex26.h"
+#include "Quote.h"
 #include <iostream>
 
 void Quote::debug() const

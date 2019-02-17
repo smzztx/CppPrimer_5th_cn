@@ -1,7 +1,7 @@
 #ifndef LIMIT_QUOTE_H_
 #define LIMIT_QUOTE_H_
 
-#include "Disc_quote_ex26.h"
+#include "Disc_quote.h"
 #include <string>
 #include <iostream>
 

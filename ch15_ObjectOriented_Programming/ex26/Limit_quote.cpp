@@ -1,4 +1,4 @@
-#include "Limit_quote_ex26.h"
+#include "Limit_quote.h"
 #include <iostream>
 
 double Limit_quote::net_price(size_t cnt) const

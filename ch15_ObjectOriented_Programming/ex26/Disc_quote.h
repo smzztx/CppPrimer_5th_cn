@@ -1,7 +1,7 @@
 #ifndef DISC_QUOTE_H_
 #define DISC_QUOTE_H_
 
-#include "Quote_ex26.h"
+#include "Quote.h"
 #include <string>
 
 class Disc_quote : public Quote

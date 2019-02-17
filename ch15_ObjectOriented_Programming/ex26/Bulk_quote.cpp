@@ -1,4 +1,4 @@
-#include "Bulk_quote_ex26.h"
+#include "Bulk_quote.h"
 #include <iostream>
 
 double Bulk_quote::net_price(size_t cnt) const
