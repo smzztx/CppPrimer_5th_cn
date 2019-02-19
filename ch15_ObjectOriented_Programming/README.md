@@ -818,3 +818,82 @@ int main()
 ```
   
 ## 15.30
+将print_total函数放入Quote.h。
+Basket.h
+```cpp
+#ifndef BASKET_H_
+#define BASKET_H_
+
+#include "Quote.h"
+#include <iostream>
+#include <memory>
+#include <set>
+
+class Basket
+{
+public:
+	void add_item(const std::shared_ptr<Quote> &sale) { items.insert(sale); }
+	void add_item(const Quote &sale) { items.insert(std::shared_ptr<Quote>(sale.clone())); }
+	void add_item(Quote &&sale) { items.insert(std::shared_ptr<Quote>(std::move(sale).clone())); }
+	double total_receipt(std::ostream&) const;
+private:
+	static bool compare(const std::shared_ptr<Quote> &lhs, const std::shared_ptr<Quote> &rhs) { return lhs->isbn() < rhs->isbn(); }
+	std::multiset<std::shared_ptr<Quote>, decltype(compare) *> items{compare};
+};
+
+#endif
+```
+  
+Basket.cpp
+```cpp
+#include "Basket.h"
+
+double Basket::total_receipt(std::ostream &os) const
+{
+	double sum = 0.0;
+	for(auto iter = items.cbegin(); iter != items.cend(); iter = items.upper_bound(*iter))
+	{
+		sum += print_total(os, **iter, items.count(*iter));
+	}
+
+	os << "Total Sale: " << sum << std::endl;
+	return sum;
+}
+```
+  
+ex30.cpp
+```cpp
+#include "Quote.h"
+#include "Bulk_quote.h"
+#include "Limit_quote.h"
+#include "Basket.h"
+#include <iostream>
+#include <functional>
+#include <vector>
+#include <memory>
+
+int main()
+{
+	Bulk_quote bq("A1-001", 80, 5, 0.2);
+	print_total(std::cout, bq, 10);
+
+	std::vector<std::shared_ptr<Quote>> basket;
+	basket.push_back(std::make_shared<Bulk_quote>(bq));
+
+	// double total_price = 0;
+	// for (const auto &vq : basket)
+	// 	total_price += vq->net_price(10);
+	// std::cout << "total_price:" << total_price << std::endl;
+
+	Basket basket_object;
+	for (int i = 0; i < 10; ++i)
+	{
+		basket_object.add_item(bq);
+	}
+	basket_object.total_receipt(std::cout);
+
+	return 0;
+}
+```
+  
+## 15.31

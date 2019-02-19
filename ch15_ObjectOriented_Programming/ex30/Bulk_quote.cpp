@@ -14,7 +14,7 @@ void Bulk_quote::debug() const
 	<< "; discount: " << discount;
 }
 
-Bulk_quote::Bulk_quote(Bulk_quote &bq) : Disc_quote(bq)
+Bulk_quote::Bulk_quote(const Bulk_quote &bq) : Disc_quote(bq)
 {
 	std::cout << "Bulk_quote::Bulk_quote(Bulk_quote &bq)" << std::endl;
 }
