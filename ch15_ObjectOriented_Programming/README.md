@@ -897,3 +897,9 @@ int main()
 ```
   
 ## 15.31
+（a）WordQuery orQuery AndQuery NotQuery；  
+（b）WordQuery orQuery AndQuery NotQuery；  
+（c）WordQuery orQuery AndQuery。  
+  
+## 15.32
+
