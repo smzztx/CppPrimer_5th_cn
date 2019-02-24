@@ -1224,7 +1224,7 @@ ex33.cpp
 ```cpp
 #include <iostream>
 #include <string>
-#include "TextQuery_ex32.h"
+#include "TextQuery_ex33.h"
 
 void runQueries(std::ifstream &infile)
 {
