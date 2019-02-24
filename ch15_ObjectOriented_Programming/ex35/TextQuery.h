@@ -23,7 +23,7 @@ public:
 	QueryResult query(const std::string&) const;
 private:
 	StrBlob file;
-	std::map<std::string, std::shared_ptr<std::set<line_no>>> wm;
+	std::map<std::string, std::shared_ptr<std::set<line_no>>> word_map;
 };
 
 class QueryResult
@@ -55,7 +55,7 @@ TextQuery::TextQuery(std::ifstream &ifs)
 			std::string word;
 			std::copy_if(text_word.begin(), text_word.end(), std::back_inserter(word), isalpha);
 			// std::cout << word << std::endl;
-			auto &wm_lines = wm[word];
+			auto &wm_lines = word_map[word];
 			if(!wm_lines)
 				wm_lines.reset(new std::set<line_no>);
 			wm_lines->insert(line_number);
@@ -66,8 +66,8 @@ TextQuery::TextQuery(std::ifstream &ifs)
 QueryResult TextQuery::query(const std::string &sought) const
 {
 	static std::shared_ptr<std::set<TextQuery::line_no>> nodata(new std::set<TextQuery::line_no>);
-	auto loc = wm.find(sought);
-	if(loc == wm.end())
+	auto loc = word_map.find(sought);
+	if(loc == word_map.end())
 		return QueryResult(sought, nodata, file);
 	else
 		return QueryResult(sought, loc->second, file);
