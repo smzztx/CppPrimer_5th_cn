@@ -3,6 +3,7 @@
 
 #include <string>
 #include "Query_base.h"
+#include "Query.h"
 
 class BinaryQuery : public Query_base
 {

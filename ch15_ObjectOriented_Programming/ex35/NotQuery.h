@@ -2,6 +2,7 @@
 #define NOTQUERY_H_
 
 #include <string>
+#include "Query_base.h"
 #include "Query.h"
 
 class NotQuery : public Query_base
