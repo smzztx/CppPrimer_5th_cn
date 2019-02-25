@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include "TextQuery.h"
+#include "Query.h"
 
 void runQueries(std::ifstream &infile)
 {
@@ -18,4 +19,7 @@ int main()
 {
     std::ifstream file("../../ch12_Dynamic_Memory/storyDataFile");
     runQueries(file);
+
+    Query q("the");
+    std::cout << q.rep() << std::endl;
 }
