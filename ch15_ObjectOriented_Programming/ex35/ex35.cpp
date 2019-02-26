@@ -17,9 +17,10 @@ void runQueries(std::ifstream &infile)
 
 int main()
 {
-    std::ifstream file("../../ch12_Dynamic_Memory/storyDataFile");
-    runQueries(file);
+    // std::ifstream file("../../ch12_Dynamic_Memory/storyDataFile");
+    // runQueries(file);
 
-    Query q("the");
+    Query q = ~Query("fiery") & Query("bird") | Query("wind");
     std::cout << q.rep() << std::endl;
+    return 0;
 }
