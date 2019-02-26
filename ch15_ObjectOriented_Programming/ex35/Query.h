@@ -4,15 +4,13 @@
 #include <string>
 #include "Query_base.h"
 #include "WordQuery.h"
-#include "NotQuery.h"
-// #include "AndQuery.h"
-// #include "OrQuery.h"
+#include "TextQuery.h"
 
 class Query
 {
 	friend Query operator~(const Query&);
-	// friend Query operator|(const Query&, cosnt Query&);
-	// friend Query operator&(const Query&, cosnt Query&);
+	friend Query operator|(const Query&, const Query&);
+	friend Query operator&(const Query&, const Query&);
 public:
 	Query(const std::string&);
 	QueryResult eval(const TextQuery &t) const { return q->eval(t); }
