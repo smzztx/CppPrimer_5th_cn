@@ -2,6 +2,7 @@
 #define ORQUERY_H_
 
 #include <string>
+#include <set>
 #include "BinaryQuery.h"
 #include "Query.h"
 
@@ -18,9 +19,9 @@ inline Query operator|(const Query &lhs, const Query &rhs)
 
 QueryResult OrQuery::eval(const TextQuery &text) const
 {
-	auto right = rhs.eval(text), left = lhs.eval(text);
-	auto ret_lines = make_shared<set<line_no>>(left.begin(), left,end());
-	return QueryResult(rep(), ret_lines, left.get_file());
+// 	auto right = rhs.eval(text), left = lhs.eval(text);
+// 	auto ret_lines = std::make_shared<std::set<line_no>>(left.begin(), left.end());
+	// return QueryResult(rep(), ret_lines, left.get_file());
 }
 
 #endif

@@ -2,6 +2,9 @@
 #include <string>
 #include "TextQuery.h"
 #include "Query.h"
+#include "NotQuery.h"
+#include "AndQuery.h"
+#include "OrQuery.h"
 
 void runQueries(std::ifstream &infile)
 {
