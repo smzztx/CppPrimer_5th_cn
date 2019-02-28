@@ -912,6 +912,85 @@ int main()
 由合成的版本管理。Query_base是一个抽象类，所以这种类型的对象本质上是派生类的子对象。  
   
 ## 15.34
+（a）Query(const std::string &s)，s为fiery、bird、wind；  
+WordQuery(const std::string &s)，s为fiery、bird、wind；  
+AndQuery(const Query &left, const Query &right）；  
+BinaryQuery(const Query &l, const Query &r, std::string s)；  
+Query(std::shared_ptr<Query_base> query)；  
+OrQuery(const Query &left, const Query &right)；  
+BinaryQuery(const Query &l, const Query &r, std::string s)；  
+Query(std::shared_ptr<Query_base> query)；  
+（b）query.rep()；  
+q->rep()，指向OrQuery::rep()；  
+Query::rep(),lhs为AndQuery::rep()，rhs为WordQuery::rep()；  
+AndQuery::rep()；  
+Query::rep();  
+（c）q->eval()，指向OrQuery::eval()。  
+  
+## 15.35
+Query.h
+```cpp
+#ifndef QUERY_H_
+#define QUERY_H_
+
+#include <string>
+#include <iostream>
+#include "Query_base.h"
+#include "WordQuery.h"
+#include "TextQuery.h"
+
+class Query
+{
+	friend Query operator~(const Query&);
+	friend Query operator|(const Query&, const Query&);
+	friend Query operator&(const Query&, const Query&);
+public:
+	Query(const std::string&);
+	QueryResult eval(const TextQuery &t) const { return q->eval(t); }
+	std::string rep() const { return q->rep(); }
+private:
+	Query(std::shared_ptr<Query_base> query) : q(query) { }
+	std::shared_ptr<Query_base> q;
+};
+
+std::ostream& operator<<(std::ostream &os, const Query &query)
+{
+	return os << query.rep();
+}
+
+inline Query::Query(const std::string &s) : q(new WordQuery(s)) { std::cout << "Query::Query(const std::string &s)" << std::endl; }
+
+#endif
+```
+  
+Query_base.h
+```cpp
+#ifndef QUERY_BASE_H_
+#define QUERY_BASE_H_
+
+#include <string>
+#include <iostream>
+#include "TextQuery.h"
+#include "Query.h"
+
+class Query_base
+{
+	friend class Query;
+protected:
+	using line_no = TextQuery::line_no;
+	virtual ~Query_base() = default;
+private:
+	virtual QueryResult eval(const TextQuery&) const = 0;
+	virtual std::string rep() const = 0;
+};
+
+#endif
+```
+  
+## 15.36
+请自行验证。
+  
+## 15.37
 
   
 ## 15.38
