@@ -20,11 +20,13 @@ void runQueries(std::ifstream &infile)
 
 int main()
 {
-    // std::ifstream file("../../ch12_Dynamic_Memory/storyDataFile");
+    std::ifstream file("../../ch12_Dynamic_Memory/storyDataFile");
     // runQueries(file);
+    TextQuery t(file);
 
     Query q = Query("fiery") & Query("bird") | Query("wind");
     std::cout << q << std::endl;
+    // q.eval(t);
 
     return 0;
 }

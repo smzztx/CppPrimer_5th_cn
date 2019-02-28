@@ -2,6 +2,7 @@
 #define ANDQUERY_H_
 
 #include <string>
+#include <iostream>
 #include <memory>
 #include <set>
 #include "BinaryQuery.h"
@@ -10,7 +11,7 @@
 class AndQuery : public BinaryQuery
 {
 	friend Query operator&(const Query&, const Query&);
-	AndQuery(const Query &left, const Query &right) : BinaryQuery(left, right, "&") { }
+	AndQuery(const Query &left, const Query &right) : BinaryQuery(left, right, "&") { std::cout << "AndQuery(const Query &left, const Query &right)" << std::endl; }
 	QueryResult eval(const TextQuery&) const;
 };
 

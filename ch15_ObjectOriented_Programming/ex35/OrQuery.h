@@ -2,6 +2,7 @@
 #define ORQUERY_H_
 
 #include <string>
+#include <iostream>
 #include <set>
 #include "BinaryQuery.h"
 #include "Query.h"

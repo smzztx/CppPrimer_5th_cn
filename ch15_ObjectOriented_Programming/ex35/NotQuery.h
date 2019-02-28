@@ -2,6 +2,7 @@
 #define NOTQUERY_H_
 
 #include <string>
+#include <iostream>
 #include <memory>
 #include <set>
 #include "Query_base.h"
@@ -10,7 +11,7 @@
 class NotQuery : public Query_base
 {
 	friend Query operator~(const Query&);
-	NotQuery(const Query &q) : query(q) { }
+	NotQuery(const Query &q) : query(q) { std::cout << "NotQuery(const Query &q)" << std::endl; }
 	std::string rep() const { return "~(" + query.rep() + ")"; }
 	QueryResult eval(const TextQuery&) const;
 	Query query;

@@ -2,6 +2,7 @@
 #define QUERY_H_
 
 #include <string>
+#include <iostream>
 #include "Query_base.h"
 #include "WordQuery.h"
 #include "TextQuery.h"
@@ -25,6 +26,6 @@ std::ostream& operator<<(std::ostream &os, const Query &query)
 	return os << query.rep();
 }
 
-inline Query::Query(const std::string &s) : q(new WordQuery(s)) { }
+inline Query::Query(const std::string &s) : q(new WordQuery(s)) { std::cout << "Query::Query(const std::string &s)" << std::endl; }
 
 #endif
