@@ -12,7 +12,7 @@ class NotQuery : public Query_base
 {
 	friend Query operator~(const Query&);
 	NotQuery(const Query &q) : query(q) { std::cout << "NotQuery(const Query &q)" << std::endl; }
-	std::string rep() const { return "~(" + query.rep() + ")"; }
+	std::string rep() const { std::cout << "NotQuery::rep()" << std::endl; return "~(" + query.rep() + ")"; }
 	QueryResult eval(const TextQuery&) const;
 	Query query;
 };
