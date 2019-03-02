@@ -1027,3 +1027,20 @@ WordQuery::rep()
 （c）非法，返回的为Query类型，不能转换为AndQuery。  
   
 ## 15.39
+返回的是shared_ptr<StrBlob>，需要增加构造函数或者修改get_file()。  
+Query类和Query_base类都没有变化，运行结果如下：
+```sh
+((fiery & bird) | wind) occurs 3 
+	(line 2) Her Daddy says when the wind blows 
+	(line 4) like a fiery bird in flight. 
+	(line 5) A beautiful fiery bird, he tells her, 
+```
+  
+## 15.40
+不会发生什么。  
+  
+## 15.41
+请自行实现。  
+  
+## 15.42
+请自行实现。  
