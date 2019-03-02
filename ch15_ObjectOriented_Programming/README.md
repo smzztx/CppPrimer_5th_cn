@@ -988,10 +988,38 @@ private:
 ```
   
 ## 15.36
-请自行验证。
+（a）
+```sh
+WordQuery(const std::string &s)
+Query::Query(const std::string &s)
+WordQuery(const std::string &s)
+Query::Query(const std::string &s)
+WordQuery(const std::string &s)
+Query::Query(const std::string &s)
+BinaryQuery(const Query &l, const Query &r, std::string s)
+AndQuery(const Query &left, const Query &right)
+Query(std::shared_ptr<Query_base> query)
+BinaryQuery(const Query &l, const Query &r, std::string s)
+OrQuery(const Query &left, const Query &right)
+Query(std::shared_ptr<Query_base> query)
+```
+  
+（b）
+```sh
+Query::rep()
+BinaryQuery::rep()|
+Query::rep()
+WordQuery::rep()
+Query::rep()
+BinaryQuery::rep()&
+Query::rep()
+WordQuery::rep()
+Query::rep()
+WordQuery::rep()
+```
   
 ## 15.37
-
+接口函数需要改变，需要将Query改为shared_ptr<Query_base>。  
   
 ## 15.38
 （a）非法，BinaryQuery为抽象类；  
