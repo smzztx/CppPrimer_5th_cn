@@ -638,7 +638,7 @@ int main()
 
 ## 10.26
 back_inserter创建一个使用push_back的迭代器；  
-front_inserter创建一个使用push+front的迭代器；  
+front_inserter创建一个使用push_front的迭代器；  
 inserter创建一个使用insert的迭代器。此函数接受第二个参数，这个参数必须是一个指向给定容器的迭代器。元素将被插入到给定迭代器所表示的元素之前。  
 
 ## 10.27
