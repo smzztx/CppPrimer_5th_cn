@@ -304,3 +304,6 @@ ConstStrBlobPtr<T> StrBlob<T>::end()
 ```
   
 ## 16.13
+一对一的友好关系，相同类型实例化的BlobPtr可以相互比较。
+  
+## 16.14
