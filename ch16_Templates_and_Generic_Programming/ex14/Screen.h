@@ -4,27 +4,29 @@
 #include <string>
 #include <vector>
 
+template <unsigned W, unsigned H>
 class Screen;
 
+template <unsigned W, unsigned H>
 class Window_mgr
 {
 public:
-    using ScreenIndex = std::vector<Screen>::size_type;
-    void clear(ScreenIndex);
+    using ScreenIndex = std::vector<Screen<W,H>>::size_type;
+    void clear(ScreenIndex<W,H>);
 private:
-    std::vector<Screen> screens;
+    std::vector<Screen<W,H>> screens;
 };
 
+template <unsigned W, unsigned H>
 class Screen 
 {
 friend void Window_mgr::clear(ScreenIndex);
 public:
-    // using pos = std::string::size_type;
-    template<typename T> using pos = 
+    using pos = std::string::size_type;
 
     Screen() = default;
-    Screen(pos ht, pos wd):height(ht), width(wd){ }
-    Screen(pos ht, pos wd, char c):height(ht), width(wd), contents(ht*wd, c){ }
+    Screen(pos H, pos W):height(H), width(W){ }
+    Screen(pos H, pos W, char c):height(H), width(W), contents(H*W, c){ }
 
     char get() const { return contents[cursor]; }
     char get(pos r, pos c) const { return contents[r*width+c]; }
