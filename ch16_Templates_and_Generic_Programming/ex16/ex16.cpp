@@ -1,8 +1,9 @@
-#include "StrVec.h"
+#include "Vec.h"
+#include <string>
 
 int main()
 {
-	StrVec s({"aaa", "bbb"});
+	Vec<std::string> s({"aaa", "bbb"});
 
 	return 0;
 }
