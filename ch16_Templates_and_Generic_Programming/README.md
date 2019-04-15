@@ -993,3 +993,32 @@ std::ostream &print(std::ostream &os, const QueryResult &qr)
   
 ## 16.23
 在销毁shared_ptr时，调用DebugDelete()。  
+
+## 16.24
+```cpp
+#ifndef BLOB_H_
+#define BLOB_H_
+
+#include <vector>
+#include <memory>
+
+template <typename T>
+class Blob
+{
+public:
+	// template <typename It>
+	// Blob(It begin, It end) : data(std::make_shared<std::vector<T>>(begin, end)) { }
+	template <typename It>
+	Blob(It begin, It end);
+private:
+	std::shared_ptr<std::vector<T>> data;
+};
+
+template <typename T>
+template <typename It>
+Blob<T>::Blob(It begin, It end) : data(std::make_shared<std::vector<T>>(begin, end)) { }
+
+#endif
+```
+  
+## 16.25
