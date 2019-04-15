@@ -898,3 +898,6 @@ int main()
 ```
   
 ## 16.22
+在销毁shared_ptr时，调用DebugDelete()。  
+  
+## 16.23
