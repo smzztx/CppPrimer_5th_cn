@@ -16,7 +16,7 @@ public:
 	typedef std::vector<std::string>::size_type size_type;
 	StrBlob();
 	StrBlob(std::initializer_list<std::string> il);
-	StrBlob(std::string::iterator begin, std::string::iterator end);
+	StrBlob(std::vector<std::string>::iterator begin, std::vector<std::string>::iterator end);
 	size_type size() const { return data->size(); }
 	bool empty() const { return data->empty(); }
 	void push_back(const std::string &t) { data->push_back(t); }
@@ -70,7 +70,7 @@ ConstStrBlobPtr& ConstStrBlobPtr::incr()
 
 StrBlob::StrBlob() : data(std::make_shared<std::vector<std::string>>()){}
 StrBlob::StrBlob(std::initializer_list<std::string> il) : data(std::make_shared<std::vector<std::string>>(il)){}
-StrBlob::StrBlob(std::string::iterator begin, std::string::iterator end) : data(std::make_shared<std::vector<std::string>>(begin, end)) { }
+StrBlob::StrBlob(std::vector<std::string>::iterator begin, std::vector<std::string>::iterator end) : data(std::make_shared<std::vector<std::string>>(begin, end)) { }
 
 void StrBlob::check(size_type i, const std::string &msg) const
 {
