@@ -1324,3 +1324,18 @@ const转换：可以将一个非const对象的引用（或指针）传递给一�
 （f）f2(int*, const int*)。  
   
 ## 16.37
+可以，使用指定模板实参。  
+```cpp
+int a = 1;
+double b = 2.0;
+max<double>(a, b);
+  
+## 16.38
+规定返回类型，推断需要分配多大空间。  
+  
+## 16.39
+```cpp
+compare<std::string>("a", "bb");
+```
+  
+## 16.40
