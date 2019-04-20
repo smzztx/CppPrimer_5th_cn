@@ -1339,3 +1339,25 @@ compare<std::string>("a", "bb");
 ```
   
 ## 16.40
+合法，传递的实参必须支持+0操作，返回类型由+操作的返回类型决定。  
+  
+## 16.41
+下述代码应该有问题：
+```cpp
+#include <iostream>
+
+template <typename T>
+auto sum(T lhs, T rhs) -> decltype(lhs + rhs)
+{
+	return lhs + rhs;
+}
+
+int main()
+{
+	auto s = sum(123456789123456789123456789123456789123456789, 123456789123456789123456789123456789123456789);
+	// std::cout << s << std::endl;
+	return 0;
+}
+```
+  
+## 16.42
