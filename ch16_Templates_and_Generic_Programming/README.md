@@ -1361,3 +1361,26 @@ int main()
 ```
   
 ## 16.42
+（a）T为int&，val为int& && -> int&；  
+（b）T为const int&，val为const int& && -> const int&；  
+（c）T为int，val为int&&。  
+  
+## 16.43
+int&  
+  
+## 16.44
+T：  
+（a）int；  
+（b）int；  
+（c）int。  
+  
+const T&：  
+（a）int；  
+（b）int；  
+（c）int。  
+  
+## 16.45
+42，T为int，val为int&&，vector<int> v；  
+int，T为int&，val为int& && -> int&，vector<int&> v，无法对int&进行内存分配，会报错。  
+  
+## 16.46
