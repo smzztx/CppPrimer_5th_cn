@@ -1384,3 +1384,6 @@ const T&：
 int，T为int&，val为int& && -> int&，vector<int&> v，无法对int&进行内存分配，会报错。  
   
 ## 16.46
+从C++11开始，std::allocator::construct的第二个参数为 Args&&... args，*elem++会返回一个左值，需要我们自行转换为右值。  
+  
+## 16.47
