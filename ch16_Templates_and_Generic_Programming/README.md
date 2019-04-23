@@ -1387,3 +1387,113 @@ int，T为int&，val为int& && -> int&，vector<int&> v，无法对int&进行内
 从C++11开始，std::allocator::construct的第二个参数为 Args&&... args，*elem++会返回一个左值，需要我们自行转换为右值。  
   
 ## 16.47
+```cpp
+#include <iostream>
+#include <memory>
+
+void func_lvalue(std::string &lhs, std::string &rhs)
+{
+	lhs = "Wang\n";
+	rhs = "Alan\n";
+}
+
+void func_rvalue(int &&lhs, int &&rhs)
+{
+	//allocte encough space
+	std::allocator<int> alloc;
+	int *data(alloc.allocate(3));
+
+	//move into the spaced newly allocated
+	alloc.construct(data, lhs);
+	alloc.construct(data + 1, 0);
+	alloc.construct(data + 2, rhs);
+
+	//print
+	for(auto p = data; p != data + 3; ++p)
+		std::cout << *p << "\n";
+
+	//destroy and deallocation
+	for(auto p = data + 3; p != data; )
+		alloc.destroy(--p);
+	alloc.deallocate(data, 3);
+}
+
+template <typename F, typename T1, typename T2>
+void flip(F f, T1 &&t1, T2 &&t2)
+{
+	f(std::forward<T2>(t2), std::forward<T1>(t1));
+}
+
+int main()
+{
+	//test for lvalue reference
+	std::string s1, s2;
+	flip(func_lvalue, s1, s2);
+	std::cout << s1 << s2;
+
+	//test for rvalue reference
+	flip(func_rvalue, 99, 88);
+
+	return 0;
+}
+```
+  
+## 16.48
+```cpp
+#include <iostream>
+#include <memory>
+#include <sstream>
+
+template <typename T> std::string debug_rep(const T &t);
+template <typename T> std::string debug_rep(T *p);
+std::string debug_rep(const std::string &s);
+std::string debug_rep(char *p);
+std::string debug_rep(const char *p);
+
+template <typename T>
+std::string debug_rep(const T &t)
+{
+	std::ostringstream ret;
+	ret << t;
+	return ret.str();
+}
+
+template <typename T>
+std::string debug_rep(T *p)
+{
+	std::ostringstream ret;
+	ret << "pointer: " << p;
+
+	if(p)
+		ret << " " << debug_rep(*p);
+	else
+		ret << " null pointer";
+	return ret.str();
+}
+
+std::string debug_rep(const std::string &s)
+{
+	return '"' + s + '"';
+}
+
+std::string debug_rep(char *p)
+{
+	return debug_rep(std::string(p));
+}
+
+std::string debug_rep(const char *p)
+{
+	std::cout << "debug_rep(const char *p)" << std::endl;
+	return debug_rep(std::string(p));
+}
+
+int main()
+{
+	char ca[] = {'a', 'b', 'c', '\0'};
+	std::cout << debug_rep(ca) << std::endl;
+
+	return 0;
+}
+```
+  
+## 16.49
