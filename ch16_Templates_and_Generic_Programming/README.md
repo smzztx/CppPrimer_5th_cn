@@ -1559,3 +1559,42 @@ template <typename T> void f(const T *t)
 ```
   
 ## 16.51
+foo(i, s, 42, d);
+3 3
+  
+foo(s, 42, "hi");
+2 2
+  
+foo(d, s);
+1 1
+  
+foo("hi");
+0 0
+  
+## 16.52
+```cpp
+#include <iostream>
+
+template <typename T, typename... Args>
+void foo(const T &t, const Args& ... rest)
+{
+	std::cout << sizeof...(Args) << std::endl;
+	std::cout << sizeof...(rest) << std::endl;
+}
+
+int main()
+{
+	int i = 0;
+	double d = 3.14;
+	std::string s = "how now brown cow";
+	
+	foo(i, s, 42, d);
+	foo(s, 42, "hi");
+	foo(d, s);
+	foo("hi");
+
+	return 0;
+}
+```
+  
+## 16.53
