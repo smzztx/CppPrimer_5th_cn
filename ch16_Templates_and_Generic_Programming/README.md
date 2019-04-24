@@ -1497,3 +1497,65 @@ int main()
 ```
   
 ## 16.49
+g(42) g(T)；g(p) g(T*)；g(ci) g(int) g(T)；g(p2)->g(const int*) g(T*)；  
+f(42) f(T)；f(p) f(T)；f(ci) f(T)；f(p2) f(const T*)。  
+  
+## 16.50
+```cpp
+#include <iostream>
+
+template <typename T>
+void f(T t)
+{
+	std::cout << "template <typename T> void f(T t)" << std::endl;
+}
+
+template <typename T>
+void f(const T *t)
+{
+	std::cout << "template <typename T> void f(const T *t)" << std::endl;
+}
+
+template <typename T>
+void g(T t)
+{
+	std::cout << "template <typename T> void g(T t)" << std::endl;
+}
+
+template <typename T>
+void g(T *t)
+{
+	std::cout << "template <typename T> void g(T *t)" << std::endl;
+}
+
+int main()
+{
+	int i = 42, *p = &i;
+	const int ci = 0, *p2 = &ci;
+
+	g(42);
+	g(p);
+	g(ci);
+	g(p2);
+
+	f(42);
+	f(p);
+	f(ci);
+	f(p2);
+
+	return 0;
+}
+```
+```sh
+$ ./ex50 
+template <typename T> void g(T t)
+template <typename T> void g(T *t)
+template <typename T> void g(T t)
+template <typename T> void g(T *t)
+template <typename T> void f(T t)
+template <typename T> void f(T t)
+template <typename T> void f(T t)
+template <typename T> void f(const T *t)
+```
+  
+## 16.51
