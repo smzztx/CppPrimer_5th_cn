@@ -68,7 +68,7 @@ int main()
 {
 	std::string s = "bb";
 
-	errorMsg(std::cout, 1, 2, "a", s) << std::endl;
+	errorMsg(std::cout, 1, 2, "a", s, "bb") << std::endl;
 
 	return 0;
 }
