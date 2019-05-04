@@ -17,6 +17,7 @@ int main()
 参见１7.1。
   
 ## 17.3
+第一种设计更好，第二种设计更容易实现，但不容易重构。  
 ```cpp
 #ifndef TEXTQUERY_H_
 #define TEXTQUERY_H_
