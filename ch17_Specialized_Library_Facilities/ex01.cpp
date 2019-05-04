@@ -1,5 +1,3 @@
-## 17.1
-```cpp
 #include <iostream>
 #include <tuple>
 #include <vector>
@@ -11,9 +9,3 @@ int main()
 
 	return 0;
 }
-```
-  
-## 17.2
-参见１7.1。
-  
-## 17.3
