@@ -1,23 +1,3 @@
-## 17.1
-```cpp
-#include <iostream>
-#include <tuple>
-#include <vector>
-
-int main()
-{
-	std::tuple<int, int, int> threeI(10, 20, 30);
-	std::tuple<std::string, std::vector<std::string>, std::pair<std::string, int>> someVal("constants", {"a", "bb"}, {"ccc", 3});
-
-	return 0;
-}
-```
-  
-## 17.2
-参见１7.1。
-  
-## 17.3
-```cpp
 #ifndef TEXTQUERY_H_
 #define TEXTQUERY_H_
 
@@ -109,6 +89,3 @@ std::ostream &print(std::ostream &os, const QueryResult &qr)
 }
 
 #endif
-```
-  
-## 17.04
