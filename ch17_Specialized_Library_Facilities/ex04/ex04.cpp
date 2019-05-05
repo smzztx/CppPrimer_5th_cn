@@ -2,6 +2,8 @@
 #include <string>
 #include "Sales_data.h"
 #include <unordered_set>
+#include <algorithm>
+#include <tuple>
 
 namespace std
 {
@@ -18,11 +20,16 @@ namespace std
 	}
 }
 
-typedef tuple<std::vector<Sales_data>::size_type, std::vector<Sales_data>::const_iterator, std::vector<Sales_data>::const_iterator> matches;
+bool compareIsbn(const Sales_data &lhs, const Sales_data &rhs)
+{
+	return lhs.isbn() < rhs.isbn();
+}
+
+typedef std::tuple<std::vector<Sales_data>::size_type, std::vector<Sales_data>::const_iterator, std::vector<Sales_data>::const_iterator> matches;
 
 std::vector<matches> findBook(const std::vector<std::vector<Sales_data>> &files, const std::string &book)
 {
-	std::vector<Sales_data> ret;
+	std::vector<matches> ret;
 	for(auto it = files.cbegin(); it != files.cend(); ++it)
 	{
 		auto found = equal_range(it->cbegin(), it->cend(), book, compareIsbn);
@@ -31,6 +38,8 @@ std::vector<matches> findBook(const std::vector<std::vector<Sales_data>> &files,
 	}
 	return ret;
 }
+
+
 
 int main()
 {
