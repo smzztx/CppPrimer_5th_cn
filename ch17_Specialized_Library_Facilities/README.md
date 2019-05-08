@@ -386,3 +386,146 @@ tuple版本的findBook，更简洁。
 返回的Sales_data中的bookNo成员为空。  
   
 ## 17.09
+（a）用unsigned值初始化：0000000000000000000000000000000000000000000000000000000000100000；  
+（b）用unsigned值初始化：00000000000011110110100110110101；  
+（c）用string初始化：取决于cin。  
+  
+## 17.10
+```cpp
+#include <bitset>
+#include <vector>
+#include <iostream>
+
+int main()
+{
+	std::vector<int> vi = {1, 2, 3, 5, 8, 13, 21};
+	std::bitset<32> bset;
+	for(auto const i : vi)
+	{
+		bset.set(i);
+	}
+	std::cout << bset << std::endl;
+
+	return 0;
+}
+```
+  
+## 17.11
+```cpp
+#include <bitset>
+
+template <unsigned N>
+class quiz
+{
+public:
+	quiz(std::string &s) : bset(s) {}
+	
+private:
+	std::bitset<N> bset;
+};
+
+int main()
+{
+	std::string s1("0101010101");
+	std::string s2("0101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101");
+	quiz<10> q1(s1);
+	quiz<100> q2(s2);
+
+	return 0;
+}
+```
+  
+## 17.12
+```cpp
+#include <bitset>
+#include <iostream>
+
+template <unsigned N>
+class quiz
+{
+template <unsigned M>
+friend std::ostream &operator<<(std::ostream&, const quiz<M>&);
+public:
+	quiz(std::string &s) : bset(s) {}
+	void update(size_t n, bool b)
+	{
+		bset[n] = b;
+	}
+	
+private:
+	std::bitset<N> bset;
+};
+
+template <unsigned M>
+std::ostream &operator<<(std::ostream &os, const quiz<M> &q)
+{
+	os << q.bset;
+	return os;
+}
+
+int main()
+{
+	std::string s1("0101010101");
+	std::string s2("0101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101");
+	quiz<10> q1(s1);
+	quiz<100> q2(s2);
+
+	q1.update(1,true);
+	std::cout << q1 << std::endl;
+
+	return 0;
+}
+```
+  
+## 17.13
+```cpp
+#include <bitset>
+#include <iostream>
+
+template <unsigned N>
+class quiz
+{
+template <unsigned M>
+friend std::ostream &operator<<(std::ostream&, const quiz<M>&);
+
+template <unsigned M>
+friend size_t grade(const quiz<M>&, const quiz<M>&);
+public:
+	quiz(std::string &s) : bset(s) {}
+	void update(size_t n, bool b)
+	{
+		bset[n] = b;
+	}
+	
+private:
+	std::bitset<N> bset;
+};
+
+template <unsigned M>
+std::ostream &operator<<(std::ostream &os, const quiz<M> &q)
+{
+	os << q.bset;
+	return os;
+}
+
+template <unsigned M>
+size_t grade(const quiz<M> &lhsQ, const quiz<M> &rhsQ)
+{
+	return (lhsQ.bset ^ rhsQ.bset).flip().count();
+}
+
+int main()
+{
+	std::string s1("0101010101");
+	std::string s2("0101010100");
+
+	quiz<10> q1(s1);
+	quiz<10> q2(s2);
+
+	std::cout << grade(q1, q2) << std::endl;
+
+	return 0;
+}
+```
+  
+## 17.14
