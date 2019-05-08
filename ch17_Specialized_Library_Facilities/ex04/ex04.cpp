@@ -63,7 +63,7 @@ int main()
 
     std::vector<Sales_data> vs1 = {sales_data1, sales_data3};
     std::vector<Sales_data> vs2 = {sales_data2};
-    std::vector<std::vector<Sales_data>> vvs;
+    std::vector<std::vector<Sales_data>> vvs = {vs1, vs2};
 
     reportResults(std::cin, std::cout, vvs);
 
