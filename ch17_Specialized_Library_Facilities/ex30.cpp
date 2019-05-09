@@ -27,7 +27,8 @@ int main()
 	
 	std::cout << random_func() << std::endl;	//default 1
 	std::cout << random_func(2) << std::endl;
-	std::cout << random_func(300, 0, 100) << std::endl;
+	for(int i = 0; i < 10; ++i)
+		std::cout << random_func(1, 0, 10) << std::endl;
 
 	return 0;
 }
