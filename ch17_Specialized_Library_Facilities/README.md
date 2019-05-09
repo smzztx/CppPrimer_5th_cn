@@ -529,3 +529,80 @@ int main()
 ```
   
 ## 17.14
+```cpp
+#include <iostream>
+#include <regex>
+int main()
+{
+	try
+	{
+		std::regex r1("[[:alnum:]]+\\.(cpp|cxx|cc)$", std::regex::icase);
+	}catch(std::regex_error e)
+	{
+		std::cout << e.what() << "\ncode: " << e.code() << std::endl;
+	}
+
+	return 0;
+}
+```
+  
+## 17.15
+gcc version 4.8.4 对regex支持有问题。  
+```cpp
+#include <iostream>
+#include <regex>
+#include <string>
+
+int main()
+{
+	//https://en.wikipedia.org/wiki/I_before_E_except_after_C
+	std::string pattern("[[:alpha:]]*(cie|[^c]ei)[[:alpha:]]*");
+	std::regex r(pattern);
+	std::smatch results;
+
+	std::string s;
+	while(std::cin >> s)
+	{
+		if(std::regex_search(s, results, r))
+			std::cout << s <<  ": correct" << std::endl;
+		else
+			std::cout << s <<  ": error" << std::endl;
+	}
+
+	
+
+	return 0;
+}
+```
+  
+## 14.16
+这样只匹配3个字符，（非c）和ei这3个字符，之前匹配正确的字符都将错误。  
+```cpp
+#include <iostream>
+#include <regex>
+#include <string>
+
+int main()
+{
+	//https://en.wikipedia.org/wiki/I_before_E_except_after_C
+	std::string pattern("[^c]ei");
+	std::regex r(pattern);
+	std::smatch results;
+
+	std::string s;
+	while(std::cin >> s)
+	{
+		if(std::regex_search(s, results, r))
+			std::cout << s <<  ": correct" << std::endl;
+		else
+			std::cout << s <<  ": error" << std::endl;
+	}
+
+	
+
+	return 0;
+}
+```
+  
+## 17.17
+
