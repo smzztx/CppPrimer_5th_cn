@@ -614,3 +614,15 @@ int main()
 会报错，未定义resp。
   
 ## 17.33
+
+  
+## 17.34
+略。  
+  
+## 17.35
+[Missing ios_base::hexfloat format specifier](https://gcc.gnu.org/bugzilla/show_bug.cgi?id=59987)
+  
+## 17.36
+
+  
+## 17.37
