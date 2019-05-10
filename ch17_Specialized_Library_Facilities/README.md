@@ -626,3 +626,4 @@ int main()
 
   
 ## 17.37
+[basic_istream::getline, if it extracts no characters, if it fills in the provided buffer without encountering the delimiter, or if the provided buffer size is less than 1.](https://en.cppreference.com/w/cpp/io/ios_base/iostate)
