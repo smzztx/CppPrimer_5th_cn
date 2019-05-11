@@ -708,6 +708,238 @@ int main()
 ## 17.19
 没有匹配则返回为空字符串，也是可以比较的。  
   
+## 17.20
+```cpp
+#include <iostream>
+#include <string>
+#include <regex>
+
+bool valid(const std::smatch &m)
+{
+	if(m[1].matched)
+		return m[3].matched && (m[4].matched == 0 || m[4].str() == " ");
+	else
+		return !m[3].matched && m[4].str() == m[6].str();
+}
+
+//908.555.1500
+int main()
+{
+	std::string phone = "(\\()?(\\d{3})(\\))?([-. ])?(\\d{3})([-. ]?)(\\d{4})";
+	std::regex r(phone);
+	std::smatch m;
+	std::string s;
+
+	while(std::getline(std::cin, s))
+	{
+		for(std::sregex_iterator it(s.begin(), s.end(), r), end_it; it != end_it; ++it)
+			if(valid(*it))
+				std::cout << "valid: " << it->str() << std::endl;
+			else
+				std::cout << "not valid: " << it->str() << std::endl;
+	}
+
+	return 0;
+}
+```
+  
+## 17.21
+```cpp
+#include <string>
+#include <vector>
+#include <sstream>
+#include <iostream>
+#include <fstream>
+#include <regex>
+
+using namespace std;
+
+struct PersonInfo {
+    string name;
+    vector<string> phones;
+};
+
+bool valid(const std::smatch &m)
+{
+	if(m[1].matched)
+		return m[3].matched && (m[4].matched == 0 || m[4].str() == " ");
+	else
+		return !m[3].matched && m[4].str() == m[6].str();
+}
+
+string format(const string &s)
+{
+	return s;
+}
+
+int main()
+{
+	string line, word;
+	vector<PersonInfo> people;
+	istringstream record;
+	ifstream ifs("personinfo");
+	ofstream ofs("personinfo_new");
+	std::string phone = "(\\()?(\\d{3})(\\))?([-. ])?(\\d{3})([-. ]?)(\\d{4})";
+	std::regex r(phone);
+	std::smatch m;
+	std::string s;
+
+	while(getline(ifs, line))
+	{
+		record.str(line);
+		PersonInfo info;
+		record >> info.name;
+		while(record >> word)
+			info.phones.push_back(word);
+		record.clear();
+		people.push_back(info);
+	}
+
+	for(const auto &person : people)
+	{
+		ostringstream formatted, badNums;
+		for(const auto &ph : person.phones)
+		{
+			for(std::sregex_iterator it(ph.begin(), ph.end(), r), end_it; it != end_it; ++it)
+				if(!valid(*it))
+				{
+					badNums << " " << ph;
+				}else
+					formatted << " " << (*it)[2] << " " << (*it)[2] << (*it)[2];
+		}
+		if(badNums.str().empty())
+			ofs << person.name << " " << formatted.str() << endl;
+		else
+			cerr << " input error: " << person.name << " invalid number(s)" << badNums.str() << endl;
+	}
+
+	return 0;
+}
+```
+  
+## 17.22
+```cpp
+#include <iostream>
+#include <string>
+#include <regex>
+
+bool valid(const std::smatch &m)
+{
+	if(m[1].matched)
+		return m[3].matched && (m[4].matched == 0 || m[4].str() == " ");
+	else
+		return !m[3].matched && m[4].str() == m[7].str();
+}
+
+//908.555.1500
+//(908)5551500
+//(908.555.1500
+//908   555   1500
+int main()
+{
+	std::string phone = "(\\()?(\\d{3})(\\))?([-. ])?([ ]*)?(\\d{3})([-. ]?)([ ]*)?(\\d{4})";
+	std::regex r(phone);
+	std::smatch m;
+	std::string s;
+
+	while(std::getline(std::cin, s))
+	{
+		for(std::sregex_iterator it(s.begin(), s.end(), r), end_it; it != end_it; ++it)
+			if(valid(*it))
+				std::cout << "valid: " << it->str() << std::endl;
+			else
+				std::cout << "not valid: " << it->str() << std::endl;
+	}
+
+	return 0;
+}
+```
+```sh
+$ ./ex22 
+908.555.1500
+valid: 908.555.1500
+908   555   1500
+valid: 908   555   1500
+```
+  
+## 17.23
+```cpp
+#include <iostream>
+#include <string>
+#include <regex>
+
+bool valid(const std::smatch &m)
+{
+	if(m[3].matched)
+		return true;
+	else
+		return !m[2].matched;
+}
+
+//111112222
+//11111-2222
+//11111
+//11111-
+int main()
+{
+	std::string mail = "(\\d{5})([-])?(\\d{4})?";
+	std::regex r(mail);
+	std::smatch m;
+	std::string s;
+
+	while(std::getline(std::cin, s))
+	{
+		for(std::sregex_iterator it(s.begin(), s.end(), r), end_it; it != end_it; ++it)
+			if(valid(*it))
+				std::cout << "valid: " << it->str() << std::endl;
+			else
+				std::cout << "not valid: " << it->str() << std::endl;
+	}
+
+	return 0;
+}
+```
+```sh
+$ ./ex23
+111112222
+valid: 111112222
+11111-2222
+valid: 11111-2222
+11111
+valid: 11111
+11111-
+not valid: 11111-
+```
+  
+## 17.24
+```cpp
+#include <iostream>
+#include <string>
+#include <regex>
+
+//908.555.1500
+//(908)5551500
+//(908.555.1500
+int main()
+{
+	std::string phone = "(\\()?(\\d{3})(\\))?([-. ])?(\\d{3})([-. ]?)(\\d{4})";
+	std::regex r(phone);
+	std::smatch m;
+	std::string s;
+	std::string fmt = "$2.$5.$7";
+
+	while(std::getline(std::cin, s))
+	{
+		std::cout << std::regex_replace(s, r, fmt) << std::endl;
+	}
+
+	return 0;
+}
+```
+  
+## 17.25
+
+
 ## 17.31
 每次的随机数都相同。
   

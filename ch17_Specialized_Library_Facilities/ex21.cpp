@@ -53,11 +53,12 @@ int main()
 		ostringstream formatted, badNums;
 		for(const auto &ph : person.phones)
 		{
-			if(!valid(ph))
-			{
-				badNums << " " << ph;
-			}else
-				formatted << " " << format(ph);
+			for(std::sregex_iterator it(ph.begin(), ph.end(), r), end_it; it != end_it; ++it)
+				if(!valid(*it))
+				{
+					badNums << " " << ph;
+				}else
+					formatted << " " << (*it)[2] << " " << (*it)[2] << (*it)[2];
 		}
 		if(badNums.str().empty())
 			ofs << person.name << " " << formatted.str() << endl;
