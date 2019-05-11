@@ -4,7 +4,6 @@
 
 int main()
 {
-	//https://en.wikipedia.org/wiki/I_before_E_except_after_C
 	std::string pattern("[^c]ei");
 	std::regex r(pattern);
 	std::smatch results;
@@ -13,12 +12,16 @@ int main()
 	while(std::cin >> s)
 	{
 		if(std::regex_search(s, results, r))
+		{
 			std::cout << s <<  ": correct" << std::endl;
+			for (size_t i = 0; i < results.size(); ++i) 
+				std::cout << i << ": " << results[i] << '\n';
+		}
 		else
+		{
 			std::cout << s <<  ": error" << std::endl;
+		}
 	}
-
-	
 
 	return 0;
 }

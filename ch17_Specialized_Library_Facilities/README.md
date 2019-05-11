@@ -536,7 +536,23 @@ int main()
 {
 	try
 	{
-		std::regex r1("[[:alnum:]]+\\.(cpp|cxx|cc)$", std::regex::icase);
+		std::regex r1("[[:anum:]]+\\.(cpp|cxx|cc)$", std::regex::icase);
+	}catch(std::regex_error e)
+	{
+		std::cout << e.what() << "\ncode: " << e.code() << std::endl;
+	}
+
+	try
+	{
+		std::regex r1("[[:alnum:]+\\.(cpp|cxx|cc)$", std::regex::icase);
+	}catch(std::regex_error e)
+	{
+		std::cout << e.what() << "\ncode: " << e.code() << std::endl;
+	}	
+
+	try
+	{
+		std::regex r1("[[:alnum:]]+\\.cpp|cxx|cc)$", std::regex::icase);
 	}catch(std::regex_error e)
 	{
 		std::cout << e.what() << "\ncode: " << e.code() << std::endl;
@@ -547,7 +563,7 @@ int main()
 ```
   
 ## 17.15
-gcc version 4.8.4 对regex支持有问题。  
+gcc version 4.8.4 对regex支持有问题，请使用4.9及以上版本。  
 ```cpp
 #include <iostream>
 #include <regex>
@@ -555,28 +571,45 @@ gcc version 4.8.4 对regex支持有问题。
 
 int main()
 {
-	//https://en.wikipedia.org/wiki/I_before_E_except_after_C
-	std::string pattern("[[:alpha:]]*(cie|[^c]ei)[[:alpha:]]*");
+	/*https://en.wikipedia.org/wiki/I_before_E_except_after_C
+	**ie in believe, fierce, collie, die, friend
+	**ei after c in receive, ceiling, receipt, ceilidh
+	*/
+	// std::string pattern("[[:alpha:]]*(cei|[^c]ie)[[:alpha:]]*");
+	std::string pattern("[[:alpha:]]*[^c]ei[[:alpha:]]*");
 	std::regex r(pattern);
 	std::smatch results;
+	std::cout << "input a word: ";
 
 	std::string s;
 	while(std::cin >> s)
 	{
 		if(std::regex_search(s, results, r))
-			std::cout << s <<  ": correct" << std::endl;
-		else
 			std::cout << s <<  ": error" << std::endl;
+		else
+			std::cout << s <<  ": correct" << std::endl;
 	}
-
-	
 
 	return 0;
 }
 ```
+```sh
+$ ./ex15 
+believe
+believe: correct
+freind
+freind: error
+receipt
+receipt: correct
+theif
+theif: error
+receive
+receive: correct
+```
   
 ## 14.16
-这样只匹配3个字符，（非c）和ei这3个字符，之前匹配正确的字符都将错误。  
+这样只匹配3个字符，（非c）和ei这3个字符，匹配成功后result中只有3个字符。  
+这里就按照题意写规则。  
 ```cpp
 #include <iostream>
 #include <regex>
@@ -584,7 +617,6 @@ int main()
 
 int main()
 {
-	//https://en.wikipedia.org/wiki/I_before_E_except_after_C
 	std::string pattern("[^c]ei");
 	std::regex r(pattern);
 	std::smatch results;
@@ -593,19 +625,88 @@ int main()
 	while(std::cin >> s)
 	{
 		if(std::regex_search(s, results, r))
+		{
 			std::cout << s <<  ": correct" << std::endl;
+			for (size_t i = 0; i < results.size(); ++i) 
+				std::cout << i << ": " << results[i] << '\n';
+		}
 		else
+		{
 			std::cout << s <<  ": error" << std::endl;
+		}
 	}
 
-	
+	return 0;
+}
+```
+```sh
+$ ./ex16 
+freind
+freind: correct
+1: rei 
+```
+  
+## 17.17
+```cpp
+#include <iostream>
+#include <regex>
+#include <string>
+
+int main()
+{
+	std::string pattern("[[:alpha:]]*[^c]ei[[:alpha:]]*");
+	std::regex r(pattern, std::regex::icase);
+	std::smatch results;
+	std::string s("freind receipt theif receive");
+
+	for(std::sregex_iterator it(s.begin(), s.end(), r), end_it; it != end_it; ++it)
+	{
+		std::cout << it->str() << std::endl;
+	}
+
+	return 0;
+}
+```
+```sh
+$ ./ex17 
+freind
+theif
+```
+  
+## 17.18
+```cpp
+#include <iostream>
+#include <regex>
+#include <string>
+#include <vector>
+#include <algorithm>
+
+int main()
+{
+	std::string pattern("([[:alpha:]]*[^c]ei[[:alpha:]]*)");
+	std::regex r(pattern, std::regex::icase);
+	std::smatch results;
+	std::string s("freind receipt theif receive albeit neighbor");
+	std::vector<std::string> vec{"neighbor","albeit","beige","feint","heir","reign","their",
+            "counterfeit","foreign","inveigh","rein","veil","deign",
+            "forfeit","inveigle","seize","veineiderdown","freight",
+            "leisure","skein","weigheight","heifer","neigh","sleigh",
+            "weighteither","height","neighbour","sleight","weirfeign",
+            "heinous","neither","surfeit","weird"};
+
+	for(std::sregex_iterator it(s.begin(), s.end(), r), end_it; it != end_it; ++it)
+	{
+		if (find(vec.begin(), vec.end(), it->str()) != vec.end())
+			continue;
+		std::cout << it->str() << std::endl;
+	}
 
 	return 0;
 }
 ```
   
-## 17.17
-
+## 17.19
+没有匹配则返回为空字符串，也是可以比较的。  
   
 ## 17.31
 每次的随机数都相同。
