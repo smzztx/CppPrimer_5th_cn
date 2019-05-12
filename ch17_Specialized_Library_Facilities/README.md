@@ -938,8 +938,207 @@ int main()
 ```
   
 ## 17.25
+```cpp
+#include <iostream>
+#include <string>
+#include <regex>
 
+//tx 908.555.1500 (908)5551500
+int main()
+{
+	std::string phone = "(\\()?(\\d{3})(\\))?([-. ])?(\\d{3})([-. ]?)(\\d{4})*";
+	std::regex r(phone);
+	std::smatch m;
+	std::string s;
+	std::string fmt = "$2.$5.$7";
 
+	while(std::getline(std::cin, s))
+	{
+		std::smatch result;
+		std::regex_search(s,result,r);
+		if(!result.empty())
+		{
+			std::cout << result.prefix() << result.format(fmt) << std::endl;
+		}
+		else
+		{
+			std::cout << "Sorry, No match." << std::endl;
+		}
+	}
+
+	return 0;
+}
+```
+  
+## 17.26
+```cpp
+#include <iostream>
+#include <string>
+#include <regex>
+
+bool valid(const std::smatch &m)
+{
+	if(m[1].matched)
+		return m[3].matched && (m[4].matched == 0 || m[4].str() == " ");
+	else
+		return !m[3].matched && m[4].str() == m[7].str();
+}
+
+//tx 908.555.1500 (908)5551500
+int main()
+{
+	std::string phone = "(\\()?(\\d{3})(\\))?([-. ])?([ ]*)?(\\d{3})([-. ]?)([ ]*)?(\\d{4})";
+	std::regex r(phone);
+	std::smatch m;
+	std::string s;
+
+	while(std::getline(std::cin, s))
+	{
+		std::vector<std::string> vs;
+		for(std::sregex_iterator it(s.begin(), s.end(), r), end_it; it != end_it; ++it)
+			if(valid(*it))
+				vs.push_back(it->str());
+		if (vs.size() == 0)
+		{
+			std::cout << "no matched number" << std::endl;
+		}else if(vs.size() == 1)
+		{
+			std::cout << vs[0] << std::endl;
+		}else if(vs.size() >1)
+		{
+			for(int i = 1; i < vs.size(); ++i)
+				std::cout << vs[i] << " ";
+			std::cout << std::endl;
+		}
+	}
+
+	return 0;
+}
+```
+  
+## 17.27
+```cpp
+#include <iostream>
+#include <string>
+#include <regex>
+
+bool valid(const std::smatch &m)
+{
+	if(m[3].matched)
+		return true;
+	else
+		return !m[2].matched;
+}
+
+//111112222
+//11111-2222
+//11111
+//11111-
+int main()
+{
+	std::string mail = "(\\d{5})([-])?(\\d{4})?";
+	std::regex r(mail);
+	std::smatch m;
+	std::string s;
+	std::string fmt = "$1-$3";
+
+	while(std::getline(std::cin, s))
+	{
+		std::cout << std::regex_replace(s, r, fmt) << std::endl;
+	}
+
+	return 0;
+}
+```
+  
+## 17.28
+```cpp
+#include <random>
+#include <iostream>
+
+unsigned random_func()
+{
+	static std::default_random_engine e;
+	static std::uniform_int_distribution<unsigned> u;
+	return u(e);
+}
+
+int main()
+{
+	
+	std::cout << random_func() << std::endl;
+
+	return 0;
+}
+```
+  
+## 17.29
+```cpp
+#include <random>
+#include <iostream>
+
+unsigned random_func()
+{
+	static std::default_random_engine e;
+	static std::uniform_int_distribution<unsigned> u;
+	return u(e);
+}
+
+unsigned random_func(unsigned i)
+{
+	static std::default_random_engine e(i);
+	static std::uniform_int_distribution<unsigned> u;
+	return u(e);
+}
+
+int main()
+{
+	
+	std::cout << random_func() << std::endl;	//default 1
+	std::cout << random_func(2) << std::endl;
+
+	return 0;
+}
+```
+  
+## 17.30
+```cpp
+#include <random>
+#include <iostream>
+
+unsigned random_func()
+{
+	static std::default_random_engine e;
+	static std::uniform_int_distribution<unsigned> u;
+	return u(e);
+}
+
+unsigned random_func(unsigned i)
+{
+	static std::default_random_engine e(i);
+	static std::uniform_int_distribution<unsigned> u;
+	return u(e);
+}
+
+unsigned random_func(unsigned i, unsigned min, unsigned max)
+{
+	static std::default_random_engine e(i);
+	static std::uniform_int_distribution<unsigned> u(min, max);
+	return u(e);
+}
+
+int main()
+{
+	
+	std::cout << random_func() << std::endl;	//default 1
+	std::cout << random_func(2) << std::endl;
+	for(int i = 0; i < 10; ++i)
+		std::cout << random_func(1, 0, 10) << std::endl;
+
+	return 0;
+}
+```
+  
 ## 17.31
 每次的随机数都相同。
   
@@ -947,7 +1146,73 @@ int main()
 会报错，未定义resp。
   
 ## 17.33
+```cpp
+#include <map>
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <sstream>
+#include <ctime>
+#include <vector>
+#include <random>
 
+using namespace std;
+
+map<string, vector<string>> buildMap(ifstream &map_file)
+{
+	map<string, vector<string>> trans_map;
+	string key;
+	string value;
+	while(map_file >> key && getline(map_file, value))
+		if(value.size() > 1)
+			trans_map[key].push_back(value.substr(1));
+		else
+			throw runtime_error("no rule for " + key);
+	return trans_map;
+}
+
+const string &transform(const string &s, const map<string, vector<string>> &m)
+{
+	static default_random_engine e(time(0));
+	static uniform_int_distribution<unsigned> u(0,1);
+	auto map_it = m.find(s);
+	if(map_it != m.cend())
+		return (map_it->second)[u(e)];
+	else
+		return s;
+}
+
+void word_tranform(ifstream &map_file, ifstream &input)
+{
+	auto trans_map = buildMap(map_file);
+	// for(const auto p : trans_map)
+	// 	cout << p.first << "->" << p.second << endl;
+	string text;
+	while(getline(input, text))
+	{
+		istringstream stream(text);
+		string word;
+		bool firstword = true;
+		while(stream >> word)
+		{
+			if(firstword)
+				firstword = false;
+			else
+				cout << " ";
+			cout << transform(word, trans_map);
+		}
+		cout << endl;
+	}
+}
+
+int main()
+{
+	ifstream map_file("word_transformation.txt"), input("word_transformation_bad.txt");
+	word_tranform(map_file, input);
+
+	return 0;
+}
+```
   
 ## 17.34
 略。  
@@ -956,7 +1221,109 @@ int main()
 [Missing ios_base::hexfloat format specifier](https://gcc.gnu.org/bugzilla/show_bug.cgi?id=59987)
   
 ## 17.36
+```cpp
+#include <iostream>
+#include <cmath>
+#include <iomanip>
 
+int main()
+{
+	std::cout << std::left << std::setw(16) <<"default format: " << std::right << std::setw(25) << sqrt(2.0) << '\n'
+		<< std::left << std::setw(16) << "scientific: " << std::scientific << std::right << std::setw(25) << sqrt(2.0) << '\n'
+		<< std::left << std::setw(16) << "fixed decimal: " << std::fixed << std::right << std::setw(25) << sqrt(2.0) << '\n'
+		<< std::left << std::setw(16) << "hexidecimal: " << std::uppercase << std::hexfloat << std::right << std::setw(25) << sqrt(2.0) << '\n'
+		<< std::left << std::setw(16) << "use defaults: " << std::defaultfloat << std::right << std::setw(25) << sqrt(2.0)
+		<< "\n\n";
+
+	return 0;
+}
+```
   
 ## 17.37
 [basic_istream::getline, if it extracts no characters, if it fills in the provided buffer without encountering the delimiter, or if the provided buffer size is less than 1.](https://en.cppreference.com/w/cpp/io/ios_base/iostate)
+```cpp
+#include <fstream>
+#include <iostream>
+#include <string>
+
+int main()
+{
+	std::fstream fs("../ch08_The_IO_Library/data");
+	char tmp[200];
+	fs.getline(tmp, 2, '\n');
+	std::cout << tmp << std::endl;
+	std::cout << fs.gcount() << std::endl;
+
+	fs.getline(tmp, 2, '\n');
+	std::cout << tmp << std::endl;
+	std::cout << fs.gcount() << std::endl;
+	std::cout << std::boolalpha << (fs.rdstate() == std::ios_base::failbit) << std::endl;
+	// std::cout << std::ios_base::goodbit << std::endl;
+	// std::cout << std::ios_base::badbit << std::endl;
+	// std::cout << std::ios_base::failbit << std::endl;
+	// std::cout << std::ios_base::eofbit << std::endl;
+	//https://en.cppreference.com/w/cpp/io/ios_base/iostate
+
+	return 0;
+}
+```
+  
+## 17.38
+```cpp
+#include <fstream>
+#include <iostream>
+#include <string>
+
+int main()
+{
+	std::fstream fs("../ch08_The_IO_Library/data");
+	char tmp[200];
+
+	// while(fs.getline(tmp, 200, ' '))
+	// 	std::cout << tmp << std::endl;
+	fs.getline(tmp, 200, ' ');
+	std::cout << tmp << std::endl;
+	std::cout << fs.gcount() << std::endl;
+	std::cout <<fs.rdstate() << std::endl;
+	fs.getline(tmp, 200, ' ');
+	std::cout <<fs.rdstate() << std::endl;
+
+	return 0;
+}
+```
+  
+## 13.39
+```cpp
+#include <iostream>
+#include <fstream>
+
+int main()
+{
+	std::fstream inOut("copyOut", std::fstream::ate | std::fstream::in | std::fstream::out);
+
+	if(!inOut)
+	{
+		std::cerr << "Unable to open file!" << std::endl;
+		return EXIT_FAILURE;
+	}
+
+	auto end_mark = inOut.tellg();
+	inOut.seekg(0, std::fstream::beg);
+	size_t cnt = 0;
+	std::string line;
+
+	while(inOut && inOut.tellg() != end_mark && getline(inOut, line))
+	{
+		cnt += line.size() + 1;
+		auto mark = inOut.tellg();
+		inOut.seekp(0, std::fstream::end);
+		inOut << cnt;
+		if(mark != end_mark) inOut << " ";
+		inOut.seekg(mark);
+	}
+	inOut.seekp(0, std::fstream::end);
+	inOut << "\n";
+
+	return 0;
+}
+```

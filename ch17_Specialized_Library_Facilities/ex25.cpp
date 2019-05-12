@@ -2,9 +2,7 @@
 #include <string>
 #include <regex>
 
-//908.555.1500
-//(908)5551500
-//(908.555.1500
+//tx 908.555.1500 (908)5551500
 int main()
 {
 	std::string phone = "(\\()?(\\d{3})(\\))?([-. ])?(\\d{3})([-. ]?)(\\d{4})*";
@@ -15,7 +13,16 @@ int main()
 
 	while(std::getline(std::cin, s))
 	{
-		std::cout << std::regex_replace(s, r, fmt) << std::endl;
+		std::smatch result;
+		std::regex_search(s,result,r);
+		if(!result.empty())
+		{
+			std::cout << result.prefix() << result.format(fmt) << std::endl;
+		}
+		else
+		{
+			std::cout << "Sorry, No match." << std::endl;
+		}
 	}
 
 	return 0;
