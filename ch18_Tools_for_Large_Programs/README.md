@@ -486,3 +486,40 @@ mathLib::MatrixLib::matrix mathLib::MatrixLib::operator*(const matrix&, const ma
 ```
   
 ## 18.15
+using指示引入的名字的作用域远比using声明引入的名字的作用域复杂。它具有将命名空间成员提升到包含命名空间本身和using指示的最近作用域的能力。对于using声明来说，我们指示简单地领名字在局部作用域有效。using指示是令整个命名空间的所有内容变得有效。通常情况下，命名空间中会含有一些不能出现在局部作用域的定义，因此using指示一般被看作是出现在最近的外层作用域中。  
+  
+## 18.16
+```cpp
+namespace Exercise{
+	int ivar = 0;
+	double dvar = 0;
+	const int limit = 1000;
+}
+int ivar = 0;
+
+using Exercise::ivar;	//1
+using Exercise::dvar;
+using Exercise::limit;
+
+// using namespace Exercise;	//3
+
+void mainp(){
+	// using Exercise::ivar;	//2
+	// using Exercise::dvar;
+	// using Exercise::limit;
+
+	// using namespace Exercise;	//4
+
+	double dvar = 3.1416;
+	int iobj = limit + 1;
+	++ivar;
+	++::ivar;
+}
+
+int main()
+{
+	return 0;
+}
+```
+  
+## 18.18
