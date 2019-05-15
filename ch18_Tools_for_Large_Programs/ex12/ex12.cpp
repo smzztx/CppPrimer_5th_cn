@@ -13,7 +13,7 @@ void runQueries(std::ifstream &infile)
         std::cout << "enter word to look for, or q to quit: ";
         std::string s;
         if (!(std::cin >> s) || s == "q") break;
-        chapter10::print(std::cout, tq.query(s)) << std::endl;
+        chapter10::print(std::cout, tq.query(s)) << std::endl;	//print(std::cout, tq.query(s)) << std::endl; corrected, will find in namespace chapter10
         // tq.query(s);
     }
 }
@@ -28,7 +28,7 @@ int main()
     std::cout << "------------" << std::endl;
     std::cout << q << std::endl;
     std::cout << "------------" << std::endl;
-    chapter10::print(std::cout, q.eval(t)) << std::endl;
+    chapter10::print(std::cout, q.eval(t)) << std::endl;	//print(std::cout, q.eval(t)) << std::endl; corrected, will find in namespace chapter10
 
     return 0;
 }
