@@ -539,3 +539,11 @@ void compute(const void *)（0->nullptr）
 void compute(const void *)为最佳匹配。  
   
 ## 18.21
+（a）CADVehicle公开继承了CAD，私有继承了Vehicle；  
+（b）重复继承；  
+（c）iostream公开继承了istream和ostream。  
+  
+## 18.22
+A->B->C->X->Y->Z->MI。
+  
+## 18.23
