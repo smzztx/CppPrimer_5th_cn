@@ -529,3 +529,13 @@ int main()
 将只使用标准库的swap，如果v1.mem1和v2.mem1为用户自定义类型，将无法使用用户定义的针对该类型的swap。
   
 ## 18.20
+候选函数：全部；  
+可行函数：  
+void compute(int)（最佳匹配）  
+void compute(double, double = 3.4)（int->double）  
+void compute(char*, char* = 0)（0->nullptr）  
+void compute(const void *)（0->nullptr）  
+改变后：  
+void compute(const void *)为最佳匹配。  
+  
+## 18.21
