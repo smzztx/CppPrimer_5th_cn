@@ -7,7 +7,7 @@ struct Base1{
 protected:
         int ival;
         double dval;
-        char cval;
+        char cval = 'b';
 private:
         int *id;
 };
@@ -22,7 +22,7 @@ private:
 struct Derived : public Base1 {
 void print(std::string) const;
 protected:
-    std::string sval;
+    std::string sval = "aaa";
     double dval;
 };
 
@@ -32,12 +32,22 @@ void print(std::vector<double>){};
 void print(int x){
     Base1::print(x);
 }
+void foo(double);
+
 protected:
     int *ival;
-    std::vector<double> dvec;
+    std::vector<double> dvec = {1.0, 2.0, 3.0};
 };
 
-using namespace std;
+int iva;
+double dval;
+void MI::foo(double cval)
+{
+    int dval;
+    dval = Base1::dval + Derived::dval;
+    Base2::fval = dvec.back();
+    sval.at(0) = Base1::cval;
+}
 
 int main()
 {

@@ -568,3 +568,131 @@ delete pe 正确。
 （f）MI析构函数（会依次调用基类析构函数）。  
   
 ## 18.26
+没有匹配的print调用，当注释void print(std;:vector<double>)时又会出现二义性；故为该函数定义一个新版本。  
+```cpp
+#include <iostream>
+#include <vector>
+struct Base1{
+    void print(int) const{
+        std::cout<<"Base1 Print Used"<<std::endl;
+        };
+protected:
+        int ival;
+        double dval;
+        char cval;
+private:
+        int *id;
+};
+struct Base2 {
+    void print(double) const;
+protected:
+    double fval;
+private:
+    double dval;
+};
+
+struct Derived : public Base1 {
+void print(std::string) const;
+protected:
+    std::string sval;
+    double dval;
+};
+
+struct MI : public Derived, public Base2{
+
+void print(std::vector<double>){};
+void print(int x){
+    Base1::print(x);
+}
+protected:
+    int *ival;
+    std::vector<double> dvec;
+};
+
+using namespace std;
+
+int main()
+{
+    MI mi;
+    mi.print(42);
+    return 0;
+}
+```
+  
+## 18.27
+（a）Base1中，ival、dval、cval、print；  
+Base2中，fval、print；  
+Derived中，sval、dval、print；  
+MI中，ival、dvec、print、foo。  
+（b）存在，ival、dval、print。  
+（c）（d）（e）如下所示。  
+```cpp
+#include <iostream>
+#include <vector>
+struct Base1{
+    void print(int) const{
+        std::cout<<"Base1 Print Used"<<std::endl;
+        };
+protected:
+        int ival;
+        double dval;
+        char cval = 'b';
+private:
+        int *id;
+};
+struct Base2 {
+    void print(double) const;
+protected:
+    double fval;
+private:
+    double dval;
+};
+
+struct Derived : public Base1 {
+void print(std::string) const;
+protected:
+    std::string sval = "aaa";
+    double dval;
+};
+
+struct MI : public Derived, public Base2{
+
+void print(std::vector<double>){};
+void print(int x){
+    Base1::print(x);
+}
+void foo(double);
+
+protected:
+    int *ival;
+    std::vector<double> dvec = {1.0, 2.0, 3.0};
+};
+
+int iva;
+double dval;
+void MI::foo(double cval)
+{
+    int dval;
+    dval = Base1::dval + Derived::dval;
+    Base2::fval = dvec.back();
+    sval.at(0) = Base1::cval;
+}
+
+int main()
+{
+    MI mi;
+    mi.print(42);
+    return 0;
+}
+```
+  
+## 18.28
+无需限定符的成员：  
+Derived1::bar（bar不仅是Base的成员，也是Derived1的成员，派生类的bar比共享虚机类的bar优先级更高）；  
+Derived2::ival（派生类Derived2的ival比共享虚机类的ival优先级更高）；  
+需要限定符的成员：  
+foo（Derived1和Derived2都存在该成员）；  
+cval（Derived1和Derived2都存在该成员）;  
+其他需要限定符的原因为会被覆盖。  
+  
+## 18.29
