@@ -547,3 +547,24 @@ void compute(const void *)为最佳匹配。
 A->B->C->X->Y->Z->MI。
   
 ## 18.23
+（a）允许；  
+（b）允许；  
+（c）允许；  
+（d）允许。  
+  
+## 18.24
+pe->print() 正确；  
+pe->highlight() 错误；  
+pe->toes() 错误；  
+pe->duddle() 错误；  
+delete pe 正确。  
+  
+## 18.25
+（a）MI::print()；  
+（b）MI::print()；  
+（c）MI::print()；  
+（d）MI析构函数（会依次调用基类析构函数）；  
+（e）MI析构函数（会依次调用基类析构函数）；  
+（f）MI析构函数（会依次调用基类析构函数）。  
+  
+## 18.26
