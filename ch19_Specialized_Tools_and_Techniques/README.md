@@ -217,12 +217,13 @@ bool operator>=(StrVec &lhs, StrVec &rhs)
   
 ## 19.3
 （a）成功；  
-（b）成功；  
+（b）失败，pb是指向B的指针，不能转换为指向C的指针；  
 （c）失败，A *pa = new D具有二义性。  
   
 ## 19.4
 ```cpp
 #include <typeinfo>
+#include <iostream>
 
 class A
 {
@@ -243,18 +244,24 @@ int main(int argc, char const *argv[])
 {
 	// A *pa = new C;
 	// B *pb = dynamic_cast<B*>(pa);
+	// if(pb) std::cout << "success" << std::endl;
+	// else std::cout << "fail" << std::endl;
 
 	// B *pb = new B;
 	// C *pc = dynamic_cast<C*>(pb);
+	// if(pc) std::cout << "success" << std::endl;
+	// else std::cout << "fail" << std::endl;
 
 	// A *pa = new D;
 	// B *pb = dynamic_cast<B*>(pa);
+	// if(pb) std::cout << "success" << std::endl;
+	// else std::cout << "fail" << std::endl;
 
-	A *pa = new A;
+	A *pa = new C;
 	try{
 		const C &c = dynamic_cast<const C&>(*pa);
-	}catch(std::bad_cast){
-		//...
+	}catch(std::bad_cast &e){
+		std::cout << e.what() << std::endl;
 	}
 
 	return 0;
@@ -265,3 +272,170 @@ int main(int argc, char const *argv[])
 我们想使用基类对象的指针或引用执行某个派生类操作并且该操作不是虚函数，则可以使用RTTI运算符（该类类型应该含有虚函数）。  
   
 ## 19.6
+Query_base为抽象虚类，AndQuery的构造函数为private，暂时没想到方法来实现该题，目前使用19.3的继承体系来验证。  
+```cpp
+#include <typeinfo>
+#include <iostream>
+
+class A
+{
+public:
+	virtual ~A() {}
+};
+
+class B : public A
+{};
+
+class C : public B
+{};
+
+class D : public B, public A
+{};
+
+int main(int argc, char const *argv[])
+{
+	A *pa1 = new C;
+    if(C *qc = dynamic_cast<C*>(pa1))
+    {
+        std::cout << "success" << std::endl;
+    }else
+    {
+        std::cout << "fail" << std::endl;
+    }
+
+	A *pa2 = new C;
+	try{
+		const C &rc = dynamic_cast<const C&>(*pa2);
+	}catch(std::bad_cast &e){
+		std::cout << e.what() << std::endl;
+	}
+
+	C c = C();
+	if(typeid(*pa1) == typeid(*pa2)) std::cout << "same type" << std::endl;
+	if(typeid(*pa1) == typeid(c)) std::cout << "same type as C" << std::endl;
+	if(typeid(*pa1) == typeid(C)) std::cout << "same type as C" << std::endl;
+
+	return 0;
+}
+```
+  
+## 19.7
+详见１9.6。  
+  
+## 19.8
+详见１9.6。  
+  
+## 19.9
+```cpp
+#include <iostream>
+#include <typeinfo>
+
+class Base
+{
+	friend bool operator==(const Base&, const Base&);
+public:
+	Base() = default;
+	Base(int i_) : i(i_) { }
+protected:
+	virtual bool equal(const Base&) const;
+private:
+	int i;
+};
+
+class Derived : public Base
+{
+public:
+	Derived() = default;
+	Derived(std::string s_, int i_) : s(s_), Base(i_) { }
+protected:
+	bool equal(const Base&) const;
+private:
+	std::string s;
+};
+
+bool operator==(const Base &lhs, const Base &rhs)
+{
+	return typeid(lhs) == typeid(rhs) && lhs.equal(rhs);
+}
+
+bool Base::equal(const Base &rhs) const
+{
+	return this->i == rhs.i;
+}
+
+bool Derived::equal(const Base &rhs) const
+{
+	auto r = dynamic_cast<const Derived&>(rhs);
+	return (this->s == r.s) && this->Base::equal(rhs);
+}
+
+int main()
+{
+	Base *pb1 = new Derived();
+	Base *pb2 = new Derived();
+	Base *pb3 = new Derived("a", 1);
+	Base *pb4 = new Base();
+
+	std::cout << std::boolalpha << (*pb1 == *pb2) << std::endl;
+	std::cout << std::boolalpha << (*pb1 == *pb3) << std::endl;
+	std::cout << std::boolalpha << (*pb1 == *pb4) << std::endl;
+
+	int arr[10];
+	Derived d;
+
+	std::cout << typeid(42).name() << ", "
+			  << typeid(arr).name() << ", "
+			  << typeid(d).name() << ", "
+			  << typeid(std::string).name() << ", "
+			  << typeid(pb1).name() << ", "
+			  << typeid(*pb1).name() << ", "
+			  << typeid(*pb3).name() << std::endl;
+
+	return 0;
+}
+```
+```sh
+$ ./ex09 true
+false
+false
+i, A10_i, 7Derived, Ss, P4Base, 7Derived, 7Derived
+```
+  
+## 19.10
+（a）P1A；  
+（b）P1A；  
+（c）1B。  
+```cpp
+#include <typeinfo>
+#include <iostream>
+
+class A
+{
+public:
+	virtual ~A() {}
+};
+
+class B : public A
+{};
+
+class C : public B
+{};
+
+int main(int argc, char const *argv[])
+{
+	// A *pa = new C;
+	// std::cout << typeid(pa).name() << std::endl;
+
+	// C cobj;
+	// A &ra = cobj;
+	// std::cout << typeid(&ra).name() << std::endl;
+
+	B *px = new B;
+	A &ra = *px;
+	std::cout << typeid(ra).name() << std::endl;
+
+	return 0;
+}
+```
+  
+## 19.11
