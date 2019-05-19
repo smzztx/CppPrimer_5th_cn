@@ -216,3 +216,52 @@ bool operator>=(StrVec &lhs, StrVec &rhs)
 ```
   
 ## 19.3
+（a）成功；  
+（b）成功；  
+（c）失败，A *pa = new D具有二义性。  
+  
+## 19.4
+```cpp
+#include <typeinfo>
+
+class A
+{
+public:
+	virtual ~A() {}
+};
+
+class B : public A
+{};
+
+class C : public B
+{};
+
+class D : public B, public A
+{};
+
+int main(int argc, char const *argv[])
+{
+	// A *pa = new C;
+	// B *pb = dynamic_cast<B*>(pa);
+
+	// B *pb = new B;
+	// C *pc = dynamic_cast<C*>(pb);
+
+	// A *pa = new D;
+	// B *pb = dynamic_cast<B*>(pa);
+
+	A *pa = new A;
+	try{
+		const C &c = dynamic_cast<const C&>(*pa);
+	}catch(std::bad_cast){
+		//...
+	}
+
+	return 0;
+}
+```
+  
+## 19.5
+我们想使用基类对象的指针或引用执行某个派生类操作并且该操作不是虚函数，则可以使用RTTI运算符（该类类型应该含有虚函数）。  
+  
+## 19.6
