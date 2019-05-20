@@ -21,24 +21,19 @@ class Screen {
 
 int main()
 {
-    // const std::string Screen::*pdata;
-    // pdata = &Screen::contents;
-    // auto pdata = &Screen::contents;  //contents is private
-
-    const std::string Screen::*pdata = Screen::data();
     Screen myScreen(2, 2, 'c');
-    auto s = myScreen.*pdata;
-    std::cout << s << std::endl;
-
-    const std::string::size_type Screen::*pcursor = Screen::pcursor();
-    auto i = myScreen.*pcursor;
-    std::cout << i << std::endl;
-
     char (Screen::*pmf2)(Screen::pos, Screen::pos) const;
     pmf2 = &Screen::get;
     // char c1 = (myScreen.*pmf2)();
     char c2 = (myScreen.*pmf2)(0, 0);
     std::cout << c2 << std::endl;
+
+    using Get1 = char (Screen::*)() const;
+    using Get2 = char (Screen::*)(Screen::pos, Screen::pos) const;
+    Get1 get1 = &Screen::get;
+    Get2 get2 = &Screen::get;
+    std::cout << (myScreen.*get1)() << std::endl;
+    std::cout << (myScreen.*get2)(0, 0) << std::endl;
 
     return 0;
 }

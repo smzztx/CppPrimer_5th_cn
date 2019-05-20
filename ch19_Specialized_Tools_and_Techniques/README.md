@@ -439,3 +439,108 @@ int main(int argc, char const *argv[])
 ```
   
 ## 19.11
+普通的数据指针指向一个对象；类成员指针指向类的非静态成员。当初始化这样一个指针时，我们令其指向类的某个成员，但是不指定该成员所属的对象；直到使用成员指针时，才提供所属的对象。  
+  
+## 19.12
+```cpp
+#include <string>
+#include <iostream>
+
+class Screen {
+    public:
+        using pos = std::string::size_type;
+
+        static const std::string Screen::*data() { return &Screen::contents; }
+        static const pos Screen::*pcursor() { return &Screen::cursor; }
+        Screen() = default;
+        Screen(pos ht, pos wd, char c):height(ht), width(wd), contents(ht*wd, c){ }
+
+        char get() const { return contents[cursor]; }
+        char get(pos r, pos c) const { return contents[r*width+c]; }
+
+    private:
+        pos cursor = 0;
+        pos height = 0, width = 0;
+        std::string contents;
+};
+
+int main()
+{
+    // const std::string Screen::*pdata;
+    // pdata = &Screen::contents;
+    // auto pdata = &Screen::contents;  //contents is private
+
+    const std::string Screen::*pdata = Screen::data();
+    Screen myScreen(2, 2, 'c');
+    auto s = myScreen.*pdata;
+    std::cout << s << std::endl;
+
+    const std::string::size_type Screen::*pcursor = Screen::pcursor();
+    auto i = myScreen.*pcursor;
+    std::cout << i << std::endl;
+
+    return 0;
+}
+```
+  
+## 19.13
+```cpp
+const std::string Sales_data::*pdata;
+```
+  
+## 19.14
+不合法，Screen中get_cursor函数返回的为pos类型，get函数返回的为char类型。  
+  
+## 19.15
+和普通函数指针不同的是，在成员函数和指向该成员的指针之间不存在自动转换规则。  
+  
+## 19.16
+```cpp
+using AvgPrice = double (Sales_data::*)() const;
+AvgPrice avgprice = &Sales_data::avg_price;
+```
+  
+## 19.17
+```cpp
+#include <string>
+#include <iostream>
+
+class Screen {
+    public:
+        using pos = std::string::size_type;
+
+        static const std::string Screen::*data() { return &Screen::contents; }
+        static const pos Screen::*pcursor() { return &Screen::cursor; }
+        Screen() = default;
+        Screen(pos ht, pos wd, char c):height(ht), width(wd), contents(ht*wd, c){ }
+
+        char get() const { return contents[cursor]; }
+        char get(pos r, pos c) const { return contents[r*width+c]; }
+
+    private:
+        pos cursor = 0;
+        pos height = 0, width = 0;
+        std::string contents;
+};
+
+int main()
+{
+    Screen myScreen(2, 2, 'c');
+    char (Screen::*pmf2)(Screen::pos, Screen::pos) const;
+    pmf2 = &Screen::get;
+    // char c1 = (myScreen.*pmf2)();
+    char c2 = (myScreen.*pmf2)(0, 0);
+    std::cout << c2 << std::endl;
+
+    using Get1 = char (Screen::*)() const;
+    using Get2 = char (Screen::*)(Screen::pos, Screen::pos) const;
+    Get1 get1 = &Screen::get;
+    Get2 get2 = &Screen::get;
+    std::cout << (myScreen.*get1)() << std::endl;
+    std::cout << (myScreen.*get2)(0, 0) << std::endl;
+
+    return 0;
+}
+```
+  
+## 19.18
