@@ -544,3 +544,251 @@ int main()
 ```
   
 ## 19.18
+```cpp
+#include <iostream>
+#include <vector>
+#include <functional>
+#include <algorithm>
+
+int main()
+{
+	std::vector<std::string> vs = {"a", "bb", "", "ccc", ""};
+	std::function<bool (const std::string&)> fcn = &std::string::empty;
+
+	auto it1 = std::find_if(vs.begin(), vs.end(), fcn);
+	std::cout << "function: " << it1 - vs.begin() << std::endl;
+
+	auto it2 = std::find_if(vs.begin(), vs.end(), std::mem_fn(&std::string::empty));
+	std::cout << "mem_fn: " << it2 - vs.begin() << std::endl;
+
+	auto it3 = std::find_if(vs.begin(), vs.end(), std::bind(&std::string::empty, std::placeholders::_1));
+	std::cout << "bind: " << it3 - vs.begin() << std::endl;
+
+	std::cout << "count_if: " << std::count_if(vs.begin(), vs.end(), fcn) << std::endl;
+
+	return 0;
+}
+```
+  
+## 19.19
+Sales_data.h
+```cpp
+#ifndef SALES_DATA_H_
+#define SALES_DATA_H_
+
+#include <string>
+#include <stdexcept>
+
+class isbn_mismatch : public std::logic_error
+{
+public:
+	explicit isbn_mismatch(const std::string &s) : std::logic_error(s) { }
+	isbn_mismatch(const std::string &s, const std::string &lhs, const std::string &rhs) :
+		std::logic_error(s), left(lhs), right(rhs) { }
+	const std::string left, right;
+};
+
+struct Sales_data;
+
+std::istream &operator>>(std::istream &is, Sales_data &item);
+std::ostream &operator<<(std::ostream &os, const Sales_data &item);
+Sales_data operator+(const Sales_data &lhs, const Sales_data &rhs);
+
+struct Sales_data
+{
+friend std::istream& operator>>(std::istream&, Sales_data&);
+friend std::ostream& operator<<(std::ostream&, const Sales_data&);
+friend Sales_data operator+(const Sales_data&, const Sales_data&);
+friend bool operator==(const Sales_data&, const Sales_data&);
+friend class std::hash<Sales_data>;
+public:
+	Sales_data(const std::string &s, unsigned n, double p) : bookNo(s), units_sold(n), revenue(p*n){std::cout << "Sales_data(const std::string &s, unsigned n, double p)" << std::endl;}
+	Sales_data() : Sales_data("", 0, 0){std::cout << "Sales_data() : Sales_data(\"\", 0, 0)" << std::endl;}
+	Sales_data(const std::string &s) : Sales_data(s, 0, 0){std::cout << "Sales_data(const std::string &s) : Sales_data" << std::endl;}
+	Sales_data(std::istream &is) : Sales_data(){/*read(is, *this);*/ is >> *this; std::cout << "Sales_data(std::istream &is) : Sales_data()" << std::endl;}
+	std::string isbn() const {return bookNo;}
+	Sales_data& operator=(const std::string&);
+    Sales_data& operator+=(const Sales_data&);
+    Sales_data& operator-=(const Sales_data&);
+    // bool higher_avg_price()
+    // {
+    // 	return this->avg_price() > 10;
+    // }
+    bool higher_avg_price(double ref_price)
+    {
+    	return this->avg_price() > ref_price;
+    }
+private:
+	inline double avg_price() const;
+
+    std::string bookNo;
+    unsigned units_sold = 0;
+    double revenue = 0.0;
+};
+
+inline double Sales_data::avg_price() const
+{
+	if(units_sold)
+		return revenue / units_sold;
+	else
+		return 0;
+}
+
+Sales_data& Sales_data::operator=(const std::string &s)
+{
+	*this = Sales_data(s);
+	return *this;
+}
+
+Sales_data& Sales_data::operator+=(const Sales_data &rhs)
+{
+	if(isbn() != rhs.isbn())
+		throw isbn_mismatch("wrong isbns", isbn(), rhs.isbn());
+	units_sold += rhs.units_sold;
+	revenue += rhs.revenue;
+
+	return *this;
+}
+
+Sales_data& Sales_data::operator-=(const Sales_data &rhs)
+{
+	units_sold -= rhs.units_sold;
+	revenue -= rhs.revenue;
+
+	return *this;
+}
+
+std::istream &operator>>(std::istream &is, Sales_data &item)
+{
+	double price = 0;
+
+	is >> item.bookNo >> item.units_sold >> price;
+	if(is)
+		item.revenue = price * item.units_sold;
+	else
+		item = Sales_data();
+
+	return is;
+}
+
+std::ostream &operator<<(std::ostream &os, const Sales_data &item)
+{
+	os << item.isbn() << " " << item.units_sold << " " << item.revenue << " " << item.avg_price();
+
+	return os;
+}
+
+Sales_data operator+(const Sales_data &lhs, const Sales_data &rhs)
+{
+	Sales_data sum = lhs;
+	sum += rhs;
+
+	return sum;
+}
+
+bool operator==(const Sales_data &lhs, const Sales_data &rhs)
+{
+	return lhs.isbn() == rhs.isbn() && 
+		lhs.units_sold == rhs.units_sold && 
+		lhs.revenue == rhs.revenue;
+}
+
+#endif
+```
+  
+## 19.20
+```cpp
+#ifndef TEXTQUERY_H_
+#define TEXTQUERY_H_
+
+#include <string>
+#include <vector>
+#include <map>
+#include <fstream>
+#include <sstream>
+#include <set>
+#include <memory>
+#include <iostream>
+#include <algorithm>
+#include <iterator>
+#include "StrBlob.h"
+
+namespace chapter10
+{
+	class TextQuery
+	{
+	public:
+		class QueryResult;
+		using line_no = std::vector<std::string>::size_type;
+		TextQuery(std::ifstream&);
+		QueryResult query(const std::string&) const;
+	private:
+		StrBlob file;
+		std::map<std::string, std::shared_ptr<std::set<line_no>>> word_map;
+	};
+
+	class TextQuery::QueryResult
+	{
+		friend std::ostream& print(std::ostream&, const QueryResult&);
+	public:
+		QueryResult(std::string s, std::shared_ptr<std::set<line_no>> p, StrBlob f) : sought(s), lines(p), file(f) { }
+		std::set<StrBlob::size_type>::iterator begin() const { return lines->begin(); }
+		std::set<StrBlob::size_type>::iterator end() const { return lines->end(); }
+		// std::shared_ptr<StrBlob> get_file() const { return std::make_shared<StrBlob>(file); }
+		const StrBlob& get_file() const { return file; }
+	private:
+		std::string sought;
+		std::shared_ptr<std::set<line_no>> lines;
+		StrBlob file;
+	};
+
+	TextQuery::TextQuery(std::ifstream &ifs)
+	{
+		std::string text_line;
+
+		while(std::getline(ifs, text_line))
+		{
+			file.push_back(text_line);
+			int line_number = file.size() - 1;
+			std::istringstream line(text_line);
+			std::string text_word;
+			while(line >> text_word)
+			{
+				std::string word;
+				std::copy_if(text_word.begin(), text_word.end(), std::back_inserter(word), isalpha);
+				// std::cout << word << std::endl;
+				auto &wm_lines = word_map[word];
+				if(!wm_lines)
+					wm_lines.reset(new std::set<line_no>);
+				wm_lines->insert(line_number);
+			}
+		}
+	}
+
+	TextQuery::QueryResult TextQuery::query(const std::string &sought) const
+	{
+		static std::shared_ptr<std::set<TextQuery::line_no>> nodata(new std::set<TextQuery::line_no>);
+		auto loc = word_map.find(sought);
+		if(loc == word_map.end())
+			return QueryResult(sought, nodata, file);
+		else
+			return QueryResult(sought, loc->second, file);
+	}
+
+	std::ostream &print(std::ostream &os, const TextQuery::QueryResult &qr)
+	{
+		os << qr.sought << " occurs " << qr.lines->size() << " " /*<< make_plural(qr.lines->size(), "time", "s")*/ << std::endl;
+		for(auto num : *qr.lines)
+		{
+			ConstStrBlobPtr p(qr.file, num);
+			os << "\t(line " << num + 1 << ") " << p.deref() << std::endl;
+		}
+			
+		return os;
+	}
+}
+
+#endif
+```
+  
+## 19.21
