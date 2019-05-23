@@ -1,14 +1,16 @@
 #include <string>
 #include "Sales_data.h"
+#include <iostream>
 
 class Token
 {
 public:
-	Token() : tok(INT), ival{0} { }
-	Token(const Token &t) : tok(t.tok) { copyUnion(t); }
+	Token() : tok(INT), ival{0} { std::cout << "Token() : tok(INT), ival{0}" << std::endl; }
+	Token(const Token &t) : tok(t.tok) { std::cout << "Token(const Token &t) : tok(t.tok)" << std::endl; copyUnion(t); }
 	Token &operator=(const Token&);
 	Token(Token &&t) noexcept : tok(t.tok)
 	{
+		std::cout << "Token(Token &&t) noexcept : tok(t.tok)" << std::endl;
 		switch(t.tok)
 		{
 			case INT: ival = t.ival;break;
@@ -39,6 +41,7 @@ private:
 
 Token &Token::operator=(int i)
 {
+	std::cout << "Token &Token::operator=(int i)" << std::endl;
 	if(tok == STR) sval.std::string::~string();
 	else if(tok == SD) sdval.Sales_data::~Sales_data();
 	ival = i;
@@ -48,6 +51,7 @@ Token &Token::operator=(int i)
 
 Token &Token::operator=(char c)
 {
+	std::cout << "Token &Token::operator=(char c)" << std::endl;
 	if(tok == STR) sval.std::string::~string();
 	else if(tok == SD) sdval.Sales_data::~Sales_data();
 	cval = c;
@@ -57,6 +61,7 @@ Token &Token::operator=(char c)
 
 Token &Token::operator=(double d)
 {
+	std::cout << "Token &Token::operator=(double d)" << std::endl;
 	if(tok == STR) sval.std::string::~string();
 	else if(tok == SD) sdval.Sales_data::~Sales_data();
 	dval = d;
@@ -66,6 +71,7 @@ Token &Token::operator=(double d)
 
 Token &Token::operator=(const std::string &s)
 {
+	std::cout << "Token &Token::operator=(const std::string &s)" << std::endl;
 	if(tok == SD) sdval.Sales_data::~Sales_data();
 	if(tok == STR) sval = s;
 	else new(&sval) std::string(s);
@@ -75,6 +81,7 @@ Token &Token::operator=(const std::string &s)
 
 Token &Token::operator=(const Sales_data &sd)
 {
+	std::cout << "Token &Token::operator=(const Sales_data &sd)" << std::endl;
 	if(tok == STR) sval.std::string::~string();
 	if(tok == SD) sdval = sd;
 	else new(&sval) Sales_data(sd);
@@ -97,6 +104,7 @@ void Token::copyUnion(const Token &t)
 
 Token &Token::operator=(const Token &t)
 {
+	std::cout << "Token &Token::operator=(const Token &t)" << std::endl;
 	if(tok == STR && t.tok != STR) sval.std::string::~string();
 	else if(tok == STR && t.tok == STR) sval = t.sval;
 	else if(tok == SD && t.tok != SD) sdval.Sales_data::~Sales_data();
@@ -108,6 +116,7 @@ Token &Token::operator=(const Token &t)
 
 Token &Token::operator=(Token&& t) noexcept
 {
+	std::cout << "Token &Token::operator=(Token&& t) noexcept" << std::endl;
 	tok = t.tok;
 	switch(t.tok)
 	{
@@ -122,10 +131,20 @@ Token &Token::operator=(Token&& t) noexcept
 
 int main()
 {
+	std::cout << "---------1----------" << std::endl;
 	Token s;
+	std::cout << "---------2----------" << std::endl;
 	Sales_data sales_data1("001-01", 1, 100);
+	std::cout << "---------3----------" << std::endl;
 	s = sales_data1;
+	std::cout << "---------4----------" << std::endl;
 	s = std::string("a");
+	std::cout << "---------5----------" << std::endl;
+	s = Token();
+	std::cout << "---------6----------" << std::endl;
+	Token s1(std::move(s));
+	// Token s1(Token(s));
+	std::cout << "---------7----------" << std::endl;
 
 	return 0;
 }
