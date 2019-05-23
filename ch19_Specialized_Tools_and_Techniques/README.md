@@ -1,5 +1,26 @@
 ## 19.1
 ```cpp
+#include <cstdlib>
+#include <new>
+
+void *operator new(size_t size)
+{
+	if(void *mem = malloc(size))
+		return mem;
+	else
+		throw std::bad_alloc();
+}
+
+void operator delete(void *mem) noexcept { free(mem); }
+
+int main()
+{
+	return 0;
+}
+```
+  
+## 19.2
+```cpp
 #ifndef STRVEC_H_
 #define STRVEC_H_
 
