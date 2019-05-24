@@ -1,4 +1,7 @@
-## 17.1
+## 练习17.1
+
+> 定义一个保存三个 int 值的 tuple，并将其成员分别初始化为10、20和30。
+
 ```cpp
 #include <iostream>
 #include <tuple>
@@ -13,10 +16,16 @@ int main()
 }
 ```
   
-## 17.2
-参见１7.1。
+## 练习17.2
+
+> 定义一个 tuple，保存一个 string、一个vector<string> 和一个 pair<string, int>。
+
+参见17.1。
   
-## 17.3
+## 练习17.3
+
+> 重写12.3节中的 TextQuery 程序，使用 tuple 代替 QueryResult 类。你认为哪种设计更好？为什么？
+
 第一种设计更好，第二种设计更容易实现，但不容易重构。  
 ```cpp
 #ifndef TEXTQUERY_H_
@@ -112,7 +121,10 @@ std::ostream &print(std::ostream &os, const QueryResult &qr)
 #endif
 ```
   
-## 17.04
+## 练习17.4
+
+> 编写并测试你自己版本的 findBook 函数。
+
 ```cpp
 #include <iostream>
 #include <string>
@@ -199,7 +211,10 @@ int main()
 }
 ```
   
-## 17.05
+## 练习17.5
+
+> 重写 findBook，令其返回一个 pair，包含一个索引和一个迭代器pair。
+
 ```cpp
 #include <iostream>
 #include <string>
@@ -286,7 +301,10 @@ int main()
 }
 ```
   
-## 17.06
+## 练习17.6
+
+> 重写 findBook，不使用tuple和pair。
+
 ```cpp
 #include <iostream>
 #include <string>
@@ -379,18 +397,35 @@ int main()
 }
 ```
   
-## 17.07
+## 练习17.7
+
+> 解释你更倾向于哪个版本的findBook，为什么。
+
 tuple版本的findBook，更简洁。  
   
-## 17.08
+## 练习17.8
+
+> 在本节最后一段代码中，如果我们将Sales_data()作为第三个参数传递给accumulate，会发生什么？
+
 返回的Sales_data中的bookNo成员为空。  
   
-## 17.09
+## 练习17.9
+
+> 解释下列每个bitset 对象所包含的位模式：
+```cpp
+(a) bitset<64> bitvec(32);
+(b) bitset<32> bv(1010101);
+(c) string bstr; cin >> bstr; bitset<8> bv(bstr);
+```
+
 （a）用unsigned值初始化：0000000000000000000000000000000000000000000000000000000000100000；  
 （b）用unsigned值初始化：00000000000011110110100110110101；  
 （c）用string初始化：取决于cin。  
   
-## 17.10
+## 练习17.10
+
+> 使用序列1、2、3、5、8、13、21初始化一个bitset，将这些位置置位。对另一个bitset进行默认初始化，并编写一小段程序将其恰当的位置位。
+
 ```cpp
 #include <bitset>
 #include <vector>
@@ -410,7 +445,10 @@ int main()
 }
 ```
   
-## 17.11
+## 练习17.11
+
+> 定义一个数据结构，包含一个整型对象，记录一个包含10个问题的真/假测验的解答。如果测验包含100道题，你需要对数据结构做出什么改变（如果需要的话）？
+
 ```cpp
 #include <bitset>
 
@@ -435,7 +473,10 @@ int main()
 }
 ```
   
-## 17.12
+## 练习17.12
+
+> 使用前一题中的数据结构，编写一个函数，它接受一个问题编号和一个表示真/假解答的值，函数根据这两个参数更新测验的解答。
+
 ```cpp
 #include <bitset>
 #include <iostream>
@@ -477,7 +518,10 @@ int main()
 }
 ```
   
-## 17.13
+## 练习17.13
+
+> 编写一个整型对象，包含真/假测验的正确答案。使用它来为前两题中的数据结构生成测验成绩。
+
 ```cpp
 #include <bitset>
 #include <iostream>
@@ -528,7 +572,10 @@ int main()
 }
 ```
   
-## 17.14
+## 练习17.14
+
+> 编写几个正则表达式，分别触发不同错误。运行你的程序，观察编译器对每个错误的输出。
+
 ```cpp
 #include <iostream>
 #include <regex>
@@ -562,7 +609,10 @@ int main()
 }
 ```
   
-## 17.15
+## 练习17.15
+
+> 编写程序，使用模式查找违反“i在e之前，除非在c之后”规则的单词。你的程序应该提示用户输入一个单词，然后指出此单词是否符号要求。用一些违反和未违反规则的单词测试你的程序。
+
 gcc version 4.8.4 对regex支持有问题，请使用4.9及以上版本。  
 ```cpp
 #include <iostream>
@@ -607,7 +657,9 @@ receive
 receive: correct
 ```
   
-## 14.16
+## 练习17.16
+
+> 如果前一题程序中的regex对象用"[^c]ei"进行初始化，将会发生什么？用此模式测试你的程序，检查你的答案是否正确。
 这样只匹配3个字符，（非c）和ei这3个字符，匹配成功后result中只有3个字符。  
 这里就按照题意写规则。  
 ```cpp
@@ -645,8 +697,11 @@ freind
 freind: correct
 1: rei 
 ```
-  
-## 17.17
+
+## 练习17.17
+
+> 更新你的程序，令它查找输入序列中所有违反"ei"语法规则的单词。
+
 ```cpp
 #include <iostream>
 #include <regex>
@@ -673,7 +728,10 @@ freind
 theif
 ```
   
-## 17.18
+## 练习17.18
+
+> 修改你的程序，忽略包含“ei”但并非拼写错误的单词，如“albeit”和“neighbor”。
+
 ```cpp
 #include <iostream>
 #include <regex>
@@ -705,10 +763,16 @@ int main()
 }
 ```
   
-## 17.19
+## 练习17.19
+
+> 为什么可以不先检查m[4]是否匹配了就直接调用m[4].str()？
+
 没有匹配则返回为空字符串，也是可以比较的。  
   
-## 17.20
+## 练习17.20
+
+> 编写你自己版本的验证电话号码的程序。
+
 ```cpp
 #include <iostream>
 #include <string>
@@ -743,7 +807,10 @@ int main()
 }
 ```
   
-## 17.21
+## 练习17.21
+
+> 使用本节定义的valid 函数重写8.3.2节中的电话号码程序。
+
 ```cpp
 #include <string>
 #include <vector>
@@ -817,7 +884,10 @@ int main()
 }
 ```
   
-## 17.22
+## 练习17.22
+
+> 重写你的电话号码程序，使之允许在号码的三个部分之间放置任意多个空白符。
+
 ```cpp
 #include <iostream>
 #include <string>
@@ -862,7 +932,10 @@ valid: 908.555.1500
 valid: 908   555   1500
 ```
   
-## 17.23
+## 练习17.23
+
+> 编写查找邮政编码的正则表达式。一个美国邮政编码可以由五位或九位数字组成。前五位数字和后四位数字之间可以用一个短横线分隔。
+
 ```cpp
 #include <iostream>
 #include <string>
@@ -911,7 +984,10 @@ valid: 11111
 not valid: 11111-
 ```
   
-## 17.24
+## 练习17.24
+
+> 编写你自己版本的重拍电话号码格式的程序。
+
 ```cpp
 #include <iostream>
 #include <string>
@@ -937,7 +1013,10 @@ int main()
 }
 ```
   
-## 17.25
+## 练习17.25
+
+> 重写你的电话号码程序，使之只输出每个人的第一个电话号码。
+
 ```cpp
 #include <iostream>
 #include <string>
@@ -970,7 +1049,10 @@ int main()
 }
 ```
   
-## 17.26
+## 练习17.26
+
+> 重写你的电话号码程序，使之对多于一个电话号码的人只输出第二个和后续号码。
+
 ```cpp
 #include <iostream>
 #include <string>
@@ -1016,7 +1098,10 @@ int main()
 }
 ```
   
-## 17.27
+## 练习17.27
+
+> 编写程序，将九位数字邮政编码的格式转换为 ddddd-dddd。
+
 ```cpp
 #include <iostream>
 #include <string>
@@ -1051,7 +1136,10 @@ int main()
 }
 ```
   
-## 17.28
+## 练习17.28
+
+> 编写函数，每次调用生成并返回一个均匀分布的随机unsigned int。
+
 ```cpp
 #include <random>
 #include <iostream>
@@ -1072,7 +1160,10 @@ int main()
 }
 ```
   
-## 17.29
+## 练习17.29
+
+> 修改上一题中编写的函数，允许用户提供一个种子作为可选参数。
+
 ```cpp
 #include <random>
 #include <iostream>
@@ -1101,7 +1192,10 @@ int main()
 }
 ```
   
-## 17.30
+## 练习17.30
+
+> 再次修改你的程序，此次增加两个参数，表示函数允许返回的最小值和最大值。
+
 ```cpp
 #include <random>
 #include <iostream>
@@ -1139,13 +1233,22 @@ int main()
 }
 ```
   
-## 17.31
+## 练习17.31
+
+> 对于本节中的游戏程序，如果在do循环内定义b和e，会发生什么？
+
 每次的随机数都相同。
   
-## 17.32
+## 练习17.32
+
+> 如果我们在循环内定义resp，会发生什么？
+
 会报错，未定义resp。
   
-## 17.33
+## 练习17.33
+
+> 修改11.3.6节中的单词转换程序，允许对一个给定单词有多种转换方式，每次随机选择一种进行实际转换。
+
 ```cpp
 #include <map>
 #include <iostream>
@@ -1214,13 +1317,39 @@ int main()
 }
 ```
   
-## 17.34
+## 练习17.34
+
+> 编写一个程序，展示如何使用表17.17和表17.18中的每个操作符。
+
 略。  
   
-## 17.35
-[Missing ios_base::hexfloat format specifier](https://gcc.gnu.org/bugzilla/show_bug.cgi?id=59987)
+## 练习17.35
+
+> 修改第670页中的程序，打印2的平方根，但这次打印十六进制数字的大写形式。
+
+这里要使用gcc5及之后的版本编译。  
+[Missing ios_base::hexfloat format specifier](https://gcc.gnu.org/bugzilla/show_bug.cgi?id=59987)  
+```cpp
+#include <iostream>
+#include <cmath>
+
+int main()
+{
+	std::cout <<"default format: " << sqrt(2.0) << '\n'
+		<< "scientific: " << std::scientific << sqrt(2.0) << '\n'
+		<< "fixed decimal: " << std::fixed << sqrt(2.0) << '\n'
+		<< "hexidecimal: " << std::uppercase << std::hexfloat << sqrt(2.0) << '\n'
+		<< "use defaults: " << std::defaultfloat << sqrt(2.0)
+		<< "\n\n";
+
+	return 0;
+}
+```
   
-## 17.36
+## 练习17.36
+
+> 修改上一题中的程序，打印不同的浮点数，使它们排成一列。
+
 ```cpp
 #include <iostream>
 #include <cmath>
@@ -1239,7 +1368,10 @@ int main()
 }
 ```
   
-## 17.37
+## 练习17.37
+
+> 用未格式化版本的getline 逐行读取一个文件。测试你的程序，给定一个文件，既包含空行又包含长度超过你传递给geiline的字符数组大小的行。
+
 [basic_istream::getline, if it extracts no characters, if it fills in the provided buffer without encountering the delimiter, or if the provided buffer size is less than 1.](https://en.cppreference.com/w/cpp/io/ios_base/iostate)
 ```cpp
 #include <fstream>
@@ -1268,7 +1400,10 @@ int main()
 }
 ```
   
-## 17.38
+## 练习17.38
+
+> 扩展上一题中你的程序，将读入的每个单词打印到它所在的行。
+
 ```cpp
 #include <fstream>
 #include <iostream>
@@ -1292,7 +1427,10 @@ int main()
 }
 ```
   
-## 13.39
+## 练习17.39
+
+> 对本节给出的 seek程序，编写你自己的版本。
+
 ```cpp
 #include <iostream>
 #include <fstream>
