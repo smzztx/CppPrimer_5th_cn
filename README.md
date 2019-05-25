@@ -1,15 +1,15 @@
 # C++Primer第五版 习题答案
 
-本文当作我学习C++的一个记录，这里的习题答案并不是标准答案，仅仅是我的理解，如有错误，请大家指出，谢谢！
-参考的文章会在文末列出。
-使用的系统为：ubuntu 14.04，编译器：gcc version 4.8.4（**建议使用gcc5**），编译时记得带上参数：-std=c++11，如下所示：
+本文当作我学习C++的一个记录，这里的习题答案并不是标准答案，仅仅是我的理解，如有错误，请大家指出，谢谢！  
+参考的文章会在文末列出。  
+使用的系统为：ubuntu 14.04，编译器：gcc version 4.8.4（`建议使用gcc5`），编译时记得带上参数：-std=c++11，如下所示：  
 ```sh
 $ g++ -o main main.cpp -std=c++11
 $ g++ -o main main.cpp helloworld.cpp -std=c++11
 ```
-使用正则表达式regex时，建议使用 gcc4.9 及以上版本；使用 std::hexfloat 时，建议使用 gcc5 及以上版本；使用 #define NDEBUG 与 assert() 时，需要使用**-D NDEBUG**参数编译。
-[github地址（用于放置最新的源码）](https://github.com/smzztx/cpplearn)
-[CSDN目录地址](https://blog.csdn.net/shamozhizhoutx/article/details/81264498)
+使用正则表达式regex时，建议使用 gcc4.9 及以上版本；使用 std::hexfloat 时，建议使用 gcc5 及以上版本；使用 #define NDEBUG 与 assert() 时，需要使用`-D NDEBUG`参数编译。  
+[github地址（用于放置最新的源码）](https://github.com/smzztx/cpplearn)  
+[CSDN目录地址](https://blog.csdn.net/shamozhizhoutx/article/details/81264498)  
 
 ## 目录
  - [第一章 开始（getting started）](https://blog.csdn.net/shamozhizhoutx/article/details/81264840)
@@ -39,16 +39,3 @@ $ g++ -o main main.cpp helloworld.cpp -std=c++11
 ---------
 最刚开始看的时候参考的是 [MISAYAONE](https://blog.csdn.net/misayaaaaa/article/details/53786215) ，后来发现github上有两个项目非常不错 [Mooophy的Cpp-Primer](https://github.com/Mooophy/Cpp-Primer) 和 [pezy的CppPrimer](https://github.com/pezy/CppPrimer) ，高级部分开始参考的代码就比较少了，接着又找到了两篇 [huangmingchuan的Cpp_Primer_Answers](https://github.com/huangmingchuan/Cpp_Primer_Answers
 ) 和 [听枫烨阁](https://blog.csdn.net/chxw098/article/details/39973555) ，我这里的习题题目大多来源于前者。碰到不会做的题目就照着写，难免有相同的地方，如有侵权马上删除。
-
-
-
-comment:<>(
-gcc -c thanks.c thanks_2.c  
-gcc -o thanks thanks.o thanks_2.o  
-
-g++ -c helloworld.cpp  
-g++ -o hello helloworld.o  
-//add C++11  
-g++ -o sleep_time sleep_time.cpp -std=c++0x  
-g++ -o helloworld helloworld.cpp -std=c++11  
-)
