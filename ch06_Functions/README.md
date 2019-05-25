@@ -186,7 +186,7 @@ int absolute(int n)
 	return (n > 0) ? n : -n;
 }
 ```
-
+  
 factMain.cpp
 ```cpp
 #include <iostream>
@@ -199,7 +199,7 @@ int main()
 	return 0;
 }
 ```
-```linux
+```sh
 $ g++ -o ex09 factMain.cpp fact.cpp -std=c++11
 $ ./ex09 
 120
@@ -538,7 +538,7 @@ int main(int argc, char const *argv[])
 	return 0;
 }
 ```
-```linux
+```sh
 $ ./ex25 hel lo
 hello
 ```
@@ -561,7 +561,7 @@ int main(int argc, char const *argv[])
 	return 0;
 }
 ```
-```linux
+```sh
 $ ./ex26 -d -o ofile data0
 ./ex26 -d -o ofile data0 
 $ ./ex26 
@@ -609,7 +609,7 @@ const std::string&
 > 编译第200页的str_subrange函数，看看你的编译器是如何处理函数中的错误的。
 
 g++
-```linux
+```sh
 错误#1：error: return-statement with no value, in function returning ‘bool’ [-fpermissive]
 错误#2：检查不出，返回true
 ```
