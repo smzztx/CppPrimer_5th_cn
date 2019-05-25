@@ -174,7 +174,7 @@ int main()
 
 > 请说明string类的输入运算符和getline函数分别是如何处理空白字符的。
 
-输入运算符碰到空格、回车和制表符，忽略前面空白；getline碰到回车，不忽略空白
+输入运算符碰到空格、回车和制表符，忽略前面空白；getline碰到回车，不忽略空白。  
   
 ## 练习3.4
 
@@ -927,7 +927,7 @@ int main()
     }
     for(auto e : score)
     {
-        cout << e <<" ";
+        //cout << e <<" ";
     }
     cout << endl;
     return 0;
