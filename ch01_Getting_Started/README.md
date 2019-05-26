@@ -245,10 +245,6 @@ $ ./ex21
 
 > 编写程序，读取多个具有相同 ISBN 的销售记录，输出所有记录的和。
 
-```cpp
-#include <iostream>
-#include "Sales_item.h"
-```
 测试：
 
 ```sh
