@@ -12,7 +12,7 @@ $ g++ -o main main.cpp helloworld.cpp -std=c++11
 [CSDN目录地址](https://blog.csdn.net/shamozhizhoutx/article/details/81264498)  
 
 ## 目录
- - [第一章 开始（getting started）](https://blog.csdn.net/shamozhizhoutx/article/details/81264840)
+ - [第一章 开始（getting started）](ch01_Getting_Started/README.md)
 - [第Ⅰ部分 C++基础]
 	- [第二章 变量和基本类型（variables and basic types）](https://blog.csdn.net/shamozhizhoutx/article/details/81431681)
 	- [第三章 字符串、向量和数组（Strings, Vectors, and Arrays）](https://blog.csdn.net/shamozhizhoutx/article/details/81590540)
