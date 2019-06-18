@@ -17,7 +17,7 @@ $ g++ -o main main.cpp helloworld.cpp -std=c++11
 	- [第二章 变量和基本类型（variables and basic types）](ch02_Variables_and_Basic_Types/README.md)
 	- [第三章 字符串、向量和数组（Strings, Vectors, and Arrays）](ch03_Strings_Vectors_and_Arrays/README.md)
 	- [第四章 表达式（Expressions）](ch04_Expressions/README.md)
-	- [第五章 语句（Statements](ch05_Statements/README.md)
+	- [第五章 语句（Statements）](ch05_Statements/README.md)
 	- [第六章 函数（Functions）](ch06_Functions/README.md)
 	- [第七章 类（Classes](ch07_Classes/README.md)
 - [第Ⅱ部分 C++标准库]
