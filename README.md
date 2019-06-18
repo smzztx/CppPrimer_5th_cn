@@ -19,7 +19,7 @@ $ g++ -o main main.cpp helloworld.cpp -std=c++11
 	- [第四章 表达式（Expressions）](ch04_Expressions/README.md)
 	- [第五章 语句（Statements）](ch05_Statements/README.md)
 	- [第六章 函数（Functions）](ch06_Functions/README.md)
-	- [第七章 类（Classes](ch07_Classes/README.md)
+	- [第七章 类（Classes）](ch07_Classes/README.md)
 - [第Ⅱ部分 C++标准库]
 	- [第八章 IO库（The IO Library）](ch08_The_IO_Library/README.md)
 	- [第九章 顺序容器（Sequential Containers）](ch09_Sequential_Containers/README.md)
