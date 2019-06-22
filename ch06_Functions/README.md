@@ -40,77 +40,23 @@ int calc(int v1, int v2) { /* ... */ }  // parameter list cannot use same name t
 double square (double x) { return x * x; }  // function body needs braces
 ```
 
-## 练习6.3
+## [练习6.3](ex03.cpp)
 
 > 编写你自己的fact函数，上机检查是否正确。
 
-```cpp
-#include <iostream>
 
-int fact(int n)
-{
-	int ret = 1;
-	for(int i = 1;i <= n;++i)
-	{
-		ret *= i;
-	}
-	return ret;
-}
-
-int main()
-{
-	std::cout << fact(5) << std::endl;
-
-	return 0;
-}
-```
   
-## 练习6.4
+## [练习6.4](ex04.cpp)
 
 > 编写一个与用户交互的函数，要求用户输入一个数字，计算生成该数字的阶乘。在main函数中调用该函数。
 
-```cpp
-#include <iostream>
 
-int fact(int n)
-{
-	int ret = 1;
-	for(int i = 1;i <= n;++i)
-	{
-		ret *= i;
-	}
-	return ret;
-}
-
-int main()
-{
-	int n;
-	std::cin >> n;
-	std::cout << fact(n) << std::endl;
-
-	return 0;
-}
-```
   
-## 练习6.5
+## [练习6.5](ex05.cpp)
 
 > 编写一个函数输出其实参的绝对值。
 
-```cpp
-#include <iostream>
 
-int absolute(int n)
-{
-	return (n > 0) ? n : -n;
-}
-
-int main()
-{
-	std::cout << absolute(5) << std::endl;
-
-	return 0;
-}
-```
   
 ## 练习6.6
 
@@ -151,137 +97,43 @@ size_t generate()
   
 ## 练习6.8
 
-> 编写一个名为Chapter6.h 的头文件，令其包含6.1节练习中的函数声明。
+> 编写一个名为 Chapter6.h 的头文件，令其包含6.1节练习中的函数声明。
 
-```cpp
-#ifndef CHAPTER6_H
-#define CHAPTER6_H
-
-int fact(int n);
-int absolute(int n);
-
-#endif
-```
+[Chapter6.h](Chapter6.h)
 
 ## 练习6.9
 
 > 编写你自己的fact.cc 和factMain.cc ，这两个文件都应该包含上一小节的练习中编写的 Chapter6.h 头文件。通过这些文件，理解你的编译器是如何支持分离式编译的。
 
-fact.cpp
-```cpp
-#include "Chapter6.h"
-
-int fact(int n)
-{
-	int ret = 1;
-	for(int i = 1;i <= n;++i)
-	{
-		ret *= i;
-	}
-	return ret;
-}
-
-int absolute(int n)
-{
-	return (n > 0) ? n : -n;
-}
-```
+[fact.cpp](fact.cpp)
   
-factMain.cpp
-```cpp
-#include <iostream>
-#include "Chapter6.h"
+[factMain.cpp](factMain.cpp)
 
-int main()
-{
-	std::cout << fact(5) << std::endl;
-
-	return 0;
-}
-```
 ```sh
 $ g++ -o ex09 factMain.cpp fact.cpp -std=c++11
 $ ./ex09 
 120
 ```
   
-## 练习6.10
+## [练习6.10](ex10.cpp)
 
 > 编写一个函数，使用指针形参交换两个整数的值。在代码中调用该函数并输出交换后的结果，以此验证函数的正确性。
 
-```cpp
-#include <iostream>
 
-void swap_int(int *i,int *j)
-{
-	int tmp = *i;
-	*i = *j;
-	*j = tmp;
-}
-
-int main()
-{
-	int i = 1,j = 2;
-
-	std::cout << i << " " << j << std::endl;
-	swap_int(&i,&j);
-	std::cout << i << " " << j << std::endl;
-
-	return 0;
-}
-```
   
-## 练习6.11
+## [练习6.11](ex11.cpp)
 
 > 编写并验证你自己的reset函数，使其作用于引用类型的参数。
 
-```cpp
-#include <iostream>
 
-void reset(int &i)
-{
-	i = 0;
-}
-
-int main(int argc, char const *argv[])
-{
-	int i = 100;
-
-	std::cout << i << std::endl;
-	reset(i);
-	std::cout << i << std::endl;
-
-	return 0;
-}
-```
   
-## 练习6.12
+## [练习6.12](ex12.cpp)
 
 > 改写6.2.1节练习中的程序，使其引用而非指针交换两个整数的值。你觉得哪种方法更易于使用呢？为什么？
 
-```cpp
-#include <iostream>
 
-void swap_int(int &i,int &j)
-{
-	int tmp = i;
-	i = j;
-	j = tmp;
-}
-
-int main()
-{
-	int i = 1,j = 2;
-
-	std::cout << i << " " << j << std::endl;
-	swap_int(i,j);
-	std::cout << i << " " << j << std::endl;
-
-	return 0;
-}
-```
-引用更易于使用，不用考虑传递的是指针，避免语法错误；
-使用引用避免拷贝。
+引用更易于使用，不用考虑传递的是指针，避免语法错误；  
+使用引用避免拷贝。  
   
 ## 练习6.13
 
@@ -331,40 +183,11 @@ bool is_empty(string& s) { return s.empty(); }
 bool is_empty(const string& s) { return s.empty(); }
 ```
   
-## 练习6.17
+## [练习6.17](ex17.cpp)
 
 > 编写一个函数，判断string对象中是否含有大写字母。编写另一个函数，把string对象全部改写成小写形式。在这两个函数中你使用的形参类型相同吗？为什么？
 
-```cpp
-#include <iostream>
-#include <string>
 
-bool is_upper(const std::string &s)
-{
-	for(auto c : s)
-	{
-		if(isupper(c)) return true;
-	}
-	return false;
-}
-
-void to_upper(std::string &s)
-{
-	for(auto &c : s) c = tolower(c);
-}
-
-int main(int argc, char const *argv[])
-{
-	std::string s("abcdABCD");
-
-	std::cout << (is_upper(s) ? "is upper" : "is not upper") << std::endl;
-	std::cout << s << std::endl;
-	to_upper(s);
-	std::cout << s << std::endl;
-
-	return 0;
-}
-```
   
 ## 练习6.18
 
@@ -402,109 +225,26 @@ vector<int> vec(10);
 
 无需改变实参的时候应该用常量引用；可能会改变常亮实参，从而导致出错。  
   
-## 练习6.21
+## [练习6.21](ex21.cpp)
 
 > 编写一个函数，令其接受两个参数：一个是int型的数，另一个是int指针。函数比较int的值和指针所指的值，返回较大的那个。在该函数中指针的类型应该是什么？
 
-```cpp
-#include <iostream>
 
-int compare(int j, int *i)
-{
-	return j > *i ? j : *i; 
-}
-
-int main()
-{
-	int j = 0, i = 1;
-	
-	std::cout << compare(j, &i) << std::endl;
-
-	return 0;
-}
-```
   
-## 练习6.22
+## [练习6.22](ex22.cpp)
 
 > 编写一个函数，令其交换两个int指针。
 
-```cpp
-#include <iostream>
 
-void swap_intp(int *&i, int *&j)
-{
-	int *tmp;
-	tmp = i;
-	i = j;
-	j = tmp;
-}
-
-int main()
-{
-	int i = 0, j = 1;
-	int *pi = &i, *pj = &j;
-
-	std::cout << pi << " " << pj << std::endl;
-	swap_intp(pi, pj);
-	std::cout << pi << " " << pj << std::endl;
-
-	return 0;
-}
-```
   
-## 练习6.23
+## [练习6.23](ex23.cpp)
 
 > 参考本节介绍的几个print函数，根据理解编写你自己的版本。依次调用每个函数使其输入下面定义的i和j:
 ```cpp
 int i = 0, j[2] = { 0, 1 };
 ```
 
-```cpp
-#include <iostream>
 
-using std::cout;
-using std::endl;
-using std::begin;
-using std::end;
-
-void print(const int* pi)
-{
-	cout << *pi << endl;
-}
-
-void print(const int *beg, const int *end)
-{
-	while(beg != end)
-		cout << *beg++ << " ";
-	cout << endl;
-}
-
-void print(const int ia[], size_t size)
-{
-	for(size_t i = 0; i != size; ++i)
-		cout << ia[i] << " ";
-	cout << endl;
-}
-
-void print(const int (&arr)[2])
-{
-	for(auto e : arr)
-		cout << e << " ";
-	cout << endl;
-}
-
-int main()
-{
-	int i = 0, j[2] = {0, 1};
-
-	print(&i);
-	print(begin(j), end(j));
-	print(j, end(j) - begin(j));
-	print(j);
-
-	return 0;
-}
-```
   
 ## 练习6.24
 
@@ -522,45 +262,21 @@ void print(const int ia[10])
 void print(const int (&ia)[10]) { /*...*/ }
 ```
   
-## 练习6.25
+## [练习6.25](ex25.cpp)
 
 > 编写一个main函数，令其接受两个实参。把实参的内容连接成一个string对象并输出出来。
 
-```cpp
-#include <iostream>
 
-int main(int argc, char const *argv[])
-{
-	const std::string s1 = argv[1], s2 = argv[2];
-
-	std::cout << s1 + s2 << std::endl;
-
-	return 0;
-}
-```
 ```sh
 $ ./ex25 hel lo
 hello
 ```
   
-## 练习6.26
+## [练习6.26](ex26.cpp)
 
 > 编写一个程序，使其接受本节所示的选项；输出传递给main函数的实参内容。
 
-```cpp
-#include <iostream>
 
-int main(int argc, char const *argv[])
-{
-	std::string s;
-
-	for(int i = 0; i != argc; ++i)
-		s += std::string(argv[i]) + " ";
-	std::cout << s << std::endl;
-
-	return 0;
-}
-```
 ```sh
 $ ./ex26 -d -o ofile data0
 ./ex26 -d -o ofile data0 
@@ -568,29 +284,11 @@ $ ./ex26
 ./ex26 
 ```
   
-## 练习6.27
+## [练习6.27](ex27.cpp)
 
 > 编写一个函数，它的参数是initializer_list<int>类型的对象，函数的功能是计算列表中所有元素的和。
 
-```cpp
-#include <iostream>
-#include <initializer_list>
 
-int counter_int(std::initializer_list<int> il)
-{
-	int cnt_i = 0;
-	for(auto e : il)
-		cnt_i += e;
-	return cnt_i;
-}
-
-int main(int argc, char const *argv[])
-{
-	std::cout << counter_int({1,2,3,4,5}) << std::endl;
-
-	return 0;
-}
-```
   
 ## 练习6.28
 
@@ -635,36 +333,11 @@ int main()
 
 合法，返回数组ia[0]-ia[9]
   
-## 练习6.33
+## [练习6.33](ex33.cpp)
 
 > 编写一个递归函数，输出vector对象的内容。
 
-```cpp
-#include <iostream>
-#include <vector>
 
-void read_vi(std::vector<int>::const_iterator iterator_begin, std::vector<int>::const_iterator iterator_end)
-{
-	if(iterator_begin != iterator_end)
-	{
-		std::cout << *iterator_begin << " ";
-		return read_vi(++iterator_begin, iterator_end);
-	}else
-	{
-		std::cout << std::endl;
-		return;
-	}
-}
-
-int main()
-{
-	std::vector<int> v{1,2,3,4,5};
-
-	read_vi(v.begin(), v.end());
-
-	return 0;
-}
-```
   
 ## 练习6.34
 
@@ -757,27 +430,11 @@ char *init(int ht, int wd = 80, char bckgrnd = ' ');
 （b）合法；  
 （c）合法，但与初衷不符，char '*'转换成整形了。  
   
-## 练习6.42
+## [练习6.42](ex42.cpp)
 
 > 给make_plural函数的第二个形参赋予默认实参's', 利用新版本的函数输出单词success和failure的单数和复数形式。
 
-```cpp
-#include <iostream>
-#include <string>
 
-using std::string;
-
-string make_plural(size_t ctr, const string &word, const string &ending = "s")
-{
-	return (ctr > 1) ? word + ending : word;
-}
-
-int main()
-{
-	std::cout << make_plural(2, "success", "es") << std::endl;
-	std::cout << make_plural(2, "failure") << std::endl;
-}
-```
   
 ## 练习6.43
 
@@ -790,30 +447,11 @@ int main()
 （a）放在头文件中，内联函数在程序中可以多次定义，它的多个定义必须完全一致，所以放在头文件中比较好；  
 （b）放在头文件中，声明放在头文件中。  
   
-## 练习6.44
+## [练习6.44](ex44.cpp)
 
 > 将6.2.2节的isShorter函数改写成内联函数。
 
-```cpp
-#include <iostream>
-#include <string>
 
-using std::string;
-
-inline bool isShorter(const string &s1, const string &s2)
-{
-	return s1.size() < s2.size();
-}
-
-int main()
-{
-	string s1("aabb"), s2("aabbcc");
-
-	std::cout << isShorter(s1, s2) << std::endl;
-
-	return 0;
-}
-```
   
 ## 练习6.45
 
@@ -827,45 +465,11 @@ int main()
 
 不能，因为std::string::size()；  不是一个constexpr函数，s1.size() == s2.size()；  不是一个常量表达式。  
   
-## 练习6.47
+## [练习6.47](ex47.cpp)
 
 > 改写6.3.2节练习中使用递归输出vector内容的程序，使其有条件地输出与执行过程有关的信息。例如，每次调用时输出vector对象的大小。分别在打开和关闭调试器的情况下编译并执行这个程序。
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <cassert>
 
-// #define NDEBUG	//this is not work for assert(), we should use $ g++ -o ex47 ex47.cpp -D NDEBUG -std=c++11
-
-void read_vi(std::vector<int>::const_iterator iterator_begin, std::vector<int>::const_iterator iterator_end)
-{
-	#ifndef NDEBUG
-		std::cerr << iterator_end - iterator_begin << __func__ << " " << __FILE__ << " " 
-		<< __LINE__ << " " << __TIME__ << " " << __DATE__ << std::endl;
-	#endif
-	assert(0);
-
-	if(iterator_begin != iterator_end)
-	{
-		std::cout << *iterator_begin << " ";
-		return read_vi(++iterator_begin, iterator_end);
-	}else
-	{
-		std::cout << std::endl;
-		return;
-	}
-}
-
-int main()
-{
-	std::vector<int> v{1,2,3,4,5};
-
-	read_vi(v.begin(), v.end());
-
-	return 0;
-}
-```
   
 ## 练习6.48
 
@@ -897,44 +501,11 @@ assert(cin);
 
 （a）二义性；（b）最佳匹配void f(int)；（c）最佳匹配void f(int, int)；（d）最佳匹配void f(double, double = 3.14)。  
   
-## 练习6.51
+## [练习6.51](ex51.cpp)
 
 > 编写函数f的4版本，令其各输出一条可以区分的消息。验证上一个练习的答案，如果你的回答错了，反复研究本节内容直到你弄清自己错在何处。
 
-```cpp
-#include <iostream>
-using std::cout; using std::endl;
 
-void f()
-{
-    cout << "f()" << endl;
-}
-
-void f(int)
-{
-    cout << "f(int)" << endl;
-}
-
-void f(int, int)
-{
-    cout << "f(int, int)" << endl;
-}
-
-void f(double, double)
-{
-    cout << "f(double, double)" << endl;
-}
-
-int main()
-{
-    //f(2.56, 42); // error: 'f' is ambiguous.
-    f(42);
-    f(42, 0);
-    f(2.56, 3.14);
-    
-    return 0;
-}
-```
   
 ## 练习6.52
 
@@ -1004,31 +575,7 @@ int multiply(int a, int b) { return a * b; }
 int divide(int a, int b) { return b != 0 ? a / b : 0; }
 ```
   
-## 练习6.56
+## [练习6.56](ex56.cpp)
 
 > 调用上述vector对象中的每个元素并输出结果。
 
-```cpp
-#include <iostream>
-#include <string>
-#include <vector>
-
-using std::string;
-using std::cout;
-using std::endl;
-using std::vector;
-
-int add(int a, int b) { return a + b; }
-int subtract(int a, int b) { return a - b; }
-int multiply(int a, int b) { return a * b; }
-int divide(int a, int b) { return b != 0 ? a / b : 0; }
-
-int main()
-{
-	vector<int (*)(int, int)> vf{add, subtract, multiply, divide};
-
-	for(const auto &e : vf) cout << e(4, 2) << endl;
-
-	return 0;
-}
-```
