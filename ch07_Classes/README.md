@@ -134,9 +134,9 @@ class默认的访问权限是private。
 struct Person
 {
 public:
-	Person() : name(""), address(""){}
-	Person(const std::string &sname, const std::string &saddress = "") : name(sname), address(saddress){}
-	Person(std::istream &is){read(is, *this);}
+    Person() : name(""), address(""){}
+    Person(const std::string &sname, const std::string &saddress = "") : name(sname), address(saddress){}
+    Person(std::istream &is){read(is, *this);}
     std::string get_name() const{return name;}
     std::string get_address() const{return address;}
 private:
@@ -346,8 +346,10 @@ Exercise::Type Exercise::setVal(Type parm) {
     return val;
 }
 ```
-测试代码：
+测试代码：  
+
 [ex35.h](ex35.h)
+
 [ex35.cpp](ex35.cpp)
   
 ## 练习7.36
