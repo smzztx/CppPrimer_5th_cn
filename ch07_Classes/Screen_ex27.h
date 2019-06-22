@@ -1,5 +1,5 @@
-#ifndef SCREEN_EX23_H_
-#define SCREEN_EX23_H_
+#ifndef SCREEN_H_
+#define SCREEN_H_
 
 #include <string>
 

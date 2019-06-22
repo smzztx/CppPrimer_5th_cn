@@ -4,242 +4,42 @@
 
 见习题2.41。
   
-## 练习7.2
+## [练习7.2](Sales_data_ex02)
 
 > 曾在2.6.2节的练习中编写了一个Sales_data类，请向这个类添加combine函数和isbn成员。
 
-```cpp
-#ifndef SALES_DATA_H_
-#define SALES_DATA_H_
 
-#include <string>
-
-struct Sales_data
-{
-    std::string bookNo;
-    unsigned units_sold = 0;
-    double revenue = 0.0;
-
-    std::string isbn() const {return bookNo;}
-    Sales_data& combine(const Sales_data&);
-};
-
-Sales_data& Sales_data::combine(const Sales_data &rhs)
-{
-	units_sold += rhs.units_sold;
-	revenue += rhs.revenue;
-
-	return *this;
-}
-
-#endif
-```
   
-## 练习7.3
+## [练习7.3](ex03.cpp)
 
 > 修改7.1.1节的交易处理程序，令其使用这些成员。
 
-```cpp
-#include <iostream>
-#include <string>
-#include "Sales_data.h"
 
-int main()
-{
-    Sales_data total;
-    double totalPrice;
-
-    if (std::cin >> total.bookNo >> total.units_sold >> totalPrice)
-    {
-        total.revenue = total.units_sold * totalPrice;
-
-        Sales_data trans;
-        double transPrice;
-        while (std::cin >> trans.bookNo >> trans.units_sold >> transPrice)
-        {
-            trans.revenue = trans.units_sold * transPrice;
-
-            if (total.isbn() == trans.isbn())
-            {
-                total.combine(trans);
-            }
-            else
-            {
-                std::cout << total.bookNo << " " << total.units_sold << " " << total.revenue << " ";
-                if (total.units_sold != 0)
-                    std::cout << total.revenue / total.units_sold << std::endl;
-                else
-                    std::cout << "(no sales)" << std::endl;
-
-                total = trans;
-            }
-        }
-
-        std::cout << total.bookNo << " " << total.units_sold << " " << total.revenue << " ";
-        if (total.units_sold != 0)
-            std::cout << total.revenue / total.units_sold << std::endl;
-        else
-            std::cout << "(no sales)" << std::endl;
-
-        return 0;
-    }
-    else
-    {
-        std::cerr << "No data?!" << std::endl;
-        return -1;  // indicate failure
-    }
-}
-```
   
-## 练习7.4
+## [练习7.4](Person_ex04.h)
 
 > 编写一个名为Person的类，使其表示人员的姓名和地址。使用string对象存放这些元素，接下来的练习将不断充实这个类的其他特征。
 
-```cpp
-#ifndef PERSON_H_
-#define PERSON_H_
 
-#include <string>
-
-struct Person
-{
-    std::string name;
-    std::string address;
-};
-
-#endif
-```
   
-## 练习7.5
+## [练习7.5](Person_ex05.h)
 
 > 在你的Person类中提供一些操作使其能够返回姓名和地址。这些函数是否应该是const的呢？解释原因。
 
 应该是const，这两个成员函数只需读取成员对象，无需改变成员对象。
-```cpp
-#ifndef PERSON_H_
-#define PERSON_H_
 
-#include <string>
-
-struct Person
-{
-    std::string name;
-    std::string address;
-
-    std::string get_name() const{return name;}
-    std::string get_address() const{return address;}
-};
-
-#endif
-```
   
-## 练习7.6
+## [练习7.6](Sales_data_ex06.h)
 
 > 对于函数add、read和print，定义你自己的版本。
 
-```cpp
-#ifndef SALES_DATA_H_
-#define SALES_DATA_H_
 
-#include <string>
-
-struct Sales_data
-{
-    std::string bookNo;
-    unsigned units_sold = 0;
-    double revenue = 0.0;
-
-    std::string isbn() const {return bookNo;}
-    Sales_data& combine(const Sales_data&);
-    double avg_price() const;
-};
-
-Sales_data& Sales_data::combine(const Sales_data &rhs)
-{
-	units_sold += rhs.units_sold;
-	revenue += rhs.revenue;
-
-	return *this;
-}
-
-double Sales_data::avg_price() const
-{
-	if(units_sold)
-		return revenue / units_sold;
-	else
-		return 0;
-}
-
-std::istream &read(std::istream &is, Sales_data &item)
-{
-	double price = 0;
-
-	is >> item.bookNo >> item.units_sold >> price;
-	item.revenue = price * item.units_sold;
-
-	return is;
-}
-
-std::ostream &print(std::ostream &os, const Sales_data &item)
-{
-	os << item.isbn() << " " << item.units_sold << " " << item.revenue << " " << item.avg_price();
-
-	return os;
-}
-
-Sales_data add(const Sales_data &lhs, const Sales_data &rhs)
-{
-	Sales_data sum = lhs;
-	sum.combine(rhs);
-
-	return sum;
-}
-
-#endif
-```
   
-## 练习7.7
+## [练习7.7](ex07.cpp)
 
 > 使用这些新函数重写7.1.2节练习中的程序。
 
-```cpp
-#include <iostream>
-#include <string>
-#include "Sales_data_ex06.h"
 
-int main()
-{
-    Sales_data total;
-
-    if (read(std::cin, total))
-    {
-        Sales_data trans;
-
-        while (read(std::cin, trans))
-        {
-            if (total.isbn() == trans.isbn())
-            {
-                total.combine(trans);
-            }
-            else
-            {
-                print(std::cout, total);
-                std::cout << std::endl;
-                total = trans;
-            }
-        }
-        print(std::cout, total);
-        std::cout << std::endl;
-
-        return 0;
-    }
-    else
-    {
-        std::cerr << "No data?!" << std::endl;
-        return -1;  // indicate failure
-    }
-}
-```
   
 ## 练习7.8
 
@@ -247,37 +47,11 @@ int main()
 
 因为read函数需要改变成员对象；而print只需读取成员对象。
   
-## 练习7.9
+## [练习7.9](Person_ex09.h)
 
 > 对于7.1.2节练习中代码，添加读取和打印Person对象的操作。
 
-```cpp
-#ifndef PERSON_H_
-#define PERSON_H_
 
-#include <string>
-
-struct Person
-{
-    std::string name;
-    std::string address;
-
-    std::string get_name() const{return name;}
-    std::string get_address() const{return address;}
-};
-
-std::istream &read(std::istream &is, Person &item)
-{
-	return is >> item.name >> item.address;
-}
-
-std::ostream &print(std::ostream &os, const Person &item)
-{
-	return os << item.name << " " << item.address;
-}
-
-#endif
-```
   
 ## 练习7.10
 
@@ -292,249 +66,27 @@ if (read(read(cin, data1), data2))
 
 > 在你的Sales_data类中添加构造函数，然后编写一段程序令其用到每个构造函数。
 
-Sales_data_ex11.cpp
-```cpp
-#ifndef SALES_DATA_H_
-#define SALES_DATA_H_
+[Sales_data_ex11.h](Sales_data_ex11.h)
 
-#include <string>
 
-struct Sales_data
-{
-	Sales_data() = default;
-	Sales_data(const std::string &s) : bookNo(s){}
-	Sales_data(const std::string &s, unsigned n, double p) : bookNo(s), units_sold(n), revenue(p*n){}
-	Sales_data(std::istream &);
-	std::string isbn() const {return bookNo;}
-    Sales_data& combine(const Sales_data&);
-    double avg_price() const;
+[ex11.cpp](ex11.cpp)
 
-    std::string bookNo;
-    unsigned units_sold = 0;
-    double revenue = 0.0;
-};
-
-double Sales_data::avg_price() const
-{
-	if(units_sold)
-		return revenue / units_sold;
-	else
-		return 0;
-}
-
-std::istream &read(std::istream &is, Sales_data &item)
-{
-	double price = 0;
-
-	is >> item.bookNo >> item.units_sold >> price;
-	item.revenue = price * item.units_sold;
-
-	return is;
-}
-
-std::ostream &print(std::ostream &os, const Sales_data &item)
-{
-	os << item.isbn() << " " << item.units_sold << " " << item.revenue << " " << item.avg_price();
-
-	return os;
-}
-
-Sales_data add(const Sales_data &lhs, const Sales_data &rhs)
-{
-	Sales_data sum = lhs;
-	sum.combine(rhs);
-
-	return sum;
-}
-
-Sales_data::Sales_data(std::istream &is)
-{
-	read(is, *this);
-}
-
-Sales_data& Sales_data::combine(const Sales_data &rhs)
-{
-	units_sold += rhs.units_sold;
-	revenue += rhs.revenue;
-
-	return *this;
-}
-
-#endif
-```
-
-ex11.cpp
-```cpp
-#include <string>
-#include <iostream>
-#include "Sales_data_ex11.h"
-
-int main()
-{
-	Sales_data sales_data1;
-	print(std::cout, sales_data1) << std::endl;
-
-	Sales_data sales_data2("1-01");
-	print(std::cout, sales_data2) << std::endl;
-
-	Sales_data sales_data3("1-01", 1, 100);
-	print(std::cout, sales_data3) << std::endl;
-
-	Sales_data sales_data4(std::cin);
-	print(std::cout, sales_data4) << std::endl;
-
-	// Sales_data sales_data5();
-	// print(std::cout, sales_data5) << std::endl;
-
-	return 0;
-}
-```
   
 ## 练习7.12
 
 > 把只接受一个istream 作为参数的构造函数移到类的内部。
 
-Sales_data_ex12.cpp
-```cpp
-#ifndef SALES_DATA_H_
-#define SALES_DATA_H_
+[Sales_data_ex12.h](Sales_data_ex12.h)
 
-#include <string>
 
-struct Sales_data;
+[ex12.cpp](ex12.cpp)
 
-std::istream &read(std::istream &is, Sales_data &item);
-std::ostream &print(std::ostream &os, const Sales_data &item);
-Sales_data add(const Sales_data &lhs, const Sales_data &rhs);
-
-struct Sales_data
-{
-	Sales_data() = default;
-	Sales_data(const std::string &s) : bookNo(s){}
-	Sales_data(const std::string &s, unsigned n, double p) : bookNo(s), units_sold(n), revenue(p*n){}
-	Sales_data(std::istream &is) {read(is, *this);}
-	std::string isbn() const {return bookNo;}
-    Sales_data& combine(const Sales_data&);
-    double avg_price() const;
-
-    std::string bookNo;
-    unsigned units_sold = 0;
-    double revenue = 0.0;
-};
-
-Sales_data& Sales_data::combine(const Sales_data &rhs)
-{
-	units_sold += rhs.units_sold;
-	revenue += rhs.revenue;
-
-	return *this;
-}
-
-double Sales_data::avg_price() const
-{
-	if(units_sold)
-		return revenue / units_sold;
-	else
-		return 0;
-}
-
-std::istream &read(std::istream &is, Sales_data &item)
-{
-	double price = 0;
-
-	is >> item.bookNo >> item.units_sold >> price;
-	item.revenue = price * item.units_sold;
-
-	return is;
-}
-
-std::ostream &print(std::ostream &os, const Sales_data &item)
-{
-	os << item.isbn() << " " << item.units_sold << " " << item.revenue << " " << item.avg_price();
-
-	return os;
-}
-
-Sales_data add(const Sales_data &lhs, const Sales_data &rhs)
-{
-	Sales_data sum = lhs;
-	sum.combine(rhs);
-
-	return sum;
-}
-
-#endif
-```
-
-ex12.cpp
-```cpp
-#include <string>
-#include <iostream>
-#include "Sales_data_ex12.h"
-
-int main()
-{
-	Sales_data sales_data1;
-	print(std::cout, sales_data1) << std::endl;
-
-	Sales_data sales_data2("1-01");
-	print(std::cout, sales_data2) << std::endl;
-
-	Sales_data sales_data3("1-01", 1, 100);
-	print(std::cout, sales_data3) << std::endl;
-
-	Sales_data sales_data4(std::cin);
-	print(std::cout, sales_data4) << std::endl;
-
-	// Sales_data sales_data5();
-	// print(std::cout, sales_data5) << std::endl;
-
-	return 0;
-}
-```
   
-## 练习7.13
+## [练习7.13](ex13.cpp)
 
 > 使用istream构造函数重写第229页的程序。
 
-```cpp
-#include <iostream>
-#include <string>
-#include "Sales_data_ex12.h"
 
-int main()
-{
-    Sales_data total(std::cin);
-
-    if (!total.isbn().empty())
-    {
-        Sales_data trans;
-
-        while (read(std::cin, trans))
-        {
-            if (total.isbn() == trans.isbn())
-            {
-                total.combine(trans);
-            }
-            else
-            {
-                print(std::cout, total);
-                std::cout << std::endl;
-                total = trans;
-            }
-        }
-        print(std::cout, total);
-        std::cout << std::endl;
-
-        return 0;
-    }
-    else
-    {
-        std::cerr << "No data?!" << std::endl;
-        return -1;  // indicate failure
-    }
-}
-```
   
 ## 练习7.14
 
@@ -544,45 +96,11 @@ int main()
 Sales_data() : bookNo(""), units_sold(0) , revenue(0){ }
 ```
   
-## 练习7.15
+## [练习7.15](Person_ex15.h)
 
 > 为你的 Person 类添加正确的构造函数。
 
-```cpp
-#ifndef PERSON_H_
-#define PERSON_H_
 
-#include <string>
-
-struct Person;
-
-std::istream &read(std::istream &is, Person &item);
-std::ostream &print(std::ostream &os, const Person &item);
-
-struct Person
-{
-	Person() : name(""), address(""){}
-	Person(const std::string &sname, const std::string &saddress = "") : name(sname), address(saddress){}
-	Person(std::istream &is){read(is, *this);}
-    std::string get_name() const{return name;}
-    std::string get_address() const{return address;}
-
-    std::string name;
-    std::string address;
-};
-
-std::istream &read(std::istream &is, Person &item)
-{
-	return is >> item.name >> item.address;
-}
-
-std::ostream &print(std::ostream &os, const Person &item)
-{
-	return os << item.name << " " << item.address;
-}
-
-#endif
-```
   
 ## 练习7.16
 
@@ -645,250 +163,33 @@ private:
 
 > 修改你的Sales_data 类使其隐藏实现的细节。你之前编写的关于Sales_data操作的程序应该继续使用，借助类的新定义重新编译该程序，确保其正常工作。
 
-Sales_data_ex21.h
-```cpp
-#ifndef SALES_DATA_H_
-#define SALES_DATA_H_
+[Sales_data_ex21.h](Sales_data_ex21.h)
 
-#include <string>
 
-struct Sales_data;
+[ex21.cpp](ex21.cpp)
 
-std::istream &read(std::istream &is, Sales_data &item);
-std::ostream &print(std::ostream &os, const Sales_data &item);
-Sales_data add(const Sales_data &lhs, const Sales_data &rhs);
-
-struct Sales_data
-{
-friend std::istream &read(std::istream &is, Sales_data &item);
-friend std::ostream &print(std::ostream &os, const Sales_data &item);
-friend Sales_data add(const Sales_data &lhs, const Sales_data &rhs);
-public:
-	Sales_data() = default;
-	Sales_data(const std::string &s) : bookNo(s){}
-	Sales_data(const std::string &s, unsigned n, double p) : bookNo(s), units_sold(n), revenue(p*n){}
-	Sales_data(std::istream &is) {read(is, *this);}
-	std::string isbn() const {return bookNo;}
-    Sales_data& combine(const Sales_data&);
-    double avg_price() const;
-private:
-    std::string bookNo;
-    unsigned units_sold = 0;
-    double revenue = 0.0;
-};
-
-Sales_data& Sales_data::combine(const Sales_data &rhs)
-{
-	units_sold += rhs.units_sold;
-	revenue += rhs.revenue;
-
-	return *this;
-}
-
-double Sales_data::avg_price() const
-{
-	if(units_sold)
-		return revenue / units_sold;
-	else
-		return 0;
-}
-
-std::istream &read(std::istream &is, Sales_data &item)
-{
-	double price = 0;
-
-	is >> item.bookNo >> item.units_sold >> price;
-	item.revenue = price * item.units_sold;
-
-	return is;
-}
-
-std::ostream &print(std::ostream &os, const Sales_data &item)
-{
-	os << item.isbn() << " " << item.units_sold << " " << item.revenue << " " << item.avg_price();
-
-	return os;
-}
-
-Sales_data add(const Sales_data &lhs, const Sales_data &rhs)
-{
-	Sales_data sum = lhs;
-	sum.combine(rhs);
-
-	return sum;
-}
-
-#endif
-```
-
-ex21.cpp
-```cpp
-#include <iostream>
-#include <string>
-#include "Sales_data_ex21.h"
-
-int main()
-{
-    Sales_data total(std::cin);
-
-    if (!total.isbn().empty())
-    {
-        Sales_data trans;
-
-        while (read(std::cin, trans))
-        {
-            if (total.isbn() == trans.isbn())
-            {
-                total.combine(trans);
-            }
-            else
-            {
-                print(std::cout, total);
-                std::cout << std::endl;
-                total = trans;
-            }
-        }
-        print(std::cout, total);
-        std::cout << std::endl;
-
-        return 0;
-    }
-    else
-    {
-        std::cerr << "No data?!" << std::endl;
-        return -1;  // indicate failure
-    }
-}
-```
   
 ## 练习7.22
 
 > 修改你的Person 类使其隐藏实现的细节。
 
-Person_ex22.h
-```cpp
-#ifndef PERSON_H_
-#define PERSON_H_
+[Person_ex22.h](Person_ex22.h)
 
-#include <string>
 
-struct Person;
+[ex22.cpp](ex22.cpp)
 
-std::istream &read(std::istream &is, Person &item);
-std::ostream &print(std::ostream &os, const Person &item);
-
-struct Person
-{
-friend std::istream &read(std::istream &is, Person &item);
-friend std::ostream &print(std::ostream &os, const Person &item);
-public:
-	Person() : name(""), address(""){}
-	Person(const std::string &sname, const std::string &saddress = "") : name(sname), address(saddress){}
-	Person(std::istream &is){read(is, *this);}
-    std::string get_name() const{return name;}
-    std::string get_address() const{return address;}
-private:
-    std::string name;
-    std::string address;
-};
-
-std::istream &read(std::istream &is, Person &item)
-{
-	return is >> item.name >> item.address;
-}
-
-std::ostream &print(std::ostream &os, const Person &item)
-{
-	return os << item.name << " " << item.address;
-}
-
-#endif
-```
-
-ex22.cpp
-```cpp
-//test Person_ex15.h
-#include <string>
-#include <iostream>
-#include "Person_ex15.h"
-
-int main()
-{
-	Person person1;
-	print(std::cout, person1) << std::endl;
-
-	Person person2("tx", "hangzhou");
-	print(std::cout, person2) << std::endl;
-	std::cout << person2.get_name() << " " << person2.get_address() << std::endl;
-
-	Person person3("tx");
-	print(std::cout, person3) << std::endl;
-
-	Person person4(std::cin);
-	print(std::cout, person4) << std::endl;
-
-	return 0;
-}
-```
   
-## 练习7.23
+## [练习7.23](Screen_ex23.h)
 
 > 编写你自己的Screen 类型。
 
-```cpp
-#ifndef SCREEN_EX23_H_
-#define SCREEN_EX23_H_
 
-#include <string>
-
-class Screen {
-    public:
-        using pos = std::string::size_type;
-
-        Screen() = default;
-        Screen(pos ht, pos wd, char c):height(ht), width(wd), contents(ht*wd, c){ }
-
-        char get() const { return contents[cursor]; }
-        char get(pos r, pos c) const { return contents[r*width+c]; }
-
-    private:
-        pos cursor = 0;
-        pos height = 0, width = 0;
-        std::string contents;
-};
-
-#endif
-```
   
-## 练习7.24
+## [练习7.24](Screen_ex24.h)
 
 > 给你的Screen 类添加三个构造函数：一个默认构造函数；另一个构造函数接受宽和高的值，然后将contents 初始化成给定数量的空白；第三个构造函数接受宽和高的值以及一个字符，该字符作为初始化后屏幕的内容。
 
-```cpp
-#ifndef SCREEN_EX23_H_
-#define SCREEN_EX23_H_
 
-#include <string>
-
-class Screen {
-    public:
-        using pos = std::string::size_type;
-
-        Screen() = default;
-        Screen(pos ht, pos wd):height(ht), width(wd){ }
-        Screen(pos ht, pos wd, char c):height(ht), width(wd), contents(ht*wd, c){ }
-
-        char get() const { return contents[cursor]; }
-        char get(pos r, pos c) const { return contents[r*width+c]; }
-
-    private:
-        pos cursor = 0;
-        pos height = 0, width = 0;
-        std::string contents;
-};
-
-#endif
-```
   
 ## 练习7.25
 
@@ -900,122 +201,11 @@ class Screen {
 
 > 将Sales_data::avg_price 定义成内联函数。
 
-Sales_data_ex26.h
-```cpp
-#ifndef SALES_DATA_H_
-#define SALES_DATA_H_
+[Sales_data_ex26.h](Sales_data_ex26.h)
 
-#include <string>
 
-struct Sales_data;
+[ex26.cpp](ex26.cpp)
 
-std::istream &read(std::istream &is, Sales_data &item);
-std::ostream &print(std::ostream &os, const Sales_data &item);
-Sales_data add(const Sales_data &lhs, const Sales_data &rhs);
-
-struct Sales_data
-{
-friend std::istream &read(std::istream &is, Sales_data &item);
-friend std::ostream &print(std::ostream &os, const Sales_data &item);
-friend Sales_data add(const Sales_data &lhs, const Sales_data &rhs);
-public:
-	Sales_data() = default;
-	Sales_data(const std::string &s) : bookNo(s){}
-	Sales_data(const std::string &s, unsigned n, double p) : bookNo(s), units_sold(n), revenue(p*n){}
-	Sales_data(std::istream &is) {read(is, *this);}
-	std::string isbn() const {return bookNo;}
-    Sales_data& combine(const Sales_data&);
-private:
-	inline double avg_price() const;
-
-    std::string bookNo;
-    unsigned units_sold = 0;
-    double revenue = 0.0;
-};
-
-Sales_data& Sales_data::combine(const Sales_data &rhs)
-{
-	units_sold += rhs.units_sold;
-	revenue += rhs.revenue;
-
-	return *this;
-}
-
-inline double Sales_data::avg_price() const
-{
-	if(units_sold)
-		return revenue / units_sold;
-	else
-		return 0;
-}
-
-std::istream &read(std::istream &is, Sales_data &item)
-{
-	double price = 0;
-
-	is >> item.bookNo >> item.units_sold >> price;
-	item.revenue = price * item.units_sold;
-
-	return is;
-}
-
-std::ostream &print(std::ostream &os, const Sales_data &item)
-{
-	os << item.isbn() << " " << item.units_sold << " " << item.revenue << " " << item.avg_price();
-
-	return os;
-}
-
-Sales_data add(const Sales_data &lhs, const Sales_data &rhs)
-{
-	Sales_data sum = lhs;
-	sum.combine(rhs);
-
-	return sum;
-}
-
-#endif
-```
-
-ex26.cpp
-```cpp
-#include <iostream>
-#include <string>
-#include "Sales_data_ex26.h"
-
-int main()
-{
-    Sales_data total(std::cin);
-
-    if (!total.isbn().empty())
-    {
-        Sales_data trans;
-
-        while (read(std::cin, trans))
-        {
-            if (total.isbn() == trans.isbn())
-            {
-                total.combine(trans);
-            }
-            else
-            {
-                print(std::cout, total);
-                std::cout << std::endl;
-                total = trans;
-            }
-        }
-        print(std::cout, total);
-        std::cout << std::endl;
-
-        return 0;
-    }
-    else
-    {
-        std::cerr << "No data?!" << std::endl;
-        return -1;  // indicate failure
-    }
-}
-```
   
 ## 练习7.27
 
@@ -1028,76 +218,11 @@ myScreen.display(cout);
 cout << "\n";
 ```
 
-Screen_ex27.h
-```cpp
-#ifndef SCREEN_EX23_H_
-#define SCREEN_EX23_H_
+[Screen_ex27.h](Screen_ex27.h)
 
-#include <string>
-
-class Screen {
-    public:
-        using pos = std::string::size_type;
-
-        Screen() = default;
-        Screen(pos ht, pos wd):height(ht), width(wd){ }
-        Screen(pos ht, pos wd, char c):height(ht), width(wd), contents(ht*wd, c){ }
-
-        char get() const { return contents[cursor]; }
-        char get(pos r, pos c) const { return contents[r*width+c]; }
-        Screen &move(pos r, pos c);
-        Screen &set(char);
-        Screen &set(pos, pos, char);
-        Screen &display(std::ostream &os) {do_display(os); return *this;}
-        const Screen &display(std::ostream &os) const {do_display(os); return *this;}
-
-    private:
-        pos cursor = 0;
-        pos height = 0, width = 0;
-        std::string contents;
-        void do_display(std::ostream &os) const {os << contents;}
-};
-
-inline Screen &Screen::move(pos r, pos c)
-{
-	pos row = r * width;
-	cursor = row + c;
-	return *this;
-}
-
-inline Screen &Screen::set(char c)
-{
-	contents[cursor] = c;
-	return *this;
-}
-
-inline Screen &Screen::set(pos r, pos col, char c)
-{
-	contents[r*width + col] = c;
-	return *this;
-}
-
-#endif
-```
   
-ex27.cpp
-```cpp
-#include <string>
-#include <iostream>
-#include "Screen_ex27.h"
+[ex27.cpp](ex27.cpp)
 
-int main()
-{
-	Screen myScreen(5, 5, 'X');
-	
-	myScreen.move(4, 0).set('#').display(std::cout);
-	std::cout << "\n";
-	myScreen.display(std::cout);
-	std::cout << "\n";
-
-	return 0;
-}
-```
   
 ## 练习7.28
 
@@ -1115,7 +240,11 @@ XXXXXXXXXXXXXXXXXXXXXXXXX
 
 > 修改你的Screen 类，令move、set和display函数返回Screen并检查程序的运行结果，在上一个练习中你的推测正确吗？
 
-```linux
+[Screen_ex29.h](Screen_ex29.h)
+
+[ex29.cpp](ex29.cpp)
+
+```sh
 $ ./ex29
 XXXXXXXXXXXXXXXXXXXX#XXXX
 XXXXXXXXXXXXXXXXXXXXXXXXX
@@ -1142,106 +271,13 @@ std::string getAddr() const { return this->addr; } // unnecessary
 
 > 定义一对类X 和Y，其中X 包含一个指向 Y 的指针，而Y 包含一个类型为 X 的对象。
 
-```cpp
-//
-//  ex7_31.h
-//  Exercise 7.31
-//
-//  Created by pezy on 11/17/14.
-//
-
-#ifndef CP5_ex7_31_h
-#define CP5_ex7_31_h
-
-class Y;
-
-class X {
-    Y* y = nullptr;
-};
-
-class Y {
-    X x;
-};
-
-#endif
-```
+[ex31.h](ex31.h)
   
-## 练习7.32
+## [练习7.32](Screen_ex32.h)
 
 > 定义你自己的Screen 和 Window_mgr，其中clear是Window_mgr的成员，是Screen的友元。
 
-```cpp
-#ifndef SCREEN_EX23_H_
-#define SCREEN_EX23_H_
 
-#include <string>
-#include <vector>
-
-class Screen;
-
-class Window_mgr
-{
-public:
-    using ScreenIndex = std::vector<Screen>::size_type;
-    void clear(ScreenIndex);
-private:
-    std::vector<Screen> screens;
-};
-
-class Screen 
-{
-friend void Window_mgr::clear(ScreenIndex);
-public:
-    using pos = std::string::size_type;
-
-    Screen() = default;
-    Screen(pos ht, pos wd):height(ht), width(wd){ }
-    Screen(pos ht, pos wd, char c):height(ht), width(wd), contents(ht*wd, c){ }
-
-    char get() const { return contents[cursor]; }
-    char get(pos r, pos c) const { return contents[r*width+c]; }
-    Screen &move(pos r, pos c);
-    Screen &set(char);
-    Screen &set(pos, pos, char);
-    Screen &display(std::ostream &os) {do_display(os); return *this;}
-    const Screen &display(std::ostream &os) const {do_display(os); return *this;}
-
-private:
-    pos cursor = 0;
-    pos height = 0, width = 0;
-    std::string contents;
-    void do_display(std::ostream &os) const {os << contents;}
-};
-
-
-
-inline Screen &Screen::move(pos r, pos c)
-{
-	pos row = r * width;
-	cursor = row + c;
-	return *this;
-}
-
-inline Screen &Screen::set(char c)
-{
-	contents[cursor] = c;
-	return *this;
-}
-
-inline Screen &Screen::set(pos r, pos col, char c)
-{
-	contents[r*width + col] = c;
-	return *this;
-}
-
-void Window_mgr::clear(ScreenIndex i)
-{
-    Screen &s = screens[i];
-    s.contents = std::string(s.height * s.width, ' ');
-}
-
-#endif
-```
   
 ## 练习7.33
 
@@ -1253,105 +289,11 @@ pos Screen::size() const
 }
 ```
 
-Screen_ex33.h
-```cpp
-#ifndef SCREEN_EX23_H_
-#define SCREEN_EX23_H_
-
-#include <string>
-#include <vector>
-
-class Screen;
-
-class Window_mgr
-{
-public:
-    using ScreenIndex = std::vector<Screen>::size_type;
-    void clear(ScreenIndex);
-private:
-    std::vector<Screen> screens;
-};
-
-class Screen 
-{
-friend void Window_mgr::clear(ScreenIndex);
-public:
-    using pos = std::string::size_type;
-
-    Screen() = default;
-    Screen(pos ht, pos wd):height(ht), width(wd){ }
-    Screen(pos ht, pos wd, char c):height(ht), width(wd), contents(ht*wd, c){ }
-
-    char get() const { return contents[cursor]; }
-    char get(pos r, pos c) const { return contents[r*width+c]; }
-    Screen &move(pos r, pos c);
-    Screen &set(char);
-    Screen &set(pos, pos, char);
-    Screen &display(std::ostream &os) {do_display(os); return *this;}
-    const Screen &display(std::ostream &os) const {do_display(os); return *this;}
-    pos size() const;
-
-private:
-    pos cursor = 0;
-    pos height = 0, width = 0;
-    std::string contents;
-    void do_display(std::ostream &os) const {os << contents;}
-};
+[Screen_ex33.h](Screen_ex33.h)
 
 
+[ex33.cpp](ex33.cpp)
 
-inline Screen &Screen::move(pos r, pos c)
-{
-	pos row = r * width;
-	cursor = row + c;
-	return *this;
-}
-
-inline Screen &Screen::set(char c)
-{
-	contents[cursor] = c;
-	return *this;
-}
-
-inline Screen &Screen::set(pos r, pos col, char c)
-{
-	contents[r*width + col] = c;
-	return *this;
-}
-
-Screen::pos Screen::size() const
-{
-    return height * width;
-}
-
-void Window_mgr::clear(ScreenIndex i)
-{
-    Screen &s = screens[i];
-    s.contents = std::string(s.height * s.width, ' ');
-}
-
-#endif
-```
-
-ex33.cpp
-```cpp
-#include <string>
-#include <iostream>
-#include "Screen_ex33.h"
-
-int main()
-{
-	Screen myScreen(5, 5, 'X');
-	
-	myScreen.move(4, 0).set('#').display(std::cout);
-	std::cout << "\n";
-	myScreen.display(std::cout);
-	std::cout << "\n";
-	std::cout << myScreen.size() << std::endl;
-
-	return 0;
-}
-```
   
 ## 练习7.34
 
@@ -1404,6 +346,9 @@ Exercise::Type Exercise::setVal(Type parm) {
     return val;
 }
 ```
+测试代码：
+[ex35.h](ex35.h)
+[ex35.cpp](ex35.cpp)
   
 ## 练习7.36
 
@@ -1487,100 +432,12 @@ private:
 
 > 使用委托构造函数重新编写你的Sales_data 类，给每个构造函数体添加一条语句，令其一旦执行就打印一条信息。用各种可能的方式分别创建 Sales_data 对象，认真研究每次输出的信息直到你确实理解了委托构造函数的执行顺序。
 
-Sales_data_ex41.h
-```cpp
-#ifndef SALES_DATA_H_
-#define SALES_DATA_H_
+[Sales_data_ex41.h](Sales_data_ex41.h)
 
-#include <string>
+[ex41.cpp](ex41.cpp)
 
-struct Sales_data;
-
-std::istream &read(std::istream &is, Sales_data &item);
-std::ostream &print(std::ostream &os, const Sales_data &item);
-Sales_data add(const Sales_data &lhs, const Sales_data &rhs);
-
-struct Sales_data
-{
-friend std::istream &read(std::istream &is, Sales_data &item);
-friend std::ostream &print(std::ostream &os, const Sales_data &item);
-friend Sales_data add(const Sales_data &lhs, const Sales_data &rhs);
-public:
-	Sales_data(const std::string &s, unsigned n, double p) : bookNo(s), units_sold(n), revenue(p*n){std::cout << "Sales_data(const std::string &s, unsigned n, double p)" << std::endl;}
-	Sales_data() : Sales_data("", 0, 0){std::cout << "Sales_data() : Sales_data(\"\", 0, 0)" << std::endl;}
-	Sales_data(const std::string &s) : Sales_data(s, 0, 0){std::cout << "Sales_data(const std::string &s) : Sales_data" << std::endl;}
-	Sales_data(std::istream &is) : Sales_data(){read(is, *this);std::cout << "Sales_data(std::istream &is) : Sales_data()" << std::endl;}
-	std::string isbn() const {return bookNo;}
-    Sales_data& combine(const Sales_data&);
-private:
-	inline double avg_price() const;
-
-    std::string bookNo;
-    unsigned units_sold = 0;
-    double revenue = 0.0;
-};
-
-Sales_data& Sales_data::combine(const Sales_data &rhs)
-{
-	units_sold += rhs.units_sold;
-	revenue += rhs.revenue;
-
-	return *this;
-}
-
-inline double Sales_data::avg_price() const
-{
-	if(units_sold)
-		return revenue / units_sold;
-	else
-		return 0;
-}
-
-std::istream &read(std::istream &is, Sales_data &item)
-{
-	double price = 0;
-
-	is >> item.bookNo >> item.units_sold >> price;
-	item.revenue = price * item.units_sold;
-
-	return is;
-}
-
-std::ostream &print(std::ostream &os, const Sales_data &item)
-{
-	os << item.isbn() << " " << item.units_sold << " " << item.revenue << " " << item.avg_price();
-
-	return os;
-}
-
-Sales_data add(const Sales_data &lhs, const Sales_data &rhs)
-{
-	Sales_data sum = lhs;
-	sum.combine(rhs);
-
-	return sum;
-}
-
-#endif
-```
-ex41.cpp
-```cpp
-#include <iostream>
-#include <string>
-#include "Sales_data_ex41.h"
-
-int main()
-{
-    Sales_data sales_data1("001-01", 1, 100);
-    Sales_data sales_data2;
-    Sales_data sales_data3("001-02");
-    Sales_data sales_data4(std::cin);
-
-    return 0;
-}
-```
 执行结果如下：
-```linux
+```sh
 $ ./ex41 
 Sales_data(const std::string &s, unsigned n, double p)
 Sales_data(const std::string &s, unsigned n, double p)
@@ -1698,48 +555,11 @@ Sales_data item2("9-999-99999-9");
 （b）不正确，combine的参数是非常量的引用，所以我们不能将临时参数传递给它，改成Sales_data &combine(const Sales_data&);后正确；  
 （c）不正确，后面的const不对，this需要可改变的。  
   
-## 练习7.50
+## [练习7.50](Person_ex50.h)
 
 > 确定在你的Person 类中是否有一些构造函数应该是 explicit 的。
 
-```cpp
-#ifndef PERSON_H_
-#define PERSON_H_
 
-#include <string>
-
-struct Person;
-
-std::istream &read(std::istream &is, Person &item);
-std::ostream &print(std::ostream &os, const Person &item);
-
-struct Person
-{
-friend std::istream &read(std::istream &is, Person &item);
-friend std::ostream &print(std::ostream &os, const Person &item);
-public:
-	Person() : name(""), address(""){}
-	Person(const std::string &sname, const std::string &saddress = "") : name(sname), address(saddress){}
-	explicit Person(std::istream &is){read(is, *this);}
-    std::string get_name() const{return name;}
-    std::string get_address() const{return address;}
-private:
-    std::string name;
-    std::string address;
-};
-
-std::istream &read(std::istream &is, Person &item)
-{
-	return is >> item.name >> item.address;
-}
-
-std::ostream &print(std::ostream &os, const Person &item)
-{
-	return os << item.name << " " << item.address;
-}
-
-#endif
-```
   
 ## 练习7.51
 
@@ -1785,28 +605,10 @@ struct Sales_data {
 
 > 定义你自己的 Debug。
 
-```cpp
-#ifndef DEBUG_EX53_
-#define DEBUG_EX53_
+[Debug_ex53.h](Debug_ex53.h)
 
-class Debug
-{
-public:
-	constexpr Debug(bool b = true) : hw(b), io(b), other(b){}
-	constexpr Debug(bool h, bool i, bool o) : hw(h), io(i), other(o){}
+[ex53.cpp](ex53.cpp)
 
-	constexpr bool amy() { return hw || io || other; }
-	void set_io(bool b){io = b;}
-	void set_hw(bool b){hw = b;}
-	void set_other(bool b){other = b;}
-private:
-	bool hw;
-	bool io;
-	bool other;
-};
-
-#endif
-```
   
 ## 练习7.54
 
@@ -1850,29 +652,9 @@ int main()
 
 > 编写你自己的 Account 类。
 
-```cpp
-#ifndef ACCOUNT_EX57_H_
-#define ACCOUNT_EX57_H_
+[account_ex57.h](account_ex57.h)
 
-#include <string>
-
-class Account
-{
-public:
-	void calculate() {amount += amount * interestRate;}
-	static double rate(){return interestRate;}
-	static void rate(double newRate){ interestRate = newRate;}
-private:
-	std::string owner;
-	double amount;
-	static double interestRate;
-	static double initRate(){return 4.0;}
-};
-double Account::interestRate = initRate();
-
-
-#endif
-```
+[ex57.cpp](ex57.cpp)
   
 ## 练习7.58
 
@@ -1891,17 +673,6 @@ double Example::rate;
 vector<double> Example::vec;
 ```
 
-```cpp
-// example.h
-class Example {
-public:
-    static double rate;
-    static const int vecSize = 20;
-    static vector<double> vec;
-};
+[ex58.h](ex58.h)
 
-// example.C
-#include "example.h"
-double Example::rate = 6.5;
-vector<double> Example::vec(Example::vecSize);
-```
+[ex58.cpp](ex58.cpp)

@@ -1,7 +1,6 @@
-//test Person_ex15.h
 #include <string>
 #include <iostream>
-#include "Person_ex15.h"
+#include "Person_ex22.h"
 
 int main()
 {
