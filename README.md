@@ -7,7 +7,12 @@
 $ g++ -o main main.cpp -std=c++11
 $ g++ -o main main.cpp helloworld.cpp -std=c++11
 ```
-使用正则表达式regex时，建议使用 gcc4.9 及以上版本；使用 std::hexfloat 时，建议使用 gcc5 及以上版本；使用 #define NDEBUG 与 assert() 时，需要使用`-D NDEBUG`参数编译。  
+使用 gcc4.8.4 碰到的问题：
+- 正则表达式regex时（建议使用 gcc4.9 及以上版本）；
+- std::hexfloat 时（建议使用 gcc5 及以上版本）；
+- 使用 #define NDEBUG 与 assert() 时，需要使用`-D NDEBUG`参数编译；
+- std::string中insert， gcc不能编译通过，[链接](ch09_Sequential_Containers/ex43.cpp)。  
+
 [github地址（用于放置最新的源码）](https://github.com/smzztx/cpplearn)  
 [CSDN目录地址](https://blog.csdn.net/shamozhizhoutx/article/details/81264498)  
 
