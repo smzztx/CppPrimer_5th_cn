@@ -70,7 +70,7 @@ badbit、failbit和eofbit任一个被置位，则检测流状态的条件会失�
 > 编写程序，将来自一个文件中的行保存在一个vector<string>中。然后使用一个istringstream从vector读取数据元素，每次读取一个单词。
 
 
-```
+
   
 ## [练习8.11](ex11.cpp)
 
