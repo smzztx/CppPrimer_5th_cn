@@ -220,7 +220,7 @@ std::string& deref() const {
 
 [StrBlob_ex22.h](StrBlob_ex22.h)
 
-[ex22.cpp](ex20.cpp)
+[ex22.cpp](ex22.cpp)
 
 
 ## 练习12.23
