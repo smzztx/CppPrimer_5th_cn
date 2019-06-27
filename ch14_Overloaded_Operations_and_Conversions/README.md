@@ -309,6 +309,7 @@ Sales_data operator+(const Sales_data &lhs, const Sales_data &rhs)
 ## 练习14.27
 
 > 为你的 StrBlobPtr 类添加递增和递减运算符。
+
 [StrBlob_ex27.h](StrBlob_ex27.h)
   
 [ex27.cpp](ex27.cpp)
