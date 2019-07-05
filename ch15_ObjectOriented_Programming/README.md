@@ -14,51 +14,11 @@
 
 > 定义你自己的 Quote 类和 print_total 函数。
 
-Quote_ex03.h
-```cpp
-#ifndef QUOTE_H_
-#define QUOTE_H_
+[Quote_ex03.h](Quote_ex03.h)
 
-#include <string>
-
-class Quote
-{
-public:
-	Quote() = default;
-	Quote(const std::string &book, double sales_price) : bookNo(book), price(sales_price) {}
-	std::string isbn() const { return bookNo; }
-	virtual double net_price(std::size_t n) const { return n * price; } 
-	virtual ~Quote() = default;
-private:
-	std::string bookNo;
-protected:
-	double price = 0;
-};
-
-#endif
-```
   
-ex03.cpp
-```cpp
-#include "Quote_ex03.h"
-#include <iostream>
-#include <functional>
+[ex03.cpp](ex03.cpp)
 
-double print_total(std::ostream &os, const Quote &item, size_t n)
-{
-	double ret = item.net_price(n);
-	os << "ISBN: " << item.isbn() << " # sold: " << n << " total due: " << ret << std::endl;
-	return ret;
-}
-
-int main()
-{
-	Quote q("A1-001", 80);
-	print_total(std::cout, q, 2);
-
-	return 0;
-}
-```
   
 ## 练习15.4
 
@@ -74,121 +34,27 @@ class Base { ... };
 （b）不正确，是定义，不是声明；  
 （c）不正确，声明中包含类名，但是不包含它的派生列表。  
   
-## 练习15.05
+## [练习15.05](Bulk_quote_ex05.h)
 
 > 定义你自己的 Bulk_quote 类。
 
-```cpp
-#ifndef BULK_QUOTE_H_
-#define BULK_QUOTE_H_
 
-#include "Quote_ex03.h"
-#include <string>
-
-class Bulk_quote : public Quote
-{
-public:
-	Bulk_quote() = default;
-	Bulk_quote(const std::string &book, double p, std::size_t qty, double disc) : Quote(book, p), min_qty(qty), discount(disc) { }
-	double net_price(std::size_t) const override;
-private:
-	std::size_t min_qty = 0;
-	double discount = 0.0;
-};
-
-double Bulk_quote::net_price(size_t cnt) const
-{
-	if(cnt >= min_qty) return cnt * (1 - discount) * price;
-	else return cnt * price;
-}
-
-#endif
-```
   
-## 练习15.06
+## [练习15.06](ex06.cpp)
 
 > 将 Quote 和 Bulk_quote 的对象传给15.2.1节练习中的 print_total 函数，检查该函数是否正确。
 
-```cpp
-#include "Quote_ex03.h"
-#include "Bulk_quote_ex05.h"
-#include <iostream>
-#include <functional>
 
-double print_total(std::ostream &os, const Quote &item, size_t n)
-{
-	double ret = item.net_price(n);
-	os << "ISBN: " << item.isbn() << " # sold: " << n << " total due: " << ret << std::endl;
-	return ret;
-}
-
-int main()
-{
-	Quote q("A1-001", 80);
-	Bulk_quote bq("A1-001", 80, 5, 0.2);
-	print_total(std::cout, q, 10);
-	print_total(std::cout, bq, 10);
-
-	return 0;
-}
-```
   
 ## 练习15.07
 
 > 定义一个类使其实现一种数量受限的折扣策略，具体策略是：当购买书籍的数量不超过一个给定的限量时享受折扣，如果购买量一旦超过了限量，则超出的部分将以原价销售。
 
-Limit_quote_ex07.h
-```cpp
-#ifndef LIMIT_QUOTE_H_
-#define LIMIT_QUOTE_H_
+[Limit_quote_ex07.h](Limit_quote_ex07.h)
 
-#include "Quote_ex03.h"
-#include <string>
-
-class Limit_quote : public Quote
-{
-public:
-	Limit_quote() = default;
-	Limit_quote(const std::string &book, double p, std::size_t qty, double disc) : Quote(book, p), max_qty(qty), discount(disc) { }
-	double net_price(std::size_t) const override;
-private:
-	std::size_t max_qty = 0;
-	double discount = 0.0;
-};
-
-double Limit_quote::net_price(size_t cnt) const
-{
-	if(cnt > max_qty) return max_qty * (1 - discount) * price + (cnt - max_qty)*price;
-	else return cnt * price;
-}
-
-#endif
-```
   
-ex07.cpp
-```cpp
-#include "Quote_ex03.h"
-#include "Limit_quote_ex07.h"
-#include <iostream>
-#include <functional>
+[ex07.cpp](ex07.cpp)
 
-double print_total(std::ostream &os, const Quote &item, size_t n)
-{
-	double ret = item.net_price(n);
-	os << "ISBN: " << item.isbn() << " # sold: " << n << " total due: " << ret << std::endl;
-	return ret;
-}
-
-int main()
-{
-	Quote q("A1-001", 80);
-	Limit_quote bq("A1-001", 80, 5, 0.2);
-	print_total(std::cout, q, 10);
-	print_total(std::cout, bq, 10);
-
-	return 0;
-}
-```
   
 ## 练习15.08
 
@@ -235,104 +101,14 @@ read中std::istream，std::ifstream是继承自std::istream，因此，std::istr
 
 > 为你的 Quote 类体系添加一个名为 debug 的虚函数，令其分别显示每个类的数据成员。
 
-Quote_ex11.h
-```cpp
-#ifndef QUOTE_H_
-#define QUOTE_H_
+[Quote_ex11.h](Quote_ex11.h)
 
-#include <string>
-#include <iostream>
-
-class Quote
-{
-public:
-	Quote() = default;
-	Quote(const std::string &book, double sales_price) : bookNo(book), price(sales_price) {}
-	std::string isbn() const { return bookNo; }
-	virtual double net_price(std::size_t n) const { return n * price; }
-	virtual void debug() const;
-	virtual ~Quote() = default;
-private:
-	std::string bookNo;
-protected:
-	double price = 0;
-};
-
-void Quote::debug() const
-{
-	std::cout << "bookNo: " << bookNo 
-	<< "; price: " << price;
-}
-
-#endif
-```
   
-Bulk_quote_ex11.h
-```cpp
-#ifndef BULK_QUOTE_H_
-#define BULK_QUOTE_H_
+[Bulk_quote_ex11.h](Bulk_quote_ex11.h)
 
-#include "Quote_ex11.h"
-#include <string>
-#include <iostream>
-
-class Bulk_quote : public Quote
-{
-public:
-	Bulk_quote() = default;
-	Bulk_quote(const std::string &book, double p, std::size_t qty, double disc) : Quote(book, p), min_qty(qty), discount(disc) { }
-	double net_price(std::size_t) const override;
-	void debug() const override;
-private:
-	std::size_t min_qty = 0;
-	double discount = 0.0;
-};
-
-double Bulk_quote::net_price(size_t cnt) const
-{
-	if(cnt >= min_qty) return cnt * (1 - discount) * price;
-	else return cnt * price;
-}
-
-void Bulk_quote::debug() const
-{
-	Quote::debug();
-	std::cout << "; min_qty: " << min_qty
-	<< "; discount: " << discount;
-}
-
-#endif
-```
   
-ex11.cpp
-```cpp
-#include "Quote_ex11.h"
-#include "Bulk_quote_ex11.h"
-#include <iostream>
-#include <functional>
+[ex11.cpp](ex11.cpp)
 
-double print_total(std::ostream &os, const Quote &item, size_t n)
-{
-	double ret = item.net_price(n);
-	os << "ISBN: " << item.isbn() << " # sold: " << n << " total due: " << ret << std::endl;
-	return ret;
-}
-
-int main()
-{
-	Quote q("A1-001", 80);
-	Bulk_quote bq("A1-001", 80, 5, 0.2);
-	// print_total(std::cout, q, 10);
-	// print_total(std::cout, bq, 10);
-
-	q.debug();
-	std::cout << std::endl;
-	bq.debug();
-	std::cout << std::endl;
-
-	return 0;
-}
-```
   
 ## 练习15.12
 
@@ -386,166 +162,30 @@ derived dobj; 	base *bp2 = &dobj; 	base &br2 = dobj;
 
 > 定义你自己的 Disc_quote 和 Bulk_quote。
 
-Disc_quote_ex15.h
-```cpp
-#ifndef DISC_QUOTE_
-#define DISC_QUOTE_
+[Disc_quote_ex15.h](Disc_quote_ex15.h)
 
-#include "Quote_ex11.h"
-#include <string>
-
-class Disc_quote : public Quote
-{
-public:
-	Disc_quote() = default;
-	Disc_quote(const std::string &book, double price, std::size_t qty, double disc)
-	: Quote(book, price), quantity(qty), discount(disc) { }
-	double net_price(std::size_t) const = 0;
-protected:
-	std::size_t quantity = 0;
-	double discount = 0.0;
-};
-
-
-#endif
-```
   
-Bulk_quote_ex15.h
-```cpp
-#ifndef BULK_QUOTE_H_
-#define BULK_QUOTE_H_
+[Bulk_quote_ex15.h](Bulk_quote_ex15.h)
 
-#include "Disc_quote_ex15.h"
-#include <string>
-#include <iostream>
-
-class Bulk_quote : public Disc_quote
-{
-public:
-	Bulk_quote() = default;
-	Bulk_quote(const std::string &book, double price, std::size_t qty, double disc) : Disc_quote(book, price, qty, disc) { }
-	double net_price(std::size_t) const override;
-	void debug() const override;
-};
-
-double Bulk_quote::net_price(size_t cnt) const
-{
-	if(cnt >= quantity) return cnt * (1 - discount) * price;
-	else return cnt * price;
-}
-
-void Bulk_quote::debug() const
-{
-	Quote::debug();
-	std::cout << "; quantity: " << quantity
-	<< "; discount: " << discount;
-}
-
-#endif
-```
   
-ex15.cpp
-```cpp
-#include "Quote_ex11.h"
-#include "Bulk_quote_ex15.h"
-#include <iostream>
-#include <functional>
+[ex15.cpp](ex15.cpp)
 
-double print_total(std::ostream &os, const Quote &item, size_t n)
-{
-	double ret = item.net_price(n);
-	os << "ISBN: " << item.isbn() << " # sold: " << n << " total due: " << ret << std::endl;
-	return ret;
-}
-
-int main()
-{
-	Quote q("A1-001", 80);
-	Bulk_quote bq("A1-001", 80, 5, 0.2);
-	// print_total(std::cout, q, 10);
-	// print_total(std::cout, bq, 10);
-
-	q.debug();
-	std::cout << std::endl;
-	bq.debug();
-	std::cout << std::endl;
-
-	return 0;
-}
-```
   
 ## 练习15.16
 
 > 改写你在15.2.2节练习中编写的数量受限的折扣策略，令其继承 Disc_quote。
 
-Limit_quote_ex16.h
-```cpp
-#ifndef LIMIT_QUOTE_H_
-#define LIMIT_QUOTE_H_
+[Limit_quote_ex16.h](Limit_quote_ex16.h)
 
-#include "Disc_quote_ex15.h"
-#include <string>
-#include <iostream>
-
-class Limit_quote : public Disc_quote
-{
-public:
-	Limit_quote() = default;
-	Limit_quote(const std::string &book, double price, std::size_t qty, double disc) : Disc_quote(book, price, qty, disc) { }
-	double net_price(std::size_t) const override;
-	void debug() const override;
-};
-
-double Limit_quote::net_price(size_t cnt) const
-{
-	if(cnt > quantity) return quantity * (1 - discount) * price + (cnt - quantity)*price;
-	else return cnt * price;
-}
-
-void Limit_quote::debug() const
-{
-	Quote::debug();
-	std::cout << "; quantity: " << quantity
-	<< "; discount: " << discount;
-}
-
-#endif
-```
   
-ex16.cpp
-```cpp
-#include "Quote_ex11.h"
-#include "Limit_quote_ex16.h"
-#include <iostream>
-#include <functional>
+[ex16.cpp](ex16.cpp)
 
-double print_total(std::ostream &os, const Quote &item, size_t n)
-{
-	double ret = item.net_price(n);
-	os << "ISBN: " << item.isbn() << " # sold: " << n << " total due: " << ret << std::endl;
-	return ret;
-}
-
-int main()
-{
-	Quote q("A1-001", 80);
-	Limit_quote bq("A1-001", 80, 5, 0.2);
-	print_total(std::cout, q, 10);
-	print_total(std::cout, bq, 10);
-
-	// q.debug();
-	// std::cout << std::endl;
-	// bq.debug();
-	// std::cout << std::endl;
-
-	return 0;
-}
-```
   
 ## 练习15.17
 
 > 尝试定义一个 Disc_quote 的对象，看看编译器给出的错误信息是什么？
 
+[ex17.cpp](ex17.cpp)
 ```
 $ g++ -o ex17 ex17.cpp -std=c++11
 ex17.cpp: In function ‘int main()’:
@@ -598,78 +238,13 @@ Derived_from_Public类：合法；
 Derived_from_Private类：非法；  
 Derived_from_Protected类：合法。  
   
-## 练习15.20
+## [练习15.20](ex20.cpp)
 
 > 编写代码检验你对前面两题的回答是否正确。
 
-```cpp
-class Base
-{
-public:
-	void memfcn(Base &b) { b = *this; };
-protected:
-	int prot_mem;
-private:
-	char priv_mem;
-};
 
-struct Pub_Derv : public Base
-{
-public:
-	void memfcn(Base &b) { b = *this; };
-};
-
-struct Priv_Derv : private Base
-{
-public:
-	void memfcn(Base &b) { b = *this; };
-};
-
-struct Prot_Derv : protected Base
-{
-public:
-	void memfcn(Base &b) { b = *this; };
-};
-
-struct Derived_from_Public : public Pub_Derv
-{
-public:
-	void memfcn(Base &b) { b = *this; };
-};
-
-struct Derived_from_Private : public Priv_Derv
-{
-public:
-	// void memfcn(Base &b) { b = *this; };
-};
-
-struct Derived_from_Protected : public Prot_Derv
-{
-public:
-	void memfcn(Base &b) { b = *this; };
-};
-
-int main()
-{
-	Pub_Derv d1;
-	Priv_Derv d2;
-	Prot_Derv d3;
-	Derived_from_Public dd1;
-	Derived_from_Private dd2;
-	Derived_from_Protected dd3;
-
-	Base *p = &d1;
-	// p = &d2;
-	// p = &d3;
-	p = &dd1;
-	// p = &dd2;
-	// p = &dd3;
-
-	return 0;
-}
-```
   
-## 练习15.21
+## [练习15.21](ex21.cpp)
 
 > 从下面这些一般性抽象概念中任选一个（或者选一个你自己的），将其对应的一组类型组织成一个继承体系：
 ```cpp
@@ -678,70 +253,8 @@ int main()
 (c) C++语言中的类型（如类、函数、成员函数）
 ```
 
-代码取自github：  
-```cpp
-#include <iostream>
-#include <string>
+代码取自github。  
 
-// just for 2D shape
-class Shape
-{
-public:
-    typedef std::pair<double, double>    Coordinate;
-
-    Shape() = default;
-    Shape(const std::string& n) :
-        name(n) { }
-
-    virtual double area()       const = 0;
-    virtual double perimeter()  const = 0;
-
-    virtual ~Shape() = default;
-private:
-    std::string name;
-};
-
-class Rectangle : public Shape
-{
-public:
-    Rectangle() = default;
-    Rectangle(const std::string& n,
-              const Coordinate& a,
-              const Coordinate& b,
-              const Coordinate& c,
-              const Coordinate& d) :
-        Shape(n), a(a), b(b), c(c), d(d) { }
-
-    ~Rectangle() = default;
-
-protected:
-    Coordinate  a;
-    Coordinate  b;
-    Coordinate  c;
-    Coordinate  d;
-};
-
-class Square : public Rectangle
-{
-public:
-    Square() = default;
-    Square(const std::string& n,
-           const Coordinate& a,
-           const Coordinate& b,
-           const Coordinate& c,
-           const Coordinate& d) :
-        Rectangle(n, a, b, c, d) { }
-
-    ~Square() = default;
-};
-
-
-int main()
-{
-
-    return 0;
-}
-```
   
 ## 练习15.22
 
@@ -771,265 +284,38 @@ int main()
 已经定义了一个构造函数，默认构造函数是被删除的，需要显式地定义。  
 如果去掉了Disc_quote的默认构造函数，Bulk_quote的默认构造函数是被删除的。  
   
-## 练习15.26
+## [练习15.26](ex26)
 
 > 定义 Quote 和 Bulk_quote 的拷贝控制成员，令其与合成的版本行为一致。为这些成员以及其他构造函数添加打印状态的语句，使得我们能够知道正在运行哪个程序。使用这些类编写程序，预测程序将创建和销毁哪些对象。重复实验，不断比较你的预测和实际输出结果是否相同，直到预测完全准确再结束。
 
-Quote_ex26.h
-```cpp
-#ifndef QUOTE_H_
-#define QUOTE_H_
 
-#include <string>
-#include <iostream>
-
-class Quote
-{
-friend bool operator!=(const Quote &lhs, const Quote &rhs) { return lhs.bookNo != rhs.bookNo && lhs.price != rhs.price; }
-public:
-	Quote() = default;
-	Quote(const std::string &book, double sales_price) : bookNo(book), price(sales_price) {}
-	Quote(const Quote&);
-	Quote(Quote&&) noexcept;
-	Quote& operator=(const Quote&);
-	Quote& operator=(Quote&&) noexcept;
-	std::string isbn() const { return bookNo; }
-	virtual double net_price(std::size_t n) const { return n * price; }
-	virtual void debug() const;
-	virtual ~Quote();
-private:
-	std::string bookNo;
-protected:
-	double price = 0;
-};
-
-#endif
-```
   
-Bulk_quote_ex26.h
-```cpp
-#ifndef BULK_QUOTE_H_
-#define BULK_QUOTE_H_
-
-#include "Disc_quote_ex26.h"
-#include <string>
-#include <iostream>
-
-class Bulk_quote : public Disc_quote
-{
-public:
-	Bulk_quote() = default;
-	Bulk_quote(const std::string &book, double price, std::size_t qty, double disc) : Disc_quote(book, price, qty, disc) { }
-	Bulk_quote(Bulk_quote&);
-	Bulk_quote(Bulk_quote&&) noexcept;
-	Bulk_quote& operator=(Bulk_quote&);
-	Bulk_quote& operator=(Bulk_quote&&) noexcept;
-	double net_price(std::size_t) const override;
-	void debug() const override;
-	~Bulk_quote() override;
-};
-
-#endif
-```
-  
-## 练习15.27
+## [练习15.27](ex27)
 
 > 重新定义你的 Bulk_quote 类，令其继承构造函数。
 
-Bulk_quote.h
-```cpp
-#ifndef BULK_QUOTE_H_
-#define BULK_QUOTE_H_
 
-#include "Disc_quote.h"
-#include <string>
-#include <iostream>
-
-class Bulk_quote : public Disc_quote
-{
-public:
-	Bulk_quote() = default;
-	using Disc_quote::Disc_quote;
-	Bulk_quote(Bulk_quote&);
-	Bulk_quote(Bulk_quote&&) noexcept;
-	Bulk_quote& operator=(Bulk_quote&);
-	Bulk_quote& operator=(Bulk_quote&&) noexcept;
-	double net_price(std::size_t) const override;
-	void debug() const override;
-	~Bulk_quote() override;
-};
-
-#endif
-```
   
-## 练习15.28
+## [练习15.28](ex28)
 
 > 定义一个存放 Quote 对象的 vector，将 Bulk_quote 对象传入其中。计算 vector 中所有元素总的 net_price。
 
-ex28.cpp
-```cpp
-#include "Quote.h"
-#include "Bulk_quote.h"
-#include "Limit_quote.h"
-#include <iostream>
-#include <functional>
-#include <vector>
-#include <memory>
 
-double print_total(std::ostream &os, const Quote &item, size_t n)
-{
-	double ret = item.net_price(n);
-	os << "ISBN: " << item.isbn() << " # sold: " << n << " total due: " << ret << std::endl;
-	return ret;
-}
 
-int main()
-{
-	Quote q("A1-001", 80);
-	Bulk_quote bq("A1-001", 80, 5, 0.2);
-	Limit_quote lq("A1-001", 80, 5, 0.2);
-	print_total(std::cout, q, 10);
-	print_total(std::cout, bq, 10);
-	print_total(std::cout, lq, 10);
-
-	double total_price = 0;
-	std::vector<Quote> vector_quote;
-	vector_quote.push_back(bq);
-	for(const auto &q : vector_quote)
-		total_price += q.net_price(10);
-	std::cout << "total_price:" << total_price << std::endl;
-
-	return 0;
-}
-```
-
-## 练习15.29
+## [练习15.29](ex29)
 
 > 再运行一次你的程序，这次传入 Quote 对象的 shared_ptr 。如果这次计算出的总额与之前的不一致，解释为什么;如果一直，也请说明原因。
 
 当派生类对象被赋值给基类对象时，其中的派生类部分将被“切掉”，因此容器和存在继承关系的类型无法兼容。  
 而使用指针时，调用的是net_price版本依赖于指针所指对象的动态类型。  
-ex29.cpp
-```cpp
-#include "Quote.h"
-#include "Bulk_quote.h"
-#include "Limit_quote.h"
-#include <iostream>
-#include <functional>
-#include <vector>
-#include <memory>
 
-double print_total(std::ostream &os, const Quote &item, size_t n)
-{
-	double ret = item.net_price(n);
-	os << "ISBN: " << item.isbn() << " # sold: " << n << " total due: " << ret << std::endl;
-	return ret;
-}
-
-int main()
-{
-	Quote q("A1-001", 80);
-	Bulk_quote bq("A1-001", 80, 5, 0.2);
-	Limit_quote lq("A1-001", 80, 5, 0.2);
-	print_total(std::cout, q, 10);
-	print_total(std::cout, bq, 10);
-	print_total(std::cout, lq, 10);
-
-	std::vector<std::shared_ptr<Quote>> basket;
-	// basket.push_back(std::make_shared<Quote>(q));
-	basket.push_back(std::make_shared<Bulk_quote>(bq));
-	// basket.push_back(std::make_shared<Limit_quote>(lq));
-
-	double total_price = 0;
-	for (const auto &vq : basket)
-		total_price += vq->net_price(10);
-	std::cout << "total_price:" << total_price << std::endl;
-
-	return 0;
-}
-```
   
-## 练习15.30
+## [练习15.30](ex30)
 
 > 编写你自己的 Basket 类，用它计算上一个练习中交易记录的总价格。
 
 将print_total函数放入Quote.h。
-Basket.h
-```cpp
-#ifndef BASKET_H_
-#define BASKET_H_
 
-#include "Quote.h"
-#include <iostream>
-#include <memory>
-#include <set>
-
-class Basket
-{
-public:
-	void add_item(const std::shared_ptr<Quote> &sale) { items.insert(sale); }
-	void add_item(const Quote &sale) { items.insert(std::shared_ptr<Quote>(sale.clone())); }
-	void add_item(Quote &&sale) { items.insert(std::shared_ptr<Quote>(std::move(sale).clone())); }
-	double total_receipt(std::ostream&) const;
-private:
-	static bool compare(const std::shared_ptr<Quote> &lhs, const std::shared_ptr<Quote> &rhs) { return lhs->isbn() < rhs->isbn(); }
-	std::multiset<std::shared_ptr<Quote>, decltype(compare) *> items{compare};
-};
-
-#endif
-```
-  
-Basket.cpp
-```cpp
-#include "Basket.h"
-
-double Basket::total_receipt(std::ostream &os) const
-{
-	double sum = 0.0;
-	for(auto iter = items.cbegin(); iter != items.cend(); iter = items.upper_bound(*iter))
-	{
-		sum += print_total(os, **iter, items.count(*iter));
-	}
-
-	os << "Total Sale: " << sum << std::endl;
-	return sum;
-}
-```
-  
-ex30.cpp
-```cpp
-#include "Quote.h"
-#include "Bulk_quote.h"
-#include "Limit_quote.h"
-#include "Basket.h"
-#include <iostream>
-#include <functional>
-#include <vector>
-#include <memory>
-
-int main()
-{
-	Bulk_quote bq("A1-001", 80, 5, 0.2);
-	print_total(std::cout, bq, 10);
-
-	std::vector<std::shared_ptr<Quote>> basket;
-	basket.push_back(std::make_shared<Bulk_quote>(bq));
-
-	// double total_price = 0;
-	// for (const auto &vq : basket)
-	// 	total_price += vq->net_price(10);
-	// std::cout << "total_price:" << total_price << std::endl;
-
-	Basket basket_object;
-	for (int i = 0; i < 10; ++i)
-	{
-		basket_object.add_item(bq);
-	}
-	basket_object.total_receipt(std::cout);
-
-	return 0;
-}
-```
   
 ## 练习15.31
 
@@ -1084,68 +370,11 @@ AndQuery::rep()；
 Query::rep();  
 （c）q->eval()，指向OrQuery::eval()。  
   
-## 练习15.35
+## [练习15.35](ex35)
 
 > 实现 Query 类和 Query_base 类，其中需要定义rep 而无须定义 eval。
 
-Query.h
-```cpp
-#ifndef QUERY_H_
-#define QUERY_H_
 
-#include <string>
-#include <iostream>
-#include "Query_base.h"
-#include "WordQuery.h"
-#include "TextQuery.h"
-
-class Query
-{
-	friend Query operator~(const Query&);
-	friend Query operator|(const Query&, const Query&);
-	friend Query operator&(const Query&, const Query&);
-public:
-	Query(const std::string&);
-	QueryResult eval(const TextQuery &t) const { return q->eval(t); }
-	std::string rep() const { return q->rep(); }
-private:
-	Query(std::shared_ptr<Query_base> query) : q(query) { }
-	std::shared_ptr<Query_base> q;
-};
-
-std::ostream& operator<<(std::ostream &os, const Query &query)
-{
-	return os << query.rep();
-}
-
-inline Query::Query(const std::string &s) : q(new WordQuery(s)) { std::cout << "Query::Query(const std::string &s)" << std::endl; }
-
-#endif
-```
-  
-Query_base.h
-```cpp
-#ifndef QUERY_BASE_H_
-#define QUERY_BASE_H_
-
-#include <string>
-#include <iostream>
-#include "TextQuery.h"
-#include "Query.h"
-
-class Query_base
-{
-	friend class Query;
-protected:
-	using line_no = TextQuery::line_no;
-	virtual ~Query_base() = default;
-private:
-	virtual QueryResult eval(const TextQuery&) const = 0;
-	virtual std::string rep() const = 0;
-};
-
-#endif
-```
   
 ## 练习15.36
 
@@ -1200,7 +429,7 @@ OrQuery c = Query("fiery") & Query("bird");
 （b）非法，返回的为Query类型，不能转换为AndQuery；  
 （c）非法，返回的为Query类型，不能转换为AndQuery。  
   
-## 练习15.39
+## [练习15.39](ex39)
 
 > 实现 Query 类和　Query_base 类，求图15.3中表达式的值并打印相关信息，验证你的程序是否正确。
 
