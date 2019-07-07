@@ -72,7 +72,7 @@ try{
 }
 ```
   
-## 练习18.5
+## [练习18.5](ex05.cpp)
 
 > 修改下面的main函数，使其能捕获图18.1所示的任何异常类型：
 ```cpp
@@ -82,60 +82,7 @@ int main(){
 ```
 处理代码应该首先打印异常相关的错误信息，然后调用 abort 终止函数。
 
-```cpp
-#include <exception>
-#include <iostream>
-#include <cstdlib>
-#include <stdexcept>
-#include <typeinfo>
 
-using namespace std;
-
-int main()
-{
-	try{
-		//使用C++标准库
-	}catch(bad_cast &r){
-		cout << r.what();
-		abort();
-	}catch(range_error &r){
-		cout << r.what();
-		abort();
-	}catch(underflow_error &r){
-		cout << r.what();
-		abort();
-	}catch(overflow_error &r){
-		cout << r.what();
-		abort();
-	}catch(runtime_error &r){
-		cout << r.what();
-		abort();
-	}catch(length_error &r){
-		cout << r.what();
-		abort();
-	}catch(out_of_range &r){
-		cout << r.what();
-		abort();
-	}catch(invalid_argument &r){
-		cout << r.what();
-		abort();
-	}catch(domain_error &r){
-		cout << r.what();
-		abort();
-	}catch(logic_error &r){
-		cout << r.what();
-		abort();
-	}catch(bad_alloc &r){
-		cout << r.what();
-		abort();
-	}catch(exception &r){
-		cout << r.what();
-		abort();
-	}
-
-	return 0;
-}
-```
   
 ## 练习18.6
 
@@ -198,206 +145,11 @@ catch (const std::bad_alloc& e) {
 
 略。  
   
-## 练习18.9
+## [练习18.9](ex09)
 
 > 定义本节描述的书店程序异常类，然后为 Sales_data 类重新编写一个复合赋值运算符并令其抛出一个异常。
 
-Sales_data.h
-```cpp
-#ifndef SALES_DATA_H_
-#define SALES_DATA_H_
 
-#include <string>
-#include <stdexcept>
-
-class isbn_mismatch : public std::logic_error
-{
-public:
-	explicit isbn_mismatch(const std::string &s) : std::logic_error(s) { }
-	isbn_mismatch(const std::string &s, const std::string &lhs, const std::string &rhs) :
-		std::logic_error(s), left(lhs), right(rhs) { }
-	const std::string left, right;
-};
-
-struct Sales_data;
-
-std::istream &operator>>(std::istream &is, Sales_data &item);
-std::ostream &operator<<(std::ostream &os, const Sales_data &item);
-Sales_data operator+(const Sales_data &lhs, const Sales_data &rhs);
-
-struct Sales_data
-{
-friend std::istream& operator>>(std::istream&, Sales_data&);
-friend std::ostream& operator<<(std::ostream&, const Sales_data&);
-friend Sales_data operator+(const Sales_data&, const Sales_data&);
-friend bool operator==(const Sales_data&, const Sales_data&);
-friend class std::hash<Sales_data>;
-public:
-	Sales_data(const std::string &s, unsigned n, double p) : bookNo(s), units_sold(n), revenue(p*n){std::cout << "Sales_data(const std::string &s, unsigned n, double p)" << std::endl;}
-	Sales_data() : Sales_data("", 0, 0){std::cout << "Sales_data() : Sales_data(\"\", 0, 0)" << std::endl;}
-	Sales_data(const std::string &s) : Sales_data(s, 0, 0){std::cout << "Sales_data(const std::string &s) : Sales_data" << std::endl;}
-	Sales_data(std::istream &is) : Sales_data(){/*read(is, *this);*/ is >> *this; std::cout << "Sales_data(std::istream &is) : Sales_data()" << std::endl;}
-	std::string isbn() const {return bookNo;}
-	Sales_data& operator=(const std::string&);
-    Sales_data& operator+=(const Sales_data&);
-    Sales_data& operator-=(const Sales_data&);
-private:
-	inline double avg_price() const;
-
-    std::string bookNo;
-    unsigned units_sold = 0;
-    double revenue = 0.0;
-};
-
-inline double Sales_data::avg_price() const
-{
-	if(units_sold)
-		return revenue / units_sold;
-	else
-		return 0;
-}
-
-Sales_data& Sales_data::operator=(const std::string &s)
-{
-	*this = Sales_data(s);
-	return *this;
-}
-
-Sales_data& Sales_data::operator+=(const Sales_data &rhs)
-{
-	if(isbn() != rhs.isbn())
-		throw isbn_mismatch("wrong isbns", isbn(), rhs.isbn());
-	units_sold += rhs.units_sold;
-	revenue += rhs.revenue;
-
-	return *this;
-}
-
-Sales_data& Sales_data::operator-=(const Sales_data &rhs)
-{
-	units_sold -= rhs.units_sold;
-	revenue -= rhs.revenue;
-
-	return *this;
-}
-
-std::istream &operator>>(std::istream &is, Sales_data &item)
-{
-	double price = 0;
-
-	is >> item.bookNo >> item.units_sold >> price;
-	if(is)
-		item.revenue = price * item.units_sold;
-	else
-		item = Sales_data();
-
-	return is;
-}
-
-std::ostream &operator<<(std::ostream &os, const Sales_data &item)
-{
-	os << item.isbn() << " " << item.units_sold << " " << item.revenue << " " << item.avg_price();
-
-	return os;
-}
-
-Sales_data operator+(const Sales_data &lhs, const Sales_data &rhs)
-{
-	Sales_data sum = lhs;
-	sum += rhs;
-
-	return sum;
-}
-
-bool operator==(const Sales_data &lhs, const Sales_data &rhs)
-{
-	return lhs.isbn() == rhs.isbn() && 
-		lhs.units_sold == rhs.units_sold && 
-		lhs.revenue == rhs.revenue;
-}
-
-#endif
-```
-  
-ex09.cpp
-```cpp
-#include <iostream>
-#include <string>
-#include "Sales_data.h"
-#include <unordered_set>
-#include <algorithm>
-#include <utility>
-
-namespace std
-{
-	template <>
-	struct hash<Sales_data>
-	{
-		typedef size_t result_type;
-		typedef Sales_data argument_type;
-		size_t operator()(const Sales_data &s) const;
-	};
-	size_t hash<Sales_data>::operator()(const Sales_data &s) const
-	{
-		return hash<std::string>()(s.bookNo) ^ hash<unsigned>()(s.units_sold) ^ hash<double>()(s.revenue);
-	}
-}
-
-bool compareIsbn(const Sales_data &lhs, const Sales_data &rhs)
-{
-	return lhs.isbn() < rhs.isbn();
-}
-
-struct matches
-{
-	std::vector<Sales_data>::size_type index;
-	std::vector<Sales_data>::const_iterator first;
-	std::vector<Sales_data>::const_iterator last;
-	matches(std::vector<Sales_data>::size_type index_, std::vector<Sales_data>::const_iterator first_, std::vector<Sales_data>::const_iterator last_) : index(index_), first(first_), last(last_) {}
-};
-
-std::vector<matches> findBook(const std::vector<std::vector<Sales_data>> &files, const std::string &book)
-{
-	std::vector<matches> ret;
-	for(auto it = files.cbegin(); it != files.cend(); ++it)
-	{
-		auto found = std::equal_range(it->cbegin(), it->cend(), Sales_data(book), compareIsbn);
-		if(found.first != found.second)
-			ret.push_back(matches(it - files.cbegin(), found.first, found.second));
-	}
-	return ret;
-}
-
-void reportResults(std::istream &in, std::ostream &os, const std::vector<std::vector<Sales_data>> &files)
-{
-	std::string s;
-	while(in >> s)
-	{
-		auto trans = findBook(files, s);
-		if(trans.empty())
-		{
-			std::cout << s << " not found in any stores" << std::endl;
-			continue;
-		}
-		for(const auto &store : trans)
-			os << "store " << store.index << " sales: " << std::accumulate(store.first, store.last, Sales_data(s)) << std::endl;
-	}
-}
-
-int main()
-{
-    Sales_data sales_data1("001-01", 1, 100);
-    Sales_data sales_data2("001-01", 2, 100);
-    Sales_data sales_data3("001-02", 2, 80);
-
-    try{
-    	auto sum = sales_data1 + sales_data3;
-    }catch(const isbn_mismatch &e){
-    	std::cerr << e.what() << ": left isbn(" << e.left << ") right isbn(" << e.right << ")" << std::endl;
-    }
-    return 0;
-}
-```
   
 ## 练习18.10
 
@@ -411,143 +163,11 @@ int main()
 
 what中如果抛出异常，需要try catch捕获，再调用what，一直循环，直达内存耗尽。  
   
-## 练习18.12
+## [练习18.12](ex12)
 
 > 将你为之前各章练习编写的程序放置在各自的命名空间中。也就是说，命名空间chapter15包含Query程序的代码，命名空间chapter10包含TextQuery的代码；使用这种结构重新编译Query代码实例。
 
-Query.h  
-```cpp
-#ifndef QUERY_H_
-#define QUERY_H_
 
-#include <string>
-#include <iostream>
-#include "Query_base.h"
-#include "WordQuery.h"
-#include "TextQuery.h"
-
-namespace chapter15
-{
-	class Query
-	{
-		friend Query operator~(const Query&);
-		friend Query operator|(const Query&, const Query&);
-		friend Query operator&(const Query&, const Query&);
-	public:
-		Query(const std::string&);
-		chapter10::QueryResult eval(const chapter10::TextQuery &t) const { return q->eval(t); }
-		std::string rep() const { std::cout << "Query::rep()" << std::endl; return q->rep(); }
-	private:
-		Query(std::shared_ptr<Query_base> query) : q(query) { std::cout << "Query(std::shared_ptr<Query_base> query)" << std::endl; }
-		std::shared_ptr<Query_base> q;
-	};
-
-	std::ostream& operator<<(std::ostream &os, const Query &query)
-	{
-		return os << query.rep();
-	}
-
-	inline Query::Query(const std::string &s) : q(new WordQuery(s)) { std::cout << "Query::Query(const std::string &s)" << std::endl; }
-}
-
-#endif
-```
-  
-TextQuery.h
-```cpp
-#ifndef TEXTQUERY_H_
-#define TEXTQUERY_H_
-
-#include <string>
-#include <vector>
-#include <map>
-#include <fstream>
-#include <sstream>
-#include <set>
-#include <memory>
-#include <iostream>
-#include <algorithm>
-#include <iterator>
-#include "StrBlob.h"
-
-namespace chapter10
-{
-	class QueryResult;
-
-	class TextQuery
-	{
-	public:
-		using line_no = std::vector<std::string>::size_type;
-		TextQuery(std::ifstream&);
-		QueryResult query(const std::string&) const;
-	private:
-		StrBlob file;
-		std::map<std::string, std::shared_ptr<std::set<line_no>>> word_map;
-	};
-
-	class QueryResult
-	{
-		friend std::ostream& print(std::ostream&, const QueryResult&);
-	public:
-		QueryResult(std::string s, std::shared_ptr<std::set<TextQuery::line_no>> p, StrBlob f) : sought(s), lines(p), file(f) { }
-		std::set<StrBlob::size_type>::iterator begin() const { return lines->begin(); }
-		std::set<StrBlob::size_type>::iterator end() const { return lines->end(); }
-		// std::shared_ptr<StrBlob> get_file() const { return std::make_shared<StrBlob>(file); }
-		const StrBlob& get_file() const { return file; }
-	private:
-		std::string sought;
-		std::shared_ptr<std::set<TextQuery::line_no>> lines;
-		StrBlob file;
-	};
-
-	TextQuery::TextQuery(std::ifstream &ifs)
-	{
-		std::string text_line;
-
-		while(std::getline(ifs, text_line))
-		{
-			file.push_back(text_line);
-			int line_number = file.size() - 1;
-			std::istringstream line(text_line);
-			std::string text_word;
-			while(line >> text_word)
-			{
-				std::string word;
-				std::copy_if(text_word.begin(), text_word.end(), std::back_inserter(word), isalpha);
-				// std::cout << word << std::endl;
-				auto &wm_lines = word_map[word];
-				if(!wm_lines)
-					wm_lines.reset(new std::set<line_no>);
-				wm_lines->insert(line_number);
-			}
-		}
-	}
-
-	QueryResult TextQuery::query(const std::string &sought) const
-	{
-		static std::shared_ptr<std::set<TextQuery::line_no>> nodata(new std::set<TextQuery::line_no>);
-		auto loc = word_map.find(sought);
-		if(loc == word_map.end())
-			return QueryResult(sought, nodata, file);
-		else
-			return QueryResult(sought, loc->second, file);
-	}
-
-	std::ostream &print(std::ostream &os, const QueryResult &qr)
-	{
-		os << qr.sought << " occurs " << qr.lines->size() << " " /*<< make_plural(qr.lines->size(), "time", "s")*/ << std::endl;
-		for(auto num : *qr.lines)
-		{
-			ConstStrBlobPtr p(qr.file, num);
-			os << "\t(line " << num + 1 << ") " << p.deref() << std::endl;
-		}
-			
-		return os;
-	}
-}
-
-#endif
-```
   
 ## 练习18.13
 
@@ -580,7 +200,7 @@ mathLib::MatrixLib::matrix mathLib::MatrixLib::operator*(const matrix&, const ma
 
 using指示引入的名字的作用域远比using声明引入的名字的作用域复杂。它具有将命名空间成员提升到包含命名空间本身和using指示的最近作用域的能力。对于using声明来说，我们指示简单地领名字在局部作用域有效。using指示是令整个命名空间的所有内容变得有效。通常情况下，命名空间中会含有一些不能出现在局部作用域的定义，因此using指示一般被看作是出现在最近的外层作用域中。  
   
-## 练习18.16
+## [练习18.16](ex17.cpp)
 
 > 假定在下面的代码中标记为“位置1”的地方是对命名空间 Exercise中所有成员的using声明，请解释代码的含义。如果这些using声明出现在“位置2”又会怎样呢？将using声明变为using指示，重新回答之前的问题。
 ```cpp
@@ -600,38 +220,7 @@ void main() {
 }
 ```
 
-```cpp
-namespace Exercise{
-	int ivar = 0;
-	double dvar = 0;
-	const int limit = 1000;
-}
-int ivar = 0;
 
-using Exercise::ivar;	//1
-using Exercise::dvar;
-using Exercise::limit;
-
-// using namespace Exercise;	//3
-
-void mainp(){
-	// using Exercise::ivar;	//2
-	// using Exercise::dvar;
-	// using Exercise::limit;
-
-	// using namespace Exercise;	//4
-
-	double dvar = 3.1416;
-	int iobj = limit + 1;
-	++ivar;
-	++::ivar;
-}
-
-int main()
-{
-	return 0;
-}
-```
   
 ## 练习18.17
 
@@ -659,7 +248,7 @@ void swap(T v1, T v2)
 
 将只使用标准库的swap，如果v1.mem1和v2.mem1为用户自定义类型，将无法使用用户定义的针对该类型的swap。
   
-## 练习18.20
+## [练习18.20](ex20.cpp)
 
 > 在下面的代码中，确定哪个函数与compute调用匹配。列出所有候选函数和可行函数，对于每个可行函数的实参与形参的匹配过程来说，发生了哪种类型转换？
 ```cpp
@@ -805,7 +394,7 @@ protected:
 （e）MI析构函数（会依次调用基类析构函数）；  
 （f）MI析构函数（会依次调用基类析构函数）。  
   
-## 练习18.26
+## [练习18.26](ex26.cpp)
 
 > 已知如上所示的继承体系，下面对print的调用为什么是错误的？适当修改MI，令其对print的调用可以编译通过并正确执行。
 ```cpp
@@ -814,55 +403,7 @@ mi.print(42);
 ```
 
 没有匹配的print调用，当注释void print(std;:vector<double>)时又会出现二义性；故为该函数定义一个新版本。  
-```cpp
-#include <iostream>
-#include <vector>
-struct Base1{
-    void print(int) const{
-        std::cout<<"Base1 Print Used"<<std::endl;
-        };
-protected:
-        int ival;
-        double dval;
-        char cval;
-private:
-        int *id;
-};
-struct Base2 {
-    void print(double) const;
-protected:
-    double fval;
-private:
-    double dval;
-};
 
-struct Derived : public Base1 {
-void print(std::string) const;
-protected:
-    std::string sval;
-    double dval;
-};
-
-struct MI : public Derived, public Base2{
-
-void print(std::vector<double>){};
-void print(int x){
-    Base1::print(x);
-}
-protected:
-    int *ival;
-    std::vector<double> dvec;
-};
-
-using namespace std;
-
-int main()
-{
-    MI mi;
-    mi.print(42);
-    return 0;
-}
-```
   
 ## 练习18.27
 
@@ -888,65 +429,7 @@ Derived中，sval、dval、print；
 MI中，ival、dvec、print、foo。  
 （b）存在，ival、dval、print。  
 （c）（d）（e）如下所示。  
-```cpp
-#include <iostream>
-#include <vector>
-struct Base1{
-    void print(int) const{
-        std::cout<<"Base1 Print Used"<<std::endl;
-        };
-protected:
-        int ival;
-        double dval;
-        char cval = 'b';
-private:
-        int *id;
-};
-struct Base2 {
-    void print(double) const;
-protected:
-    double fval;
-private:
-    double dval;
-};
-
-struct Derived : public Base1 {
-void print(std::string) const;
-protected:
-    std::string sval = "aaa";
-    double dval;
-};
-
-struct MI : public Derived, public Base2{
-
-void print(std::vector<double>){};
-void print(int x){
-    Base1::print(x);
-}
-void foo(double);
-
-protected:
-    int *ival;
-    std::vector<double> dvec = {1.0, 2.0, 3.0};
-};
-
-int iva;
-double dval;
-void MI::foo(double cval)
-{
-    int dval;
-    dval = Base1::dval + Derived::dval;
-    Base2::fval = dvec.back();
-    sval.at(0) = Base1::cval;
-}
-
-int main()
-{
-    MI mi;
-    mi.print(42);
-    return 0;
-}
-```
+[代码](ex27.cpp)
   
 ## 练习18.28
 
@@ -1004,59 +487,7 @@ Base *pb; Class *pc; MI *pmi; D2 *pd2;
 （b）一个Base两个Class；  
 （c）（a）编译错误，（b）编译错误，（c）编译错误，（d）正确。  
   
-## 练习18.30
+## [练习18.30](ex30.cpp)
 
 > 在Base中定义一个默认构造函数、一个拷贝构造函数和一个接受int形参的构造函数。在每个派生类中分别定义这三种构造函数，每个构造函数应该使用它的形参初始化其Base部分。
 
-```cpp
-#include <iostream>
-
-using namespace std;
-
-class Class {
-};
-
-class Base : public Class {
-public:
-	// Base() = default;
-	Base() { cout << "Base()" << endl; }
-	Base(int) { cout << "Base(int)" << endl; }
-	Base(const Base &b) {}
-};
-
-class D1 : virtual public Base {
-public:
-	D1() = default;
-	D1(int i) : Base(i) { cout << "D1(int)" << endl; }
-	D1(const D1 &d){}
-};
-
-class D2 : virtual public Base {
-public:
-	D2() = default;
-	D2(int i) : Base(i) { cout << "D2(int)" << endl; }
-	D2(const D2 &d) {}
-};
-
-class MI : public D1, public D2 {
-public:
-	MI() = default;
-	MI(int i) : D1(i), D2(i) { cout << "MI(int)" << endl; }
-	MI(const MI &m) {}
-};
-
-class Final : public MI, public Class {
-public:
-	Final() = default;
-	// Final(int i) : MI(i) { cout << "Final(int)" << endl; }
-	Final(int i) : MI(i), Base(i) { cout << "Final(int)" << endl; }
-	Final(const Final &f) {}
-};
-
-int main(int argc, char const *argv[])
-{
-	Final f(1);
-
-	return 0;
-}
-```
