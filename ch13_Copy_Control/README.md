@@ -124,7 +124,7 @@ private:
 
 > 当一个 StrBlob 对象销毁时会发生什么？一个 StrBlobPtr 对象销毁时呢？
 
-销毁StrBlob时shared_ptr-1，直到为0时，对象销毁，销毁StrBlobPtr不会销毁对象。  
+StrBlob对象销毁时，shared_ptr-1，直到为0时，动态对象将销毁；StrBlobPtr对象销毁时，其指向的动态对象不会被销毁。  
 
 ## 练习13.11
 
