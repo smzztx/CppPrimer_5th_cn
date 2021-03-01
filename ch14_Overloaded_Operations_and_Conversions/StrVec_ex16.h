@@ -81,7 +81,7 @@ StrVec::~StrVec()
 
 void StrVec::reserve(size_t n)
 {
-	if(n > capacity()) return;
+	if(n <= capacity()) return;
 	auto newdata = alloc.allocate(n);
 	auto dest = newdata;
 	auto elem = elements;
