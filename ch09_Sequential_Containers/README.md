@@ -388,7 +388,7 @@ s.reserve(100);
 
 > 编写一个函数，接受三个string参数是s、oldVal 和newVal。使用迭代器及insert和erase函数将s中所有oldVal替换为newVal。测试你的程序，用它替换通用的简写形式，如，将"tho"替换为"though",将"thru"替换为"through"。
 
-在gcc上编译失败。
+在gcc上编译失败（当时的测试环境为ubuntu 14.04+gcc version 4.8.4），在Ubuntu16.06+gcc5.4可以通过编译并成功运行。
 
   
 ## [练习9.44](ex44.cpp)

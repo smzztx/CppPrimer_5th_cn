@@ -1,4 +1,3 @@
-//it can't compile it on gcc.
 #include <string>
 #include <iostream>
 
