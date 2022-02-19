@@ -86,7 +86,7 @@ while(cin >> i && i != 42)
 
 > 书写一条表达式用于测试4个值a、b、c、d的关系，确保a大于b、b大于c、c大于d。
 
-a >=b && b > c && c>d  
+a > b && b > c && c > d  
   
 ## 练习4.12
 
@@ -124,7 +124,7 @@ double dval; int ival; int *pi;
 dval = ival = pi = 0;
 ```
 
-pi改为*p  
+pi改为*pi  
   
 ## 练习4.16
 
@@ -134,7 +134,7 @@ if (p = getPtr() != 0)
 if (i = 1024)
 ```
 
-（a）if((p = getPtr() != 0)；（b）if(i == 1024)。  
+（a）if((p = getPtr()) != 0)；（b）if(i == 1024)。  
   
 ## 练习4.17
 
@@ -341,7 +341,7 @@ double dval;
 
 > 假设 i 是int类型，d 是double类型，书写表达式 i*=d 使其执行整数类型的乘法而非浮点类型的乘法。
 
-i *= static_cast<int>(d)  
+i *= static_cast\<int\>(d)  
   
 ## 练习4.37
 
@@ -355,7 +355,7 @@ int i; double d; const string *ps; char *pc; void *pv;
 ```
 
 （a）pv = static_cast<void*>(const_cast<string*>(ps));  
-（b）i = static_cast<int>(*pc);  
+（b）i = static_cast\<int\>(\*pc);  
 （c）pv = static_cast<void*>(&d);  
 （d）pc = reinterpret_cast<void*>(pv);  
   
