@@ -27,7 +27,11 @@ int main()
 		}
 		pres = s;
 	}
-
+	if(cnt > max_cnt)
+	{
+		max_cnt = cnt;
+		max_string = pres;
+	}
 	(max_cnt > 1) ? (cout << max_string << ":" << max_cnt << endl) : (cout << "no repeat" << endl);
 	return 0;
 }
