@@ -9,6 +9,10 @@ void replace_with_str(string &s, const string &oldVal, const string &newVal)
 
 	while(iter != s.end())
 	{
+		if((s.end()-iter) < (oldVal.end()- oldVal.begin()))
+		{
+			return;
+		}
 		if(oldVal == string(iter, iter+oldVal.size()))
 		{
 			iter = s.erase(iter, iter+oldVal.size());
