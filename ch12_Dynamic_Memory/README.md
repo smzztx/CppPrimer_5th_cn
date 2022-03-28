@@ -125,7 +125,12 @@ auto p = sp.get();
 delete p;
 ```
 
-sp和p指向的是同一个内存，释放了p所指向的内存后，再使用sp调用对象时可能会出错。  
+sp和p指向的是同一个对象，程序中手动销毁了p所指向的对象，程序结束会自动销毁sp所指向的对象，会销毁两次同一个对象而报错。报错代码如下：  
+```sh
+$ ./ex13
+double free or corruption (out)
+Aborted (core dumped)
+```
 
 ## [练习12.14](ex14.cpp)
 
