@@ -154,7 +154,7 @@ derived dobj; 	base *bp2 = &dobj; 	base &br2 = dobj;
 （a）调用base中的print，编译时确定；  
 （b）调用derived中的print，编译时确定；  
 （c）调用base中的name函数，不是虚函数，没有动态绑定，所以编译时确定；  
-（d）调用derived中的name函数，不是虚函数，没有动态绑定，所以编译时确定；  
+（d）调用base中的name函数，不是虚函数，没有动态绑定，所以编译时确定；  
 （e）调用base中的print，运行时确定；  
 （f）调用derived中的print，运行时确定。  
   
