@@ -156,7 +156,7 @@ void reset(int &i)
 }
 ```
 
-不能是引用的例子（有关容器的迭代器貌似都不能定义为引用，具体原因不清楚）:
+不能是引用的例子:
 ```cpp
 void print(std::vector<int>::iterator begin, std::vector<int>::iterator end)
 {
