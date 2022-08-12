@@ -371,7 +371,7 @@ std::string (&fun(std::string (&arrs)[10]))[10];
 using ARRS = std::string[10];
 ARRS &fun(ARRS &arrs);
  
-auto fun(std::string (&arrs)[10]) -> std::string (&)[10]);
+auto fun(std::string (&arrs)[10]) -> std::string (&)[10];
  
 std::string arrs1[10];
 decltype(arrs1) &fun(decltype(arrs1) &arrs);
