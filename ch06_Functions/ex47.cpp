@@ -10,7 +10,7 @@ void read_vi(std::vector<int>::const_iterator iterator_begin, std::vector<int>::
 		std::cerr << iterator_end - iterator_begin << __func__ << " " << __FILE__ << " " 
 		<< __LINE__ << " " << __TIME__ << " " << __DATE__ << std::endl;
 	#endif
-	assert(0);
+	// assert(0);
 
 	if(iterator_begin != iterator_end)
 	{
