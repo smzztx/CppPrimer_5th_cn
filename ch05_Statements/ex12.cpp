@@ -6,7 +6,7 @@ using std::endl;
 int main()
 {
     unsigned aCnt = 0, eCnt = 0, iCnt = 0, oCnt = 0, uCnt = 0, tabCnt = 0, newlineCnt = 0, ffCnt = 0, flCnt = 0, fiCnt = 0;
-    char ch, prech;
+    char ch, prech = '\0';
     while (cin >> std::noskipws >> ch)
     {
         switch (ch) {
