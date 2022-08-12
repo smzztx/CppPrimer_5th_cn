@@ -383,7 +383,7 @@ decltype(arrs1) &fun(decltype(arrs1) &arrs);
 > 修改arrPtr函数，使其返回数组的引用。
 
 ```cpp
-decltype(arrStr)& arrPtr(int i)
+decltype(odd)& arrPtr(int i)
 {
           return (i % 2) ? odd : even;
 }
