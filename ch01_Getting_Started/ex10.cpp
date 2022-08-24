@@ -2,14 +2,13 @@
 
 int main()
 {
-	int i = 10 ,sum = 0;
+        int i = 10;
 
-	while(i >= 0)
-	{
-		sum += i;
-		--i;
-	}
-	std::cout << sum << std::endl;
+        while(i >= 0)
+        {
+                std::cout << i << std::endl;
+                --i;
+        }
 
-	return 0;
+        return 0;
 }
