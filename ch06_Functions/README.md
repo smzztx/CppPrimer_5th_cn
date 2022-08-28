@@ -371,7 +371,7 @@ std::string (&fun(std::string (&arrs)[10]))[10];
 using ARRS = std::string[10];
 ARRS &fun(ARRS &arrs);
  
-auto fun(std::string (&arrs)[10]) -> std::string (&)[10]);
+auto fun(std::string (&arrs)[10]) -> std::string (&)[10];
  
 std::string arrs1[10];
 decltype(arrs1) &fun(decltype(arrs1) &arrs);
@@ -383,7 +383,7 @@ decltype(arrs1) &fun(decltype(arrs1) &arrs);
 > 修改arrPtr函数，使其返回数组的引用。
 
 ```cpp
-decltype(arrStr)& arrPtr(int i)
+decltype(odd)& arrPtr(int i)
 {
           return (i % 2) ? odd : even;
 }
@@ -480,7 +480,7 @@ while (cin >> s && s != sought) { } //空函数体
 assert(cin);
 ```
 
-合理，当输入结束时终止程序。  
+不合理，这里虽然没有语法错误，但是它的使用是不合理的。 `assert` 宏通常用于检查“不能发生”的条件。这里改成 `assert(!cin)` 更加合理些。  
   
 ## 练习6.49
 
