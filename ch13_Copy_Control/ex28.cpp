@@ -6,7 +6,7 @@
 //
 //  Given the following classes, implement a default constructor and the necessary copy-control members.
 
-#include "ex13_28.h"
+#include "ex28.h"
 
 TreeNode& TreeNode::operator=(const TreeNode &rhs)
 {
