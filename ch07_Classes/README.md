@@ -299,7 +299,7 @@ pos Screen::size() const
 
 > 如果我们把第256页Screen类的pos的typedef放在类的最后一行会发生什么情况？
 
-dummy_fcn(pos height)中的pos未声明，将会报错。
+这样做会导致编译出错，因为对 pos 的使用出现在它的声明之前，此时编译器并不知道 pos 到底是什么含义。
   
 ## 练习7.35
 
