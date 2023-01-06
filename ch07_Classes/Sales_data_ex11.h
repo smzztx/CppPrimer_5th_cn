@@ -2,6 +2,7 @@
 #define SALES_DATA_H_
 
 #include <string>
+#include <iostream>
 
 struct Sales_data
 {
