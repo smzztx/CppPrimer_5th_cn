@@ -8,8 +8,8 @@ using namespace std;
 int main()
 {
 	ifstream ifs("data");
-	vector<char> v1;
-	char buf;
+	vector<string> v1;
+	string buf;
 
 	if(ifs)
 	{
@@ -19,9 +19,8 @@ int main()
 		}
 	}
 
-
-	for(const auto &c : v1)
-		cout << c << endl;
+	for(const auto &s : v1)
+		cout << s << endl;
 
 	return 0;
 }
