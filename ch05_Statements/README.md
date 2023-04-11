@@ -48,7 +48,7 @@ while (iter != s.end()) { /* . . . */ }
 （b）
 ```cpp
 bool status;
-while ((status = find(word))) {/* ... */}
+while (status = find(word)) {/* ... */}
 if (!status) {/* ... */}
 ```
   
