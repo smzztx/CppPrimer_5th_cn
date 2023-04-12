@@ -52,7 +52,7 @@ while(iter1 != iter2)
   
 ## 练习9.7
 
-> 为了索引int 的 vector中的元素，应该使用什么类型？
+> 为了索引 int 的 vector 中的元素，应该使用什么类型？
 
 ```cpp
 vector<int>::size_type
