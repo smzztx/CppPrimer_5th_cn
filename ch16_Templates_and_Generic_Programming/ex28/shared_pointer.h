@@ -8,7 +8,7 @@ namespace cp5
 	class shared_pointer;
 
 	template <typename T>
-	void swap(shared_pointer<T> &lhs, shared_pointer<T> &rhs)
+	void swap(shared_pointer<T> &lhs, shared_pointer<T> &rhs) noexcept
 	{
 		using std::swap;
 		swap(lhs.ptr, rhs.ptr);
