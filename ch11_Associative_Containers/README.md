@@ -25,7 +25,7 @@ set：添加忽略关键字的例子。
 
 > 扩展你的程序，忽略大小写和标点。例如，"example."、"example,"和"Example"应该递增相同的计数器。
 
-经过研究发现，实际使用的是<ctype.h>中的ispunct，这个是全局变量。<cctype>是std::ispunct (<cctype>)和std::ispunct (<clocale>)，会有重载的问题。
+经过研究发现，实际使用的是\<ctype.h\>中的ispunct，这个是全局变量。如果使用std::ispunct (\<cctype\>)和std::ispunct (\<clocale\>)，会有重载的问题。  
 
 ## 练习11.5
 
