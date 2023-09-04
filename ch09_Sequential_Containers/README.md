@@ -283,10 +283,13 @@ int ia[] = { 0, 1, 1, 2, 3, 5, 8, 13, 21, 55, 89 };
 
 > 第316页中删除偶数值元素并复制奇数值元素的程序不能用于list或forward_list。为什么？修改程序，使之也能用于这些类型。
 
-[list](ex31_list.cpp)
+不能直接用于list或forward_list，list 和 forward_list 。与其他容器的一个不同是，迭代器不支持加减运算，究其原因，链表中元素并非在内存中连续存储，因此无法通过地址的加减在元素间远距离移动。因此，应多次调用++来实现与迭代器加法相同的效果。  
+
+[list（主要是 iter +=2 改成 ++iter;++iter;）](ex31_list.cpp)
 
   
-[forward_list](ex31_forward_list.cpp)
+对于 forward_list ，由于是单向链表结构，删除元素时，需将前驱指针调整为指向下一个节点，因此需维护“前驱”、“后驱”两个迭代器。  
+[forward_list（修改的比较多，具体看代码）](ex31_forward_list.cpp)
 
   
 ## 练习9.32
