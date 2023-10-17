@@ -5,7 +5,7 @@
 我使用g++，一般将C++程序命名为.cpp。  
 g++ -o main main.cpp  
 [代码](ex01_main.cpp)
-```bash
+```sh
 $ g++ -o main main.cpp 
 $ ls
 main  main.cpp
@@ -74,7 +74,7 @@ ex07.cpp:6:2: error: expected ‘;’ before ‘return’
 ## 练习1.8
 
 > 指出下列哪些输出语句是合法的(如果有的话)：
-```c++
+```cpp
 std::cout << "/*";
 std::cout << "*/";
 std::cout << /* "*/" */;
@@ -103,7 +103,7 @@ std::cout << /* "*/" /* "/*" */;
 ## 练习1.12
 
 > 下面的for循环完成了什么功能？sum的终值是多少？
-```
+```cpp
 int sum = 0;
 for (int i = -100; i <= 100; ++i)
   sum += i;
@@ -222,7 +222,7 @@ $ ./ex17
 
 测试：
 
-```
+```sh
 $ ./ex20 
 2-01 2 20
 2-01 2 40 20
