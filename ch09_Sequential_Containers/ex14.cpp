@@ -6,7 +6,10 @@ using namespace std;
 
 int main()
 {
-	list<const char *> l1 = {"aaa","bbb","ccc"};
+	char c1[5] = "aaaa";
+	char c2[5] = "bbbb";
+	char c3[5] = "cccc";
+	list<char *> l1 = { c1,c2,c3 };
 	vector<string> v1;
 
 	v1.assign(l1.begin(),l1.end());
