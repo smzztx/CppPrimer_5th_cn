@@ -2,6 +2,7 @@
 #include <iostream>
 #include <algorithm>
 #include <map>
+#include <functional>
 
 int add(int i, int j) { return i + j; }
 
